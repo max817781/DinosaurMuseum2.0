@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>恐龍諾諾博物館｜午後森林風格版</title>
+    <style>
+        body {
+            background-color: #141414;
+            color: #ffffff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        header {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            padding: 20px 40px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+            z-index: 100;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2em;
+            color: #e50914;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        /* 輪播橫幅區域 */
+        .hero-slider {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background-color: #000;
+            overflow: hidden;
+            display: flex;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            z-index: 1;
+        }
+        .slide.active {
+            opacity: 1;
+            z-index: 10;
+        }
+        .slide-content {
+            width: 45%;
+            height: 100%;
+            padding: 0 5% 0 10%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: linear-gradient(to right, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+            z-index: 2;
+        }
+        .slide-tag {
+            color: #4CAF50;
+            font-size: 1em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .slide-title {
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+        .slide-desc {
+            font-size: 1.1em;
+            color: #e0e0e0;
+            margin-bottom: 15px;
+        }
+        .slide-meta {
+            font-size: 0.9em;
+            color: #888;
+            margin-bottom: 30px;
+        }
+        .slide-btn {
+            background-color: transparent;
+            color: #fff;
+            border: 1px solid #fff;
+            padding: 10px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 1.1em;
+            width: fit-content;
+            transition: background-color 0.3s, color 0.3s;
+            position: relative;
+            z-index: 20;
+        }
+        .slide-btn:hover {
+            background-color: #fff;
+            color: #000;
+        }
+        .slide-image-container {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 70%;
+            height: 100%;
+            z-index: 0;
+        }
+        .slide-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%);
+            mask-image: linear-gradient(to right, transparent 0%, black 30%);
+        }
+        
+        /* 左右切換按鈕 */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 2em;
+            padding: 15px 20px;
+            cursor: pointer;
+            z-index: 50; /* 提高層級確保不被擋住 */
+            transition: background-color 0.3s, transform 0.3s;
+            border-radius: 8px;
+        }
+        .nav-arrow:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+            transform: translateY(-50%) scale(1.1);
+        }
+        .prev-arrow {
+            left: 20px;
+        }
+        .next-arrow {
+            right: 20px;
+        }
+
+        /* 輪播指示點 */
+        .slider-dots {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            z-index: 30;
+        }
+        .dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            margin: 0 6px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .dot.active {
+            background-color: #fff;
+            transform: scale(1.3);
+        }
+
+        /* 內容容器 */
+        .container {
+            padding: 40px;
+            position: relative;
+            z-index: 5;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ==================================
+           模式切換按鈕區 (VOD模式 / 歌單模式) 
+           ================================== */
+        .mode-switch-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
+        .mode-btn {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+        .mode-btn:hover {
+            color: #fff;
+            background-color: #222;
+        }
+        .mode-btn.active {
+            color: #e50914;
+            background-color: #1a1a1a;
+        }
+
+        /* 標籤分類與搜尋列控制區 */
+        .controls-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background-color: #333;
+            color: #fff;
+            border: 2px solid transparent;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover {
+            background-color: #555;
+        }
+        .filter-btn.active {
+            background-color: #e50914;
+            border-color: #e50914;
+        }
+
+        /* 搜尋框樣式 */
+        .search-input {
+            background-color: #333;
+            color: #fff;
+            border: 2px solid transparent;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.95em;
+            outline: none;
+            width: 280px;
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            background-color: #444;
+            border-color: #e50914;
+        }
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        /* ==================================
+           VOD 卡片排版
+           ================================== */
+        .video-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap; 
+        }
+        .video-card {
+            position: relative;
+            width: 300px;
+            transition: transform 0.3s ease;
+            text-decoration: none;
+            color: white;
+        }
+        .video-card:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+        .cover-container {
+            position: relative;
+            width: 100%;
+            height: 168px;
+            background-color: #333;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .icon-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5em;
+            z-index: 1; 
+        }
+        .cover-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 2; 
+        }
+        .cover-image[src=""] {
+            display: none;
+        }
+        .video-info {
+            padding: 10px 0;
+        }
+        .video-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+        .tags {
+            font-size: 0.9em;
+            color: #a3a3a3;
+        }
+        .tag {
+            margin-right: 10px;
+        }
+        .video-story { margin-top: 9px; color: #85818a; font-size: .86em; line-height: 1.5; }
+
+        /* ==================================
+           歌單條列式排版
+           ================================== */
+        .song-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .song-row {
+            display: flex;
+            align-items: center;
+            background-color: #1f1f1f;
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .song-row:hover {
+            background-color: #2e2e2e;
+            transform: translateX(5px);
+        }
+        /* 如果待練或沒有連結，讓它看起來不能點 */
+        .song-row.no-link {
+            cursor: default;
+        }
+        .song-row.no-link:hover {
+            transform: none;
+        }
+        
+        .song-icon {
+            font-size: 1.8em;
+            margin-right: 20px;
+            width: 40px;
+            text-align: center;
+        }
+        .song-cover {
+            width: 112px;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            flex-shrink: 0;
+            margin-right: 18px;
+            border-radius: 9px;
+            border: 1px solid rgba(255,255,255,.1);
+            box-shadow: 0 5px 16px rgba(0,0,0,.3);
+        }
+        .song-details {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .song-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .song-title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .song-singer {
+            font-size: 0.95em;
+            color: #aaa;
+        }
+        .song-tags-wrap {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .song-badge {
+            background-color: #333;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            color: #ccc;
+        }
+        .song-badge.status-pending {
+            border: 1px solid #f39c12;
+            color: #f39c12;
+            background-color: transparent;
+        }
+        .song-play-btn {
+            background-color: #e50914;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .song-play-btn.disabled {
+            background-color: #555;
+            color: #999;
+        }
+
+        /* 隱藏區塊用 */
+        /* 第二版：全新首頁 */
+        html { scroll-behavior: smooth; }
+        header {
+            position: fixed;
+            display: flex;
+            justify-content: space-between;
+            background: rgba(10, 10, 12, 0.76);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .brand-wrap { display: flex; align-items: center; gap: 12px; }
+        .brand-mark {
+            width: 38px; height: 38px; display: grid; place-items: center;
+            border-radius: 12px; background: linear-gradient(135deg, #c9825b, #e6b97a);
+            box-shadow: 0 8px 24px rgba(201, 130, 91, 0.28);
+        }
+        .brand-text h1 { font-size: 1.25em; line-height: 1; }
+        .brand-text span { display: block; margin-top: 5px; color: #9d9d9d; font-size: 0.72em; letter-spacing: 0.08em; }
+        .top-nav { display: flex; align-items: center; gap: 24px; }
+        .top-nav a { color: #dedede; text-decoration: none; font-size: 0.95em; }
+        .top-nav a:hover { color: #fff; }
+        .home-hero {
+            min-height: 720px; padding: 120px 8% 70px; box-sizing: border-box;
+            display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr);
+            align-items: center; gap: 70px; position: relative; overflow: hidden;
+            background: radial-gradient(circle at 82% 28%, rgba(201,130,91,.23), transparent 28%),
+                        radial-gradient(circle at 15% 80%, rgba(230,185,122,.13), transparent 28%),
+                        linear-gradient(145deg, #11100f 0%, #211c19 54%, #12110f 100%);
+        }
+        .home-hero::before {
+            content: ""; position: absolute; inset: 0; opacity: .16;
+            background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+            background-size: 48px 48px; mask-image: linear-gradient(to bottom, black, transparent);
+        }
+        .home-copy, .museum-card { position: relative; z-index: 1; }
+        .eyebrow { color: #e6b97a; font-size: .85em; font-weight: bold; letter-spacing: .16em; text-transform: uppercase; }
+        .home-title { max-width: 760px; margin: 18px 0 22px; font-size: clamp(3em, 5.4vw, 5.4em); line-height: 1.04; letter-spacing: -.045em; }
+        .home-title em { color: #e1a276; font-style: normal; }
+        .home-lead { max-width: 650px; color: #bdbdc5; font-size: 1.12em; line-height: 1.8; }
+        .home-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
+        .home-btn {
+            padding: 13px 24px; border-radius: 999px; color: #fff; text-decoration: none;
+            font-weight: bold; border: 1px solid rgba(255,255,255,.18); transition: transform .2s, background .2s;
+        }
+        .home-btn:hover { transform: translateY(-2px); }
+        .home-btn.primary { border-color: #c9825b; background: #c9825b; box-shadow: 0 12px 30px rgba(201,130,91,.25); }
+        .home-btn.secondary { background: rgba(255,255,255,.06); }
+        .museum-card {
+            padding: 36px; border: 1px solid rgba(255,255,255,.12); border-radius: 28px;
+            background: linear-gradient(145deg, rgba(255,255,255,.1), rgba(255,255,255,.035));
+            box-shadow: 0 30px 70px rgba(0,0,0,.38); backdrop-filter: blur(14px); transform: rotate(2deg);
+        }
+        .museum-card .dino { font-size: 4.8em; }
+        .museum-card h2 { margin: 18px 0 10px; font-size: 1.8em; }
+        .museum-card p { color: #aaa; line-height: 1.7; }
+        .museum-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 25px; }
+        .museum-stat { padding: 15px 8px; text-align: center; border-radius: 14px; background: rgba(0,0,0,.24); }
+        .museum-stat strong { display: block; font-size: 1em; color: #f1d5ae; }
+        .museum-stat span { color: #888; font-size: .75em; }
+        .about-site { padding: 90px 8%; background: #101012; }
+        .section-kicker { color: #d99a70; font-weight: bold; }
+        .about-site h2 { margin: 10px 0 14px; font-size: clamp(2em, 4vw, 3.4em); }
+        .about-site > p { max-width: 760px; color: #aaa; line-height: 1.8; }
+        .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 36px; }
+        .feature-card { padding: 28px; border-radius: 18px; background: #19191c; border: 1px solid #29292d; }
+        .feature-icon { font-size: 1.8em; }
+        .feature-card h3 { margin: 16px 0 9px; }
+        .feature-card p { margin: 0; color: #96969e; line-height: 1.65; }
+        .memory-note {
+            max-width: 920px; margin: 54px 0 0; padding: 30px 34px;
+            border-left: 3px solid #c9825b; border-radius: 0 16px 16px 0;
+            background: linear-gradient(90deg, rgba(201,130,91,.12), rgba(201,130,91,.02));
+            color: #d9c5b7; font-size: 1.15em; line-height: 1.8;
+        }
+        .memory-note strong { color: #fff; }
+        /* 諾諾個人感：小恐龍手帳 */
+        .nono-profile {
+            display: grid; grid-template-columns: 1.1fr .9fr; gap: 28px;
+            margin-top: 38px; align-items: stretch;
+        }
+        .profile-note, .nono-bubble {
+            position: relative; padding: 34px; border-radius: 26px;
+            overflow: hidden;
+        }
+        .profile-note {
+            background: #17171a; border: 1px solid rgba(185, 170, 221, .25);
+            box-shadow: 0 22px 50px rgba(0,0,0,.22);
+        }
+        .profile-note::after {
+            content: "🦖"; position: absolute; right: 24px; bottom: -18px;
+            font-size: 7em; opacity: .12; transform: rotate(-8deg);
+        }
+        .profile-note h3 { margin: 8px 0 16px; font-size: 2em; color: #d9ccef; }
+        .profile-note p { max-width: 680px; color: #beb8c7; line-height: 1.85; }
+        .rawr-line { color: #d8eb9d; font-weight: bold; letter-spacing: .04em; }
+        .dino-tags { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 22px; }
+        .dino-tag {
+            padding: 8px 12px; border-radius: 999px; background: rgba(158,181,104,.13);
+            border: 1px solid rgba(188,213,123,.25); color: #d8eb9d; font-size: .85em;
+        }
+        .nono-bubble {
+            display: flex; flex-direction: column; justify-content: space-between;
+            background: linear-gradient(145deg, #dfeeb4, #f4df9d); color: #28251f;
+            transform: rotate(1.5deg); box-shadow: 0 22px 50px rgba(0,0,0,.24);
+        }
+        .nono-bubble .bubble-icons { font-size: 3.3em; letter-spacing: .08em; }
+        .nono-bubble blockquote { margin: 25px 0; font-size: 1.2em; line-height: 1.7; font-weight: bold; }
+        .nono-bubble small { color: #5f5a49; }
+        .x-section {
+            padding: 90px 8%; background: linear-gradient(180deg, #101012, #151419);
+        }
+        .x-layout {
+            display: grid; grid-template-columns: minmax(260px,.72fr) minmax(340px,1.28fr);
+            gap: 32px; margin-top: 30px; align-items: start;
+        }
+        .x-intro {
+            position: sticky; top: 105px; padding: 30px; border-radius: 24px;
+            background: #1c1b20; border: 1px solid #302d38;
+        }
+        .x-intro .x-handle { color: #b8a8dd; font-weight: bold; }
+        .x-intro h2 { font-size: 2.4em; margin: 12px 0; }
+        .x-intro p { color: #aaa4b0; line-height: 1.75; }
+        .x-link {
+            display: inline-block; margin-top: 16px; padding: 11px 18px; border-radius: 999px;
+            background: #eef5d2; color: #24251f; text-decoration: none; font-weight: bold;
+        }
+        .x-frame {
+            min-height: 560px; padding: 16px; border-radius: 26px;
+            background: #f4f1e8; box-shadow: 0 20px 55px rgba(0,0,0,.26);
+        }
+        .x-frame .twitter-timeline {
+            min-height: 528px; display: flex; align-items: center; justify-content: center;
+            padding: 30px; box-sizing: border-box; border: 2px dashed #d2cab8;
+            border-radius: 18px; color: #4b463d; text-align: center; text-decoration: none;
+            line-height: 1.8;
+        }
+        .x-fallback-icon { display: block; font-size: 4em; margin-bottom: 14px; }
+        .x-fallback-title { display: block; color: #28251f; font-size: 1.25em; font-weight: bold; }
+        .x-frame .twitter-tweet {
+            margin: 0 auto !important; color: #28251f;
+        }
+        .post-fallback {
+            min-height: 490px; display: flex; flex-direction: column; justify-content: center;
+            padding: 42px; box-sizing: border-box; color: #302c25;
+        }
+        .post-fallback .post-rawr { color: #6f638f; font-weight: bold; }
+        .post-fallback p { font-size: 1.28em; line-height: 1.8; }
+        .post-fallback a { color: #5c4f7d; font-weight: bold; }
+        .x-profile-banner {
+            position: relative; display: block; max-width: 900px; margin: 30px auto 0;
+            overflow: hidden; border-radius: 28px; border: 1px solid #302d38;
+            background: #fff; box-shadow: 0 24px 60px rgba(0,0,0,.32);
+            transition: transform .25s ease, box-shadow .25s ease;
+        }
+        .x-profile-banner:hover { transform: translateY(-4px); box-shadow: 0 30px 70px rgba(0,0,0,.4); }
+        .x-profile-banner img { display: block; width: 100%; height: auto; }
+        .x-banner-cta {
+            position: absolute; right: 20px; bottom: 20px; padding: 11px 18px;
+            border-radius: 999px; background: rgba(16,16,18,.9); color: #fff;
+            font-weight: bold; box-shadow: 0 8px 24px rgba(0,0,0,.3);
+        }
+        .selected-post { max-width: 720px; margin: 55px auto 0; }
+        .selected-post-title { margin-bottom: 18px; text-align: center; }
+        .selected-post-title span { color: #b8a8dd; font-weight: bold; letter-spacing: .1em; }
+        .selected-post-title h2 { margin: 8px 0 0; font-size: 2em; }
+        .selected-post .x-frame { min-height: 480px; }
+        /* 第三版：回憶探索功能 */
+        .story-section { padding: 95px 8%; position: relative; overflow: hidden; }
+        .story-section:nth-of-type(even) { background: #111113; }
+        .section-heading { max-width: 780px; margin-bottom: 38px; }
+        .section-heading h2 { margin: 10px 0 14px; font-size: clamp(2.2em, 4.5vw, 4em); line-height: 1.08; }
+        .section-heading p { color: #aaa4b0; line-height: 1.8; }
+
+        .memory-draw-section {
+            background: radial-gradient(circle at 78% 30%, rgba(180,204,113,.16), transparent 28%),
+                        linear-gradient(145deg, #17161b, #101012);
+        }
+        .memory-draw-wrap { display: grid; grid-template-columns: .8fr 1.2fr; gap: 30px; align-items: stretch; }
+        .memory-machine {
+            padding: 36px; border-radius: 28px; background: linear-gradient(145deg, #dfeeb4, #f0dca0);
+            color: #28251f; box-shadow: 0 24px 60px rgba(0,0,0,.3);
+        }
+        .memory-machine .machine-icon { font-size: 4em; }
+        .memory-machine h2 { margin: 15px 0 10px; font-size: 2em; }
+        .memory-machine p { line-height: 1.7; color: #5d584a; }
+        .draw-btn {
+            margin-top: 20px; border: 0; border-radius: 999px; padding: 13px 22px;
+            background: #302b3d; color: #fff; font-weight: bold; cursor: pointer; font-size: 1em;
+        }
+        .draw-btn:hover { transform: translateY(-2px); }
+        .memory-result {
+            display: flex; flex-direction: column; justify-content: center; min-height: 280px;
+            padding: 40px; border-radius: 28px; border: 1px dashed #4b4655; background: #1b1a20;
+        }
+        .memory-result.empty { color: #77727d; text-align: center; }
+        .memory-result-icon { font-size: 3.6em; }
+        .memory-result-label { margin-top: 14px; color: #b8a8dd; font-weight: bold; letter-spacing: .1em; }
+        .memory-result h3 { margin: 8px 0; font-size: 2em; }
+        .memory-result p { color: #aaa4b0; line-height: 1.7; }
+        .memory-open { color: #d8eb9d; text-decoration: none; font-weight: bold; }
+
+        .timeline { position: relative; max-width: 980px; margin: 0 auto; }
+        .timeline::before { content: ""; position: absolute; left: 118px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(#d9a173,#9fb66c); }
+        .timeline-item { display: grid; grid-template-columns: 95px 1fr; gap: 46px; position: relative; padding: 0 0 42px; }
+        .timeline-date { padding-top: 20px; color: #e6b97a; font-weight: bold; text-align: right; }
+        .timeline-card {
+            position: relative; padding: 28px 30px; border-radius: 22px; background: #1b1a1f;
+            border: 1px solid #302d38; color: #fff; text-decoration: none;
+        }
+        .timeline-card::before { content: ""; position: absolute; left: -30px; top: 27px; width: 13px; height: 13px; border-radius: 50%; background: #c9df86; box-shadow: 0 0 0 7px #17161a; }
+        .timeline-card:hover { background: #232129; transform: translateX(3px); }
+        .timeline-label { color: #a99bc9; font-size: .82em; font-weight: bold; letter-spacing: .1em; }
+        .timeline-card h3 { margin: 9px 0; font-size: 1.4em; }
+        .timeline-card p { margin: 0; color: #aaa4b0; line-height: 1.7; }
+        .timeline-icon { float: right; font-size: 2.1em; }
+
+        .original-song-section { background: linear-gradient(145deg, #1d1822, #101012); }
+        .original-song-card { display: grid; grid-template-columns: .82fr 1.18fr; max-width: 1100px; margin: 0 auto; border-radius: 32px; overflow: hidden; border: 1px solid #3b3445; box-shadow: 0 28px 70px rgba(0,0,0,.32); }
+        .song-art { min-height: 420px; padding: 46px; display: flex; flex-direction: column; justify-content: space-between; background: radial-gradient(circle at 70% 20%, rgba(216,235,157,.32), transparent 25%), linear-gradient(145deg,#9f8bc5,#4f426b); }
+        .song-art-icon { font-size: 6em; }
+        .song-art small { color: #eee8f7; letter-spacing: .12em; }
+        .song-story { padding: 48px; background: #18171c; }
+        .song-story h2 { margin: 10px 0 6px; font-size: 3em; }
+        .song-en-title { color: #c6b7e3; font-size: 1.1em; }
+        .song-story > p { color: #b3adb9; line-height: 1.8; }
+        .credit-list { display: grid; gap: 8px; margin: 25px 0; color: #918b98; font-size: .9em; }
+        .song-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+        .song-action { padding: 11px 18px; border-radius: 999px; text-decoration: none; font-weight: bold; background: #dfeaaf; color: #27271f; }
+        .song-action.secondary { background: #29262f; color: #ddd5e8; border: 1px solid #484151; }
+
+        .quote-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+        .quote-card { display: flex; flex-direction: column; min-height: 230px; padding: 28px; border-radius: 24px; background: #1b1a1f; border: 1px solid #312e38; color: #fff; text-decoration: none; }
+        .quote-card:nth-child(2) { transform: rotate(1deg); background: #dfeeb4; color: #2b2923; }
+        .quote-icon { font-size: 2.4em; }
+        .quote-card blockquote { margin: 20px 0; font-size: 1.18em; line-height: 1.65; font-weight: bold; flex-grow: 1; }
+        .quote-card small { color: #988fa2; }
+        .quote-card:nth-child(2) small { color: #656050; }
+
+        .annual-card { max-width: 1100px; margin: 0 auto; padding: 55px; border-radius: 34px; background: linear-gradient(135deg,#201d26,#18171b); border: 1px solid #393440; }
+        .annual-year { font-size: clamp(4em,10vw,8em); font-weight: 900; line-height: .9; color: #d8eb9d; opacity: .92; }
+        .annual-card h2 { margin: 22px 0 10px; font-size: 2.4em; }
+        .annual-card > p { max-width: 760px; color: #aaa4b0; line-height: 1.8; }
+        .annual-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 35px; }
+        .annual-stat { padding: 22px; border-radius: 18px; background: rgba(255,255,255,.045); }
+        .annual-stat strong { display: block; color: #e6b97a; font-size: 2em; }
+        .annual-stat span { color: #908a95; }
+        #archive { scroll-margin-top: 80px; }
+        @media (max-width: 850px) {
+            header { padding: 16px 20px; }
+            .brand-text span, .top-nav a:not(.nav-main) { display: none; }
+            .home-hero { grid-template-columns: 1fr; gap: 38px; padding: 120px 7% 70px; }
+            .museum-card { transform: none; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .home-title { font-size: clamp(3em, 15vw, 5em); }
+            .song-row { padding: 12px; }
+            .song-cover { width: 82px; margin-right: 12px; }
+            .song-play-btn { display: none; }
+            .nono-profile, .x-layout { grid-template-columns: 1fr; }
+            .nono-bubble { transform: none; }
+            .x-intro { position: static; }
+            .x-profile-banner { border-radius: 18px; }
+            .x-banner-cta { right: 12px; bottom: 12px; font-size: .84em; }
+            .memory-draw-wrap, .original-song-card { grid-template-columns: 1fr; }
+            .timeline::before { left: 10px; }
+            .timeline-item { grid-template-columns: 1fr; gap: 10px; padding-left: 38px; }
+            .timeline-date { text-align: left; padding-top: 0; }
+            .timeline-card::before { left: -34px; }
+            .quote-grid, .annual-stats { grid-template-columns: 1fr; }
+            .quote-card:nth-child(2) { transform: none; }
+            .song-art { min-height: 280px; }
+            .song-story, .annual-card { padding: 30px; }
+        }
+
+        /* ================================================================
+           第四版定調：午後森林裡的小恐龍回憶手帳
+           ================================================================ */
+        :root {
+            --cream: #fff8e7;
+            --cream-deep: #f4ead0;
+            --paper: #fffdf7;
+            --sage: #91a96f;
+            --sage-deep: #617849;
+            --sage-soft: #dfe9bd;
+            --yellow: #f1cd69;
+            --purple: #554b69;
+            --purple-soft: #dcd3e8;
+            --pink: #e884a2;
+            --brown: #4a4038;
+            --muted-brown: #786d63;
+            --line-warm: #ddd0b7;
+        }
+        body { background: var(--cream); color: var(--brown); font-family: "Trebuchet MS", "Microsoft JhengHei", sans-serif; }
+        header {
+            background: rgba(255,248,231,.9); border-bottom: 1px solid rgba(97,120,73,.18);
+            box-shadow: 0 6px 24px rgba(78,68,52,.06);
+        }
+        .brand-mark { width: 48px; height: 48px; overflow: hidden; padding: 0; background: var(--paper); border: 2px solid var(--yellow); }
+        .brand-mark img { width: 100%; height: 100%; object-fit: cover; object-position: top; transform: scale(1.22); }
+        .brand-text h1 { color: var(--purple); }
+        .brand-text span { color: var(--sage-deep); }
+        .top-nav a { color: var(--brown); }
+        .top-nav a:hover { color: var(--sage-deep); }
+        .top-nav .nav-main { padding: 9px 15px; border-radius: 999px; background: var(--sage-soft); color: var(--sage-deep); }
+        .top-nav .archive-shortcut { font-weight: bold; color: var(--purple); border-bottom: 2px solid var(--yellow); }
+
+        .home-hero {
+            min-height: 760px; grid-template-columns: minmax(340px,.78fr) minmax(520px,1.22fr);
+            background: radial-gradient(circle at 8% 15%, rgba(241,205,105,.28), transparent 26%),
+                        radial-gradient(circle at 86% 12%, rgba(145,169,111,.22), transparent 27%),
+                        linear-gradient(145deg, #fffdf5, #f7edcf 60%, #e8edcf);
+        }
+        .home-hero::before { opacity: .28; background-image: linear-gradient(rgba(97,120,73,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(97,120,73,.08) 1px, transparent 1px); }
+        .eyebrow, .section-kicker { color: var(--sage-deep); }
+        .home-title { color: var(--purple); font-size: clamp(3em,4.3vw,4.4em); line-height: 1.08; }
+        .home-title em { color: var(--sage-deep); white-space: nowrap; }
+        .home-lead { color: var(--muted-brown); }
+        .home-btn { color: var(--brown); border-color: var(--line-warm); }
+        .home-btn.primary { background: var(--sage); border-color: var(--sage); color: #fff; box-shadow: 0 14px 32px rgba(97,120,73,.22); }
+        .home-btn.secondary { background: rgba(255,255,255,.7); }
+        .identity-card { padding: 12px; border-radius: 32px; background: rgba(255,255,255,.78); border: 1px solid rgba(97,120,73,.2); transform: rotate(1deg); }
+        .identity-card img { display: block; width: 100%; aspect-ratio: 1.5/1; object-fit: cover; border-radius: 23px; }
+        .cover-caption { display: flex; justify-content: space-between; gap: 18px; align-items: center; padding: 18px 14px 8px; color: var(--purple); }
+        .cover-caption strong { font-size: 1.1em; }
+        .cover-caption span { color: var(--sage-deep); font-size: .9em; }
+
+        .about-site { background: var(--cream-deep); }
+        .about-site h2, .section-heading h2 { color: var(--purple); }
+        .about-site > p, .section-heading p { color: var(--muted-brown); }
+        .profile-note { background: var(--paper); border-color: rgba(145,169,111,.38); box-shadow: 0 20px 45px rgba(95,76,49,.1); }
+        .profile-note h3 { color: var(--purple); }
+        .profile-note p { color: var(--muted-brown); }
+        .rawr-line { color: var(--sage-deep); }
+        .dino-tag { background: #eef3d8; border-color: #cbd9a4; color: var(--sage-deep); }
+        .nono-bubble { background: linear-gradient(145deg,#fff4c7,#eadff1); color: var(--brown); border: 1px solid rgba(85,75,105,.12); }
+        .nono-bubble blockquote { color: var(--purple); }
+        .chibi-image { display: block; width: min(230px,75%); margin: -15px auto 5px; filter: drop-shadow(0 12px 18px rgba(85,75,105,.14)); }
+        .memory-note { background: linear-gradient(90deg,rgba(232,132,162,.13),rgba(255,255,255,.25)); border-left-color: var(--pink); color: var(--brown); }
+        .memory-note strong { color: var(--purple); }
+
+        .story-section { background: var(--cream); }
+        .story-section:nth-of-type(even) { background: #f4f0df; }
+        .memory-draw-section { background: radial-gradient(circle at 78% 30%,rgba(145,169,111,.22),transparent 30%),linear-gradient(145deg,#f8edca,#edf1d4); }
+        .memory-machine { background: linear-gradient(145deg,#dfe9bd,#fff0b8); color: var(--brown); box-shadow: 0 22px 50px rgba(95,76,49,.12); }
+        .memory-machine p { color: var(--muted-brown); }
+        .draw-btn { background: var(--purple); color: #fff; }
+        .memory-result { background: var(--paper); border-color: var(--sage); box-shadow: 0 18px 42px rgba(95,76,49,.08); }
+        .memory-result.empty, .memory-result p { color: var(--muted-brown); }
+        .memory-result-label { color: var(--sage-deep); }
+        .memory-result h3 { color: var(--purple); }
+        .memory-open { color: var(--sage-deep); }
+
+        .timeline::before { background: linear-gradient(var(--yellow),var(--sage)); }
+        .timeline-date { color: var(--sage-deep); }
+        .timeline-card { background: var(--paper); border-color: var(--line-warm); color: var(--brown); box-shadow: 0 12px 30px rgba(95,76,49,.07); }
+        .timeline-card::before { background: var(--pink); box-shadow: 0 0 0 7px var(--cream); }
+        .timeline-card:hover { background: #fff9df; }
+        .timeline-label { color: var(--sage-deep); }
+        .timeline-card h3 { color: var(--purple); }
+        .timeline-card p { color: var(--muted-brown); }
+
+        .original-song-section { background: linear-gradient(145deg,#eee6f3,#f7efda); }
+        .original-song-card { border-color: #d8cce3; box-shadow: 0 24px 55px rgba(85,75,105,.13); }
+        .song-art { background: radial-gradient(circle at 70% 20%,rgba(241,205,105,.38),transparent 27%),linear-gradient(145deg,#aabf7d,#74678b); }
+        .song-story { background: var(--paper); }
+        .song-story h2 { color: var(--purple); }
+        .song-en-title { color: var(--sage-deep); }
+        .song-story > p, .credit-list { color: var(--muted-brown); }
+        .song-action { background: var(--sage); color: #fff; }
+        .song-action.secondary { background: var(--purple-soft); color: var(--purple); border-color: #c8bbd6; }
+
+        .quote-card { background: var(--paper); border-color: var(--line-warm); color: var(--brown); box-shadow: 0 14px 34px rgba(95,76,49,.08); }
+        .quote-card:nth-child(2) { background: var(--sage-soft); }
+        .quote-card small, .quote-card:nth-child(2) small { color: var(--muted-brown); }
+        .quote-card.has-link { cursor: pointer; transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease; }
+        .quote-card.has-link:hover { transform: translateY(-8px) rotate(-.4deg); border-color: var(--sage); box-shadow: 0 22px 44px rgba(95,76,49,.16); }
+        .quote-card.has-link:hover .quote-icon { transform: scale(1.12) rotate(-6deg); }
+        .quote-icon { transition: transform .24s ease; }
+        .quote-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .quote-source, .quote-audio-btn {
+            display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px;
+            font-size: .82em; font-weight: bold; text-decoration: none;
+        }
+        .quote-source { color: #fff; background: var(--sage); }
+        .quote-source:hover { background: var(--sage-deep); }
+        .quote-audio-btn { border: 1px solid #cdbfd9; background: var(--purple-soft); color: var(--purple); cursor: pointer; }
+        .quote-image { width: 100%; height: auto; object-fit: contain; filter: drop-shadow(0 8px 12px rgba(85,75,105,.13)); }
+		//width: 100%; height: auto;
+		// .quote-image { width: 72px; height: 72px; object-fit: contain; filter: drop-shadow(0 8px 12px rgba(85,75,105,.13)); }
+        .quote-placeholder-note { display: inline-block; color: var(--muted-brown); font-size: .75em; }
+        .annual-card { background: linear-gradient(135deg,#fbf2cf,#e7eccd); border-color: #d7d3a9; box-shadow: 0 22px 55px rgba(95,76,49,.1); }
+        .annual-year { color: var(--sage-deep); }
+        .annual-card h2 { color: var(--purple); }
+        .annual-card > p, .annual-stat span { color: var(--muted-brown); }
+        .annual-stat { background: rgba(255,255,255,.6); }
+        .annual-stat strong { color: var(--pink); }
+
+        .x-section { background: linear-gradient(180deg,#f5ecd6,#eee7d9); }
+        .x-profile-banner { border-color: var(--line-warm); box-shadow: 0 22px 55px rgba(95,76,49,.14); }
+        .selected-post-title h2 { color: var(--purple); }
+        .selected-post-title span { color: var(--sage-deep); }
+
+        .hero-slider { background: var(--purple); }
+        .slide-content { background: linear-gradient(to right,rgba(61,52,73,.98) 43%,rgba(61,52,73,0) 100%); }
+        .slide-tag { color: var(--yellow); }
+        .container { background: var(--cream); }
+        .mode-switch-container { border-bottom-color: var(--line-warm); }
+        .mode-btn { color: var(--muted-brown); }
+        .mode-btn:hover { color: var(--purple); background: #f3ead7; }
+        .mode-btn.active { color: var(--sage-deep); background: var(--sage-soft); }
+        .filter-btn { background: #e9e1d0; color: var(--brown); }
+        .filter-btn:hover { background: #ded3bd; }
+        .filter-btn.active { background: var(--sage); border-color: var(--sage); color: #fff; }
+        .search-input { background: var(--paper); color: var(--brown); border-color: var(--line-warm); }
+        .search-input:focus { background: #fff; border-color: var(--sage); }
+        .video-card, .song-row { background: var(--paper); color: var(--brown); border: 1px solid var(--line-warm); box-shadow: 0 10px 28px rgba(95,76,49,.07); }
+        .video-card:hover, .song-row:hover { background: #fff9df; }
+        .video-title, .song-title { color: var(--purple); }
+        .tags, .song-singer, .video-story { color: var(--muted-brown); }
+        .song-badge { background: var(--purple-soft); color: var(--purple); }
+        .song-play-btn { background: var(--sage); }
+        .song-play-btn.disabled { background: #cbc3b2; color: #776f64; }
+
+        @media (max-width: 850px) {
+            .home-hero { grid-template-columns: 1fr; }
+            .home-title { font-size: clamp(2.75em,11.5vw,3.5em); }
+            .identity-card { transform: none; }
+            .cover-caption { align-items: flex-start; flex-direction: column; gap: 4px; }
+            .quote-card.has-link:hover { transform: none; }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand-wrap">
+            <div class="brand-mark"><img src="images/nono-chibi.png" alt="諾諾角色圖"></div>
+            <div class="brand-text">
+                <h1>恐龍諾諾博物館</h1>
+                <span>DINOSAUR YANYAN ARCHIVE</span>
+            </div>
+        </div>
+        <nav class="top-nav" aria-label="主要選單">
+            <a href="#about">關於諾諾</a>
+            <a href="#timeline">成長足跡</a>
+            <a href="#updates">最新動態</a>
+            <a href="#archive" class="archive-shortcut">VOD／歌單館藏</a>
+            <a href="#random-memory" class="nav-main">抽一段回憶</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="home-hero" aria-labelledby="home-title">
+            <div class="home-copy">
+                <div class="eyebrow">Rawr Rawr!!! Welcome home 🦖</div>
+                <h2 class="home-title" id="home-title">一個普通女孩，<br>和她最愛的<em>小恐龍</em>。</h2>
+                <p class="home-lead">這是諾諾留下人生故事的小角落。歌聲、笑聲、名場面，還有那些現在回頭看可能會害羞的瞬間——</p>
+                <div class="home-actions">
+                    <a class="home-btn primary" href="#archive">翻翻以前的故事</a>
+                    <a class="home-btn secondary" href="#about">先認識諾諾</a>
+                </div>
+            </div>
+            <aside class="museum-card identity-card" aria-label="小恐龍諾諾形象封面">
+                <img src="images/nono-main-cover.jpg" alt="小恐龍諾諾坐在窗邊抱著恐龍玩偶的封面">
+                <div class="cover-caption"><strong>Little Dino YanYan</strong><span>一座會慢慢長大的回憶館 🌱</span></div>
+            </aside>
+        </section>
+
+        <section class="about-site" id="about">
+            <span class="section-kicker">ABOUT THE DINOSAUR!!!</span>
+            <h2>嗨！我是諾諾，一個超愛小恐龍的普通女孩</h2>
+            <p>個人勢 VTuber，可以中文／英文交流，日文還在努力學習中。比起一本正經的自我介紹，這裡更多保留諾諾真實、可愛、偶爾犯懶，也一直努力往前走的樣子。</p>
+            <div class="nono-profile">
+                <article class="profile-note">
+                    <div class="rawr-line">RAWR!!!!!!!! 🦖✨</div>
+                    <h3>Little Dino YanYan</h3>
+                    <p>I’m just an ordinary girl who LOVES her little dinosaur (*ˉ︶ˉ*)！歡迎來到恐龍博物館網站!!在這裡收藏了直播、歌回和活動的展覽品!!。</p>
+                    <div class="dino-tags">
+                        <span class="dino-tag">🦖 Individual VTuber</span>
+                        <span class="dino-tag">中文 OK</span>
+                        <span class="dino-tag">English OK</span>
+                        <span class="dino-tag">日本語を勉強中</span>
+                        <span class="dino-tag">💛 Soup dumplings</span>
+                    </div>
+                </article>
+                <aside class="nono-bubble">
+                    <img class="chibi-image" src="images/nono-chibi.png" alt="諾諾與小恐龍的Q版形象">
+                    <blockquote>“不是哥布林，是恐龍。這件事非常重要”</blockquote>
+                    <small>。</small>
+                </aside>
+            </div>
+            <div class="memory-note"><strong>恐龍博物館存在的意義。</strong><br>不是要證明諾諾做過多少事情，而是希望諾諾想回頭時，每一段回憶都還找得到。</div>
+        </section>
+
+        <section class="story-section memory-draw-section" id="random-memory">
+            <div class="memory-draw-wrap">
+                <div class="memory-machine">
+                    <div class="machine-icon">🎞️🦖</div>
+                    <span class="section-kicker">TAKE ME BACK</span>
+                    <h2>帶我回到某一天</h2>
+                    <p>不用想要看什麼，讓小恐龍從收藏裡抽出一段歌聲、一場活動，或一個曾經笑過的瞬間。</p>
+                    <button class="draw-btn" id="drawMemoryBtn" type="button">抽一張回憶卡 ✨</button>
+                </div>
+                <div class="memory-result empty" id="memoryResult" aria-live="polite">
+                    <div class="memory-result-icon">💭</div>
+                    <p>按下按鈕，看看今天是哪段回憶來找你。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="story-section" id="timeline">
+            <div class="section-heading">
+                <span class="section-kicker">GROWING FOOTPRINTS</span>
+                <h2>一路走來的小恐龍腳印</h2>
+                <p>不是用數字衡量成長，而是把那些「從這一天開始不一樣了」的時刻，慢慢連成一條路。</p>
+            </div>
+            <div class="timeline" id="timelineContainer"></div>
+        </section>
+
+        <section class="story-section original-song-section" id="original-song">
+            <div class="section-heading">
+                <span class="section-kicker">SPECIAL EXHIBIT</span>
+                <h2>原創歌曲特別展</h2>
+            </div>
+            <div class="original-song-card" id="originalSongContainer"></div>
+        </section>
+
+        <section class="story-section" id="quotes">
+            <div class="section-heading">
+                <span class="section-kicker">WORDS TO REMEMBER</span>
+                <h2>那些一聽就知道是諾諾的話</h2>
+                <p>有些回憶不是一段影片，而是一句多年後想起來，還是會笑出來的話。</p>
+            </div>
+            <div class="quote-grid" id="quoteContainer"></div>
+        </section>
+
+        <section class="story-section" id="annual-review">
+            <div class="annual-card" id="annualReviewContainer"></div>
+        </section>
+
+        <section class="x-section" id="updates">
+            <span class="section-kicker">YANYAN'S LATEST RAWR</span>
+            <a class="x-profile-banner" href="https://x.com/LittleDinoYan" target="_blank" rel="noopener" aria-label="前往諾諾的 X 個人頁">
+                <img src="images/x-profile-banner.png" alt="YanYan DinoVT 的 X 個人頁介紹">
+                <span class="x-banner-cta">前往 @LittleDinoYan ↗</span>
+            </a>
+            <div class="selected-post">
+                <div class="selected-post-title">
+                    <span>PINNED MEMORY</span>
+                    <h2>精選文章</h2>
+                </div>
+                <div class="x-frame">
+                    <blockquote class="twitter-tweet" data-theme="light" data-dnt="true" data-conversation="none">
+                        <div class="post-fallback">
+                            <span class="post-rawr">YanYan🦖 DinoVT · 2026/05/31</span>
+                            <p>【Original Song】✉︎《致小龍包》<br>Dear Soup Dumplings 🦖💖</p>
+                            <a href="https://x.com/LittleDinoYan/status/2060945997682131069?s=20">查看這篇 X 貼文 ↗</a>
+                        </div>
+                    </blockquote>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="archive"></div>
+    <div class="hero-slider" id="heroSlider" aria-label="精選館藏"></div>
+
+    <div class="container">
+        
+        <div class="mode-switch-container">
+            <button id="btnVodMode" class="mode-btn active" onclick="switchMode('vod')">📺 VOD 實況存檔</button>
+            <button id="btnSongMode" class="mode-btn" onclick="switchMode('song')">🎵 歌單搜尋模式</button>
+        </div>
+
+        <div id="vodSection">
+            <div class="controls-container">
+                <div class="filter-container" id="vodFilterBtnContainer">
+                    <button class="filter-btn active" onclick="filterVod(this, 'all')">全部</button>
+                    <button class="filter-btn" onclick="filterVod(this, '遊戲')">🎮 遊戲</button>
+                    <button class="filter-btn" onclick="filterVod(this, '唱歌')">🎤 唱歌</button>
+                    <button class="filter-btn" onclick="filterVod(this, '雜談')">💬 雜談</button>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="searchVodInput" class="search-input" placeholder="搜尋 VOD 標題...">
+                </div>
+            </div>
+            <div class="video-row" id="vodRowContainer"></div>
+        </div>
+
+
+        <div id="songSection" class="hidden">
+            <div class="controls-container">
+                <div class="filter-container" id="songFilterBtnContainer">
+                    <button class="filter-btn active" onclick="filterSong(this, 'all')">全部歌曲</button>
+                    <button class="filter-btn" onclick="filterSong(this, '中文')">中文</button>
+                    <button class="filter-btn" onclick="filterSong(this, '英文')">英文</button>
+                    <button class="filter-btn" onclick="filterSong(this, '日文')">日文</button>
+                    <button class="filter-btn" onclick="filterSong(this, '待練')">⏳ 待練</button>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="searchSongInput" class="search-input" placeholder="搜尋 歌手 或 歌名...">
+                </div>
+            </div>
+            <div class="song-list-container" id="songListContainer"></div>
+        </div>
+
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        // =========================================================================
+        // 【維護專區 1：輪播橫幅資料】
+        // =========================================================================
+        const legacyHeroData = [
+            {
+                tag: "",
+                title: "《寶貝1》<br>張懸",
+                desc: "「給你一點甜甜，讓你今夜都好眠✨ 」",
+                meta: "",
+                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1515228468105969814",
+                image: "images/my_cover_01.jpg" 
+            },
+            {
+                tag: "",
+                title: "《不靈不靈》<br>很美味",
+                desc: "",
+                meta: "",
+                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1515665102961905764",
+                image: "images/my_cover_02.jpg" 
+            },
+            {
+                tag: "",
+                title: "《我想要佔據你》<br>告五人",
+                desc: "",
+                meta: "",
+                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1516778060677124106",
+                image: "images/my_cover_03.jpg" 
+            }
+        ];
+
+        // =========================================================================
+        // 【維護專區 2：大型 VOD 存檔資料】
+        // =========================================================================
+        const legacyVodData = [
+            {
+                title: "【瓦羅然】瓦瓦小公主1V3",
+                category: "遊戲",
+                emoji: "🎮",
+                link: "https://discord.com/channels/1437520274659479625/1438430166773792858/1476758590365765777",
+                image: "" 
+            },
+            {
+                title: "【讀書哼歌】陳綺貞之一心多用的諾諾 ♫",
+                category: "唱歌",
+                emoji: "🎤",
+                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1517492901792186439啊這個link有什麼問題嗎 ",
+                image: "images/cover2.jpg" 
+            },
+            {
+                title: "【🎊 半週年慶祝】溫暖社群棉花台 Q&A 環節 #01",
+                category: "雜談",
+                emoji: "💬",
+                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1505946351383478292",
+                image: ""
+            }
+        ];
+
+        // =========================================================================
+        // 【維護專區 3：純歌單資料庫】 (已新增測試用假資料)
+        // 💡 status 填: "已唱" 或 "待練"
+        // 💡 language 填: "中文", "英文", "日文"...
+        // =========================================================================
+        const legacySongData = [
+            {
+                title: "寶貝",
+                singer: "張懸",
+                language: "中文",
+                status: "已唱",
+                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/000000000000000001",
+                image: "images/my_cover_01.jpg"
+            },
+            {
+                title: "喜歡",
+                singer: "張懸",
+                language: "中文",
+                status: "待練",
+                link: "" 
+            },
+            {
+                title: "不靈不靈",
+                singer: "很美味",
+                language: "中文",
+                status: "已唱",
+                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/000000000000000002",
+                image: "images/my_cover_02.jpg"
+            },
+            {
+                title: "我想要佔據你",
+                singer: "告五人",
+                language: "中文",
+                status: "已唱",
+                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1515665102961905764",
+                image: "images/my_cover_03.jpg"
+            },
+            {
+                title: "First Love",
+                singer: "宇多田光",
+                language: "日文",
+                status: "已唱",
+                link: "https://discord.com/channels/1437520274659479625/xxxx/xxxx_jp_1" 
+            },
+            {
+                title: "Automatic",
+                singer: "宇多田光",
+                language: "日文",
+                status: "已唱",
+                link: "https://discord.com/channels/1437520274659479625/xxxx/xxxx_jp_2" 
+            },
+            {
+                title: "Flavor Of Life",
+                singer: "宇多田光",
+                language: "日文",
+                status: "待練",
+                link: "" 
+            },
+            {
+                title: "A Thousand Years",
+                singer: "Christina Perri",
+                language: "英文",
+                status: "已唱",
+                link: "https://discord.com/channels/1437520274659479625/xxxx/xxxx_english" 
+            }
+        ];
+
+        // 第三版實際資料全部由 data.js 提供；上方 legacy 資料只保留相容備份，不再使用。
+        const {
+            heroData, vodData, songData, timelineData, originalSong,
+            quoteData, memoryPool, annualReview
+        } = window.museumData;
+
+        // =========================================================================
+        // 渲染邏輯區：生成 HTML
+        // =========================================================================
+        
+        // 渲染輪播 (將幻燈片與按鈕同時寫入，避免層級與點擊失效)
+        const sliderContainer = document.getElementById('heroSlider');
+        function initSliderDOM() {
+            let sliderHTML = '';
+            let dotsHTML = '<div class="slider-dots">';
+            
+            // 先加入所有幻燈片
+            heroData.forEach((item, index) => {
+                let activeClass = index === 0 ? 'active' : '';
+                sliderHTML += `
+                    <div class="slide ${activeClass}">
+                        <div class="slide-content">
+                            <div class="slide-tag">${item.tag}</div>
+                            <h2 class="slide-title">${item.title}</h2>
+                            <div class="slide-desc">${item.desc}</div>
+                            <div class="slide-meta">${item.meta}</div>
+                            <a href="${item.link}" class="slide-btn" target="_blank">立即前往</a>
+                        </div>
+                        <div class="slide-image-container">
+                            <img src="${item.image}" alt="封面圖" class="slide-image">
+                        </div>
+                    </div>
+                `;
+                dotsHTML += `<span class="dot ${activeClass}" onclick="currentSlide(${index})"></span>`;
+            });
+            dotsHTML += '</div>';
+
+            // 最後加入左右按鈕，確保 z-index 不受干擾
+            sliderHTML += '<button class="nav-arrow prev-arrow" onclick="changeSlide(-1)">&#10094;</button>';
+            sliderHTML += '<button class="nav-arrow next-arrow" onclick="changeSlide(1)">&#10095;</button>';
+            
+            sliderContainer.innerHTML = sliderHTML + dotsHTML;
+        }
+        initSliderDOM();
+
+        // 渲染 VOD 卡片
+        const vodRowContainer = document.getElementById('vodRowContainer');
+        function renderVod() {
+            let html = '';
+            vodData.forEach(video => {
+                let targetAttr = video.link.includes('http') ? 'target="_blank"' : '';
+                html += `
+                    <a href="${video.link}" ${targetAttr} class="video-card" data-category="${video.category}">
+                        <div class="cover-container">
+                            <div class="icon-cover">${video.emoji}</div>
+                            <img src="${video.image}" alt="${video.category}封面" class="cover-image" onerror="this.style.display='none'">
+                        </div>
+                        <div class="video-info">
+                            <div class="video-title">${video.title}</div>
+                            <div class="tags">
+                                <span class="tag">#${video.category}</span>
+                            </div>
+                            <div class="video-story">${video.story || '這段故事正在等待補充。'}</div>
+                        </div>
+                    </a>
+                `;
+            });
+            vodRowContainer.innerHTML = html;
+        }
+        renderVod();
+
+        // 渲染 歌單 清單
+        const songListContainer = document.getElementById('songListContainer');
+        function renderSongs() {
+            let html = '';
+            songData.forEach(song => {
+                let isPending = (song.status === '待練');
+                let linkAttr = (isPending || song.link === "") ? '' : `href="${song.link}" target="_blank"`;
+                let rowClass = (isPending || song.link === "") ? 'song-row no-link' : 'song-row';
+                let btnHtml = (isPending || song.link === "") 
+                              ? `<div class="song-play-btn disabled">尚未演唱</div>` 
+                              : `<div class="song-play-btn">▶ 前往點聽</div>`;
+                
+                let pendingBadge = isPending ? `<span class="song-badge status-pending">⏳ 待練</span>` : '';
+                let coverHtml = song.image
+                              ? `<img src="${song.image}" alt="${song.title}封面" class="song-cover">`
+                              : `<div class="song-icon">🎵</div>`;
+
+                html += `
+                    <a ${linkAttr} class="${rowClass}" data-lang="${song.language}" data-status="${song.status}">
+                        ${coverHtml}
+                        <div class="song-details">
+                            <div class="song-header">
+                                <div class="song-title">${song.title}</div>
+                                <div class="song-singer">${song.singer}</div>
+                            </div>
+                            <div class="song-tags-wrap">
+                                <span class="song-badge">${song.language}</span>
+                                ${pendingBadge}
+                            </div>
+                        </div>
+                        ${btnHtml}
+                    </a>
+                `;
+            });
+            songListContainer.innerHTML = html;
+        }
+        renderSongs();
+
+        // 第三版：成長時間軸
+        const timelineContainer = document.getElementById('timelineContainer');
+        function renderTimeline() {
+            timelineContainer.innerHTML = timelineData.map(item => {
+                const tag = item.link ? 'a' : 'article';
+                const linkAttrs = item.link ? `href="${item.link}" target="_blank" rel="noopener"` : '';
+                return `
+                    <div class="timeline-item">
+                        <div class="timeline-date">${item.date}</div>
+                        <${tag} class="timeline-card" ${linkAttrs}>
+                            <span class="timeline-icon">${item.icon}</span>
+                            <span class="timeline-label">${item.label}</span>
+                            <h3>${item.title}</h3>
+                            <p>${item.desc}</p>
+                        </${tag}>
+                    </div>`;
+            }).join('');
+        }
+        renderTimeline();
+
+        // 第三版：原創歌曲特別展
+        const originalSongContainer = document.getElementById('originalSongContainer');
+        function renderOriginalSong() {
+            originalSongContainer.innerHTML = `
+                <div class="song-art">
+                    <div class="song-art-icon">✉️🦖</div>
+                    <small>ORIGINAL SONG · ${originalSong.date}</small>
+                </div>
+                <div class="song-story">
+                    <span class="section-kicker">A LETTER IN HER VOICE</span>
+                    <h2>〈${originalSong.title}〉</h2>
+                    <div class="song-en-title">${originalSong.englishTitle}</div>
+                    <p>${originalSong.desc}</p>
+                    <div class="credit-list">${originalSong.credits.map(credit => `<span>${credit}</span>`).join('')}</div>
+                    <div class="song-actions">
+                        <a class="song-action" href="${originalSong.youtube}" target="_blank" rel="noopener">在 YouTube 聽歌 ▶</a>
+                        <a class="song-action secondary" href="${originalSong.xLink}" target="_blank" rel="noopener">閱讀原始貼文 ↗</a>
+                    </div>
+                </div>`;
+        }
+        renderOriginalSong();
+
+// 第三版：經典語錄
+        const quoteContainer = document.getElementById('quoteContainer');
+        function renderQuotes() {
+            quoteContainer.innerHTML = quoteData.map(quote => {
+                const visual = quote.image
+                    ? `<img class="quote-image" src="${quote.image}" alt="${quote.note}插圖">`
+                    : `<span class="quote-icon">${quote.icon}</span>`;
+                const sourceLink = quote.link
+                    ? `<a class="quote-source" href="${quote.link}" target="_blank" rel="noopener">查看原文 ↗</a>`
+                    : '';
+                const audioButton = quote.audio
+                    ? `<button class="quote-audio-btn" type="button" data-audio="${quote.audio}">🔊 播放諾諾音效</button>`
+                    : '';
+                return `<article class="quote-card ${quote.link ? 'has-link' : ''}">
+                    ${visual}
+                    <blockquote>「${quote.text}」</blockquote>
+                    <small>${quote.note}</small>
+                    ${(sourceLink || audioButton) ? `<div class="quote-actions">${sourceLink}${audioButton}</div>` : ''}
+                </article>`;
+            }).join('');
+
+            quoteContainer.querySelectorAll('.quote-audio-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    if (button.currentSound && !button.currentSound.paused) {
+                        return;
+                    }
+                    button.currentSound = new Audio(button.dataset.audio);
+                    button.currentSound.play().catch(() => {
+                        button.textContent = '音效目前無法播放';
+                    });
+                });
+            });
+        }
+        renderQuotes();
+/* 原版，會重複播放
+        // 第三版：經典語錄
+        const quoteContainer = document.getElementById('quoteContainer');
+        function renderQuotes() {
+            quoteContainer.innerHTML = quoteData.map(quote => {
+                const visual = quote.image
+                    ? `<img class="quote-image" src="${quote.image}" alt="${quote.note}插圖">`
+                    : `<span class="quote-icon">${quote.icon}</span>`;
+                const sourceLink = quote.link
+                    ? `<a class="quote-source" href="${quote.link}" target="_blank" rel="noopener">查看原文 ↗</a>`
+                    : '';
+                const audioButton = quote.audio
+                    ? `<button class="quote-audio-btn" type="button" data-audio="${quote.audio}">🔊 播放諾諾音效</button>`
+                    : '';
+                return `<article class="quote-card ${quote.link ? 'has-link' : ''}">
+                    ${visual}
+                    <blockquote>「${quote.text}」</blockquote>
+                    <small>${quote.note}</small>
+                    ${(sourceLink || audioButton) ? `<div class="quote-actions">${sourceLink}${audioButton}</div>` : ''}
+                </article>`;
+            }).join('');
+
+            quoteContainer.querySelectorAll('.quote-audio-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const sound = new Audio(button.dataset.audio);
+                    sound.play().catch(() => {
+                        button.textContent = '音效目前無法播放';
+                    });
+                });
+            });
+        }
+        renderQuotes();
+*/
+        // 第三版：年度回顧（數字自動從 data.js 計算）
+        const annualReviewContainer = document.getElementById('annualReviewContainer');
+        function renderAnnualReview() {
+            const sungCount = songData.filter(song => song.status === '已唱').length;
+            annualReviewContainer.innerHTML = `
+                <div class="annual-year">${annualReview.year}</div>
+                <span class="section-kicker">YEAR IN MEMORIES</span>
+                <h2>${annualReview.title}</h2>
+                <p>${annualReview.desc}</p>
+                <div class="annual-stats">
+                    <div class="annual-stat"><strong>${vodData.length}</strong><span>段 VOD 故事</span></div>
+                    <div class="annual-stat"><strong>${sungCount}</strong><span>首已唱歌曲</span></div>
+                    <div class="annual-stat"><strong>${timelineData.length}</strong><span>枚成長腳印</span></div>
+                </div>`;
+        }
+        renderAnnualReview();
+
+        // 第三版：隨機回憶抽卡
+        const drawMemoryBtn = document.getElementById('drawMemoryBtn');
+        const memoryResult = document.getElementById('memoryResult');
+        let lastMemoryIndex = -1;
+        drawMemoryBtn.addEventListener('click', () => {
+            let index = Math.floor(Math.random() * memoryPool.length);
+            if (memoryPool.length > 1 && index === lastMemoryIndex) index = (index + 1) % memoryPool.length;
+            lastMemoryIndex = index;
+            const memory = memoryPool[index];
+            memoryResult.classList.remove('empty');
+            memoryResult.innerHTML = `
+                <div class="memory-result-icon">${memory.icon}</div>
+                <div class="memory-result-label">${memory.type}</div>
+                <h3>${memory.title}</h3>
+                <p>${memory.desc}</p>
+                <a class="memory-open" href="${memory.link}" target="_blank" rel="noopener">打開這段回憶 ↗</a>`;
+        });
+
+        // =========================================================================
+        // 模式切換邏輯 (VOD <-> 歌單)
+        // =========================================================================
+        const btnVodMode = document.getElementById('btnVodMode');
+        const btnSongMode = document.getElementById('btnSongMode');
+        const vodSection = document.getElementById('vodSection');
+        const songSection = document.getElementById('songSection');
+
+        function switchMode(mode) {
+            if (mode === 'vod') {
+                btnVodMode.classList.add('active');
+                btnSongMode.classList.remove('active');
+                vodSection.classList.remove('hidden');
+                songSection.classList.add('hidden');
+            } else {
+                btnSongMode.classList.add('active');
+                btnVodMode.classList.remove('active');
+                songSection.classList.remove('hidden');
+                vodSection.classList.add('hidden');
+            }
+        }
+
+        // =========================================================================
+        // VOD 篩選與搜尋 (修正 event.target 問題，改以 this 傳入)
+        // =========================================================================
+        let currentVodCategory = 'all';
+        const searchVodInput = document.getElementById('searchVodInput');
+        searchVodInput.addEventListener('input', applyVodFilters);
+
+        function filterVod(element, category) {
+            currentVodCategory = category;
+            const btns = document.getElementById('vodFilterBtnContainer').querySelectorAll('.filter-btn');
+            btns.forEach(btn => btn.classList.remove('active'));
+            if (element) {
+                element.classList.add('active');
+            }
+            applyVodFilters();
+        }
+
+        function applyVodFilters() {
+            const cards = document.querySelectorAll('.video-card');
+            const searchText = searchVodInput.value.toLowerCase();
+            cards.forEach(card => {
+                const cat = card.getAttribute('data-category');
+                const title = card.querySelector('.video-title').textContent.toLowerCase();
+                const matchCat = (currentVodCategory === 'all' || cat === currentVodCategory);
+                const matchSearch = title.includes(searchText);
+                card.style.display = (matchCat && matchSearch) ? '' : 'none';
+            });
+        }
+
+        // =========================================================================
+        // 歌單 篩選與搜尋 (同時搜歌名與歌手)
+        // =========================================================================
+        let currentSongFilter = 'all';
+        const searchSongInput = document.getElementById('searchSongInput');
+        searchSongInput.addEventListener('input', applySongFilters);
+
+        function filterSong(element, filterValue) {
+            currentSongFilter = filterValue;
+            const btns = document.getElementById('songFilterBtnContainer').querySelectorAll('.filter-btn');
+            btns.forEach(btn => btn.classList.remove('active'));
+            if (element) {
+                element.classList.add('active');
+            }
+            applySongFilters();
+        }
+
+        function applySongFilters() {
+            const rows = document.querySelectorAll('.song-row');
+            const searchText = searchSongInput.value.toLowerCase();
+            rows.forEach(row => {
+                const lang = row.getAttribute('data-lang');
+                const status = row.getAttribute('data-status');
+                const title = row.querySelector('.song-title').textContent.toLowerCase();
+                const singer = row.querySelector('.song-singer').textContent.toLowerCase();
+                
+                // 檢查是否符合標籤 (如果點選待練，看 status；如果是語系，看 lang)
+                let matchFilter = false;
+                if (currentSongFilter === 'all') {
+                    matchFilter = true;
+                } else if (currentSongFilter === '待練') {
+                    matchFilter = (status === '待練');
+                } else {
+                    matchFilter = (lang === currentSongFilter);
+                }
+
+                // 搜尋框可以搜歌名或歌手
+                const matchSearch = title.includes(searchText) || singer.includes(searchText);
+
+                row.style.display = (matchFilter && matchSearch) ? '' : 'none';
+            });
+        }
+
+        // =========================================================================
+        // 輪播圖動態控制與計時器邏輯 (安全封裝)
+        // =========================================================================
+        let slideIndex = 0;
+        let slideIntervalTimer;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+
+        window.showSlide = function(index) {
+            if (slides.length === 0) return;
+            slides.forEach((slide) => slide.classList.remove("active"));
+            dots.forEach((dot) => dot.classList.remove("active"));
+            
+            slideIndex = index;
+            if (slideIndex >= slides.length) { slideIndex = 0; }
+            if (slideIndex < 0) { slideIndex = slides.length - 1; }
+            
+            slides[slideIndex].classList.add("active");
+            dots[slideIndex].classList.add("active");
+        };
+
+        window.nextSlide = function() {
+            showSlide(slideIndex + 1);
+        };
+
+        window.changeSlide = function(n) {
+            showSlide(slideIndex + n);
+            resetInterval();
+        };
+
+        window.currentSlide = function(index) {
+            showSlide(index);
+            resetInterval();
+        };
+
+        window.resetInterval = function() {
+            clearInterval(slideIntervalTimer);
+            slideIntervalTimer = setInterval(nextSlide, 5000);
+        };
+
+        // 啟動計時器
+        if (slides.length > 0) {
+            slideIntervalTimer = setInterval(nextSlide, 5000);
+        }
+    </script>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</body>
+</html>

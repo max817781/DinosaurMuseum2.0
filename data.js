@@ -1,88 +1,284 @@
 /*
- * 恐龍諾諾博物館｜第三版資料檔
- * 之後新增內容，主要修改這個檔案即可。
- * 圖片請先放入 images 資料夾，連結可使用 Discord、X 或 YouTube。
+ * 恐龍諾諾博物館｜共用資料檔
+ *
+ * 維護原則：
+ * 1. 新增 VOD 時，只在 vodData 寫一次。
+ * 2. 新增歌曲時，只在 songData 寫一次。
+ * 3. heroData 是人工策展區；只有放進這裡的內容才會出現在首頁輪播。
+ * 4. contentMap 只保存時間軸、語錄等其他共用內容。
  */
 window.museumData = {
+    contentMap: {
+        original_rawr_rawr: {
+            type: "originalSong",
+            title: "RawrRawr",
+            date: "2026.03.28",
+            youtube: "https://www.youtube.com/watch?v=SOYVnvJXcq4&list=RDSOYVnvJXcq4&start_radio=1",
+            image: ""
+        },
+		//原創曲展區
+        original_dear_dumplings: {
+            type: "originalSong",
+            title: "致小龍包",
+            englishTitle: "Dear Soup Dumplings",
+            date: "2026.05.30",
+            desc: "一封寫給小龍包們的信。這不只是原創歌曲，也是 YanYan 與大家共同走過一段時間的證明。",
+            youtube: "https://youtu.be/vsmhL5o-kvo?si=-ep-zsgPCVpY29h3",
+            xLink: "https://x.com/LittleDinoYan/status/2060945997682131069",
+            image: "",
+            credits: [
+                "Vocal & Melody：YanYan",
+                "Lyrics：YanYan",
+                "Music & Vocal Mixing：ProdbyTaka",
+                "MV Art：mhs鈴黔",
+                "MV Production：YanYan"
+            ]
+        },
+		original_second_song: {
+			type: "originalSong",
+			title: "第二首歌名",
+			englishTitle: "Second Original Song",
+			date: "2026.XX.XX",
+			desc: "這裡寫第二首原創歌的介紹。",
+			youtube: "YouTube連結",
+			xLink: "X貼文連結",
+			image: "images/original_song_02.jpg",
+			icon: "🎵🦖",
+			credits: [
+				"Vocal：YanYan",
+				"Lyrics：YanYan",
+				"Music：填寫製作人"
+            ]
+        },
+		
+        profile_yanyan: {
+            type: "profile",
+            title: "YanYan 的自我介紹",
+            text: "Rawr Rawr!!! I’m just an ordinary girl who LOVES her little dinosaur.",
+            link: "https://x.com/LittleDinoYan",
+            audio: "images/rawr.mp3",
+            image: ""
+        },
+        quote_not_goblin: {
+            type: "quote",
+            title: "恐龍語錄",
+            text: "不是哥布林，是恐龍。這件事非常重要。",
+            link: "",
+            audio: "",
+            image: ""
+        },
+        quote_southern_zongzi: {
+            type: "quote",
+            title: "2026 端午粽子之戰",
+            text: "南部粽才是最賀甲的…！！！而且一定要鹹粽！！",
+            link: "https://x.com/LittleDinoYan/status/2067829682742202618",
+            audio: "",
+            image: "images/粽子投票.jpg"
+        }
+    },
+
+    // 人工策展區：想放上首頁輪播時，才把 sourceId 加進來。
     heroData: [
         {
+            sourceId: "song_baobei",
             tag: "歌聲收藏",
-            title: "《寶貝》<br>張懸",
             desc: "給你一點甜甜，讓你今夜都好眠✨",
-            meta: "歌回紀錄",
-            link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1515228468105969814",
-            image: "images/my_cover_01.jpg"
+            meta: "歌回紀錄"
         },
         {
+            sourceId: "song_buling_buling",
             tag: "歌聲收藏",
-            title: "《不靈不靈》<br>很美味",
             desc: "把那一天的笑容和歌聲一起留下來。",
-            meta: "歌回紀錄",
-            link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1515665102961905764",
-            image: "images/my_cover_02.jpg"
+            meta: "歌回紀錄"
         },
         {
+            sourceId: "song_occupy_you",
             tag: "歌聲收藏",
-            title: "《我想要佔據你》<br>告五人",
             desc: "一首歌，也是一段被收藏的心情。",
-            meta: "歌回紀錄",
-            link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1516778060677124106",
-            image: "images/my_cover_03.jpg"
-        },
+            meta: "歌回紀錄"
+        }
     ],
 
     vodData: [
         {
+            id: "vod_valo_princess_1v3",
+            type: "vod",
             title: "【瓦羅然】瓦瓦小公主1V3",
+            link: "https://discord.com/channels/1437520274659479625/1438430166773792858/1476758590365765777",
+            image: "",
             category: "遊戲",
             emoji: "🎮",
-            date: "",
-            story: "一場值得回頭再看的遊戲時刻。",
-            link: "https://discord.com/channels/1437520274659479625/1438430166773792858/1476758590365765777",
-            image: ""
+            story: "一場值得回頭再看的遊戲時刻。"
         },
         {
-            title: "【歌回】陳綺貞|一心多用的諾諾 ♫",
+            id: "vod_cheer_chen_multitask",
+            type: "vod",
+            title: "【歌回】陳綺貞｜一心多用的 YanYan ♫",
+            link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1517492901792186439",
+            image: "",
             category: "唱歌",
             emoji: "🎤",
-            date: "",
-            story: "只有陳綺貞，才能一心多用",
-            link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1517492901792186439",
-            image: "images/cover2.jpg"
+            story: "只有陳綺貞，才能一心多用。"
         },
         {
+            id: "vod_half_anniversary_qa",
+            type: "vod",
             title: "【🎊 半週年慶祝】溫暖社群棉花台 Q&A 環節 #01",
-            category: "雜談",
-            emoji: "💬",
-            date: "",
-            story: "和小龍包們一起度過的紀念日。",
             link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1505946351383478292",
-            image: ""
+            image: "",
+            category: "活動",
+            emoji: "💬",
+            story: "和小龍包們一起度過的紀念日。"
         },
+		{
+            id: "vod_The_Young_Lady_and_the_Gentle_Dinosaur_2.0",
+            type: "vod",
+            title: "大小姐與溫柔小恐龍2.0",
+            link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1510212575953162352",
+            image: "",
+            category: "精華",
+            emoji: "💬",
+            story: " 大小姐與溫柔小恐龍2.0的第一次相遇",
+			tags:"小恐龍2.0,小劇場,關關的心"
+        },
+		{
+            id: "A_Flash_of_Green_Light!!_The_Goblin_Idol..._Rallying_the_Army_Again?",
+            type: "vod",
+            title: "眼前一道綠光!!哥布林偶像...再現集結大軍?",
+            link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1502341152836161627",
+            image: "",
+            category: "精華",
+            emoji: "",
+            story: " 哥布林偶像再次來襲!!",
+			tags:"哥布林偶像"
+        },
+		{
+    "id": "",
+    "type": "vod",
+    "title": "Blue - yung kai",
+    "link": "https://discord.com/channels/1437520274659479625/1473967136908251321/1502311174665011200",
+    "image": "",
+    "category": "唱歌",
+    "emoji": "🎤",
+    "story": "",
+    "tags": ""
+},
+{
+    "id": "",
+    "type": "vod",
+    "title": "從地下偶像到地下室摔角：諾諾的物理性出道！",
+    "link": "https://discord.com/channels/1437520274659479625/1473967136908251321/1498970969463718000",
+    "image": "",
+    "category": "其他",
+    "emoji": "🦖",
+    "story": "",
+    "tags": ""
+},
+{
+    "id": "",
+    "type": "vod",
+    "title": "陳綺貞 Cheer Chen【太多 Too Much】",
+    "link": "https://discord.com/channels/1437520274659479625/1473967136908251321/1498679825941135370",
+    "image": "",
+    "category": "唱歌",
+    "emoji": "🎤",
+    "story": "",
+    "tags": ""
+}
 		
     ],
 
     songData: [
-        { title: "寶貝", singer: "張懸", language: "中文", status: "已唱", link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1515228468105969814", image: "images/my_cover_01.jpg" },
-        { title: "喜歡", singer: "張懸", language: "中文", status: "待練", link: "" },
-        { title: "不靈不靈", singer: "很美味", language: "中文", status: "已唱", link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1515665102961905764", image: "images/my_cover_02.jpg" },
-        { title: "我想要佔據你", singer: "告五人", language: "中文", status: "已唱", link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1516778060677124106", image: "images/my_cover_03.jpg" },
-        { title: "First Love", singer: "宇多田光", language: "日文", status: "待練", link: "" },
-        { title: "Automatic", singer: "宇多田光", language: "日文", status: "待練", link: "" },
-        { title: "Flavor Of Life", singer: "宇多田光", language: "日文", status: "待練", link: "" },
-        { title: "A Thousand Years", singer: "Christina Perri", language: "英文", status: "已唱", link: "" },
-		
+        {
+            id: "song_baobei",
+            type: "song",
+            title: "寶貝",
+            artist: "張懸",
+            language: "中文",
+            status: "已唱",
+            link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1515228468105969814",
+            image: "images/my_cover_01.jpg"
+        },
+        {
+            id: "song_xihuan",
+            type: "song",
+            title: "喜歡",
+            artist: "張懸",
+            language: "中文",
+            status: "待練",
+            link: "",
+            image: ""
+        },
+        {
+            id: "song_buling_buling",
+            type: "song",
+            title: "不靈不靈",
+            artist: "很美味",
+            language: "中文",
+            status: "已唱",
+            link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1515665102961905764",
+            image: "images/my_cover_02.jpg"
+        },
+        {
+            id: "song_occupy_you",
+            type: "song",
+            title: "我想要佔據你",
+            artist: "告五人",
+            language: "中文",
+            status: "已唱",
+            link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1516778060677124106",
+            image: "images/my_cover_03.jpg"
+        },
+        {
+            id: "song_first_love",
+            type: "song",
+            title: "First Love",
+            artist: "宇多田光",
+            language: "日文",
+            status: "待練",
+            link: "",
+            image: ""
+        },
+        {
+            id: "song_automatic",
+            type: "song",
+            title: "Automatic",
+            artist: "宇多田光",
+            language: "日文",
+            status: "待練",
+            link: "",
+            image: ""
+        },
+        {
+            id: "song_flavor_of_life",
+            type: "song",
+            title: "Flavor Of Life",
+            artist: "宇多田光",
+            language: "日文",
+            status: "待練",
+            link: "",
+            image: ""
+        },
+        {
+            id: "song_thousand_years",
+            type: "song",
+            title: "A Thousand Years",
+            artist: "Christina Perri",
+            language: "英文",
+            status: "已唱",
+            link: "",
+            image: ""
+        }
     ],
-	
-//里程碑
+
     timelineData: [
         {
+            sourceId: "profile_yanyan",
             date: "2025.10",
             label: "最初的足跡",
-            title: "小恐龍開始留下故事",
+            displayTitle: "小恐龍開始留下故事",
             desc: "@LittleDinoYan 的個人頁在這個月加入 X。這裡把它視為時間軸上第一枚溫柔的腳印。",
-            icon: "🦖",
-            link: "https://x.com/LittleDinoYan"
+            icon: "🦖"
         },
         {
             date: "2025.11.11",
@@ -125,12 +321,11 @@ window.museumData = {
             link: ""
         },
         {
-            date: "2026.03.28",
+            sourceId: "original_rawr_rawr",
             label: "第一首原創曲",
-            title: "〈RawrRawr〉公開!! [點擊播放]",
+            titleSuffix: "公開!! [點擊播放]",
             desc: "YanYan 的第一首原創曲。",
-            icon: "🎵",
-            link: "https://www.youtube.com/watch?v=SOYVnvJXcq4&list=RDSOYVnvJXcq4&start_radio=1"
+            icon: "🎵"
         },
         {
             date: "2026.04.15",
@@ -149,12 +344,12 @@ window.museumData = {
             link: ""
         },
         {
-            date: "2026.05.30",
+            sourceId: "original_dear_dumplings",
             label: "原創歌曲",
-            title: "努力自己寫出了〈致小龍包〉~~ [點擊播放]",
+            titlePrefix: "努力自己寫出了",
+            titleSuffix: "~~ [點擊播放]",
             desc: "這是一封寫給小龍包們的歌聲信件。比起單純的作品發布，更像是 YanYan 把一段陪伴認真收進歌裡。",
-            icon: "✉️",
-            link: "https://www.youtube.com/watch?v=vsmhL5o-kvo"
+            icon: "✉️"
         },
         {
             date: "2026.06",
@@ -166,31 +361,18 @@ window.museumData = {
         }
     ],
 
-//原創歌曲特別展
     originalSong: {
-        title: "致小龍包",
-        englishTitle: "Dear Soup Dumplings",
-        date: "2026.05.30",
-        desc: "一封寫給小龍包們的信。這不只是原創歌曲，也是諾諾與大家共同走過一段時間的證明。",
-        youtube: "https://youtu.be/vsmhL5o-kvo?si=-ep-zsgPCVpY29h3",
-        xLink: "https://x.com/LittleDinoYan/status/2060945997682131069",
-        credits: ["Vocal & Melody：YanYan", "Lyrics：YanYan", "Music & Vocal Mixing：ProdbyTaka", "MV Art：mhs鈴黔", "MV Production：YanYan"]
+        sourceId: "original_dear_dumplings"
     },
-
-    // 語錄可選填 image 與 audio：
-    // image: "images/語錄插圖.png"
-    // audio: "audio/yanyan-rawr.mp3"
+	originalSongs: [
+		{ sourceId: "original_dear_dumplings" },
+		{ sourceId: "original_second_song" }
+	],
+	
     quoteData: [
-        { text: "Rawr Rawr!!! I’m just an ordinary girl who LOVES her little dinosaur.", note: "諾諾的自我介紹", icon: "🦖", image: "", audio: "images/rawr.mp3", link: "https://x.com/LittleDinoYan" },
-        { text: "不是哥布林，是恐龍。這件事非常重要。", note: "恐龍語錄", icon: "🌱", image: "", audio: "", link: "" },
-        { text: "南部粽才是最賀甲的…！！！而且一定要鹹粽！！", note: "2026 端午粽子之戰", icon: "🔥", image: "images/粽子投票.jpg", audio: "", link: "https://x.com/LittleDinoYan/status/2067829682742202618" }
-    ],
-
-    memoryPool: [
-        { type: "原創歌曲", title: "〈致小龍包〉", desc: "回到那封寫給小龍包們的歌聲信件。", icon: "✉️", link: "https://x.com/LittleDinoYan/status/2060945997682131069" },
-        { type: "遊戲時刻", title: "瓦瓦小公主 1V3", desc: "重新看看這場值得收藏的瓦羅然時刻。", icon: "🎮", link: "https://discord.com/channels/1437520274659479625/1438430166773792858/1476758590365765777" },
-        { type: "紀念活動", title: "半週年棉花台 Q&A", desc: "回到和小龍包們一起慶祝的那一天。", icon: "🎊", link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1505946351383478292" },
-        { type: "歌聲收藏", title: "我想要佔據你", desc: "讓一首歌帶你回到當時的心情。", icon: "🎵", link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1516778060677124106" }
+        { sourceId: "profile_yanyan", icon: "🦖" },
+        { sourceId: "quote_not_goblin", icon: "🌱" },
+        { sourceId: "quote_southern_zongzi", icon: "🔥" }
     ],
 
     annualReview: {

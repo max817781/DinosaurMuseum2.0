@@ -183,6 +183,8 @@
            ================================== */
         .mode-switch-container {
             display: flex;
+            align-items: center;
+            flex-wrap: wrap;
             gap: 15px;
             margin-bottom: 30px;
             border-bottom: 1px solid #333;
@@ -206,6 +208,14 @@
         .mode-btn.active {
             color: #e50914;
             background-color: #1a1a1a;
+        }
+        .public-replay-link {
+            margin-left: auto;
+            border: 1px solid #444;
+            background: #181818;
+            color: #aaa;
+            font-size: 1em;
+            text-decoration: none;
         }
 
         /* 標籤分類與搜尋列控制區 */
@@ -330,6 +340,22 @@
             margin-right: 10px;
         }
         .video-story { margin-top: 9px; color: #85818a; font-size: .86em; line-height: 1.5; }
+        .advanced-tag-filter-container {
+            margin: -8px 0 24px;
+            padding: 12px 14px;
+            border: 1px solid #333;
+            border-radius: 14px;
+        }
+        .vod-advanced-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px 10px;
+            margin-top: 5px;
+        }
+        .advanced-tag {
+            color: #8f8a98;
+            font-size: .88em;
+        }
 
         /* ==================================
            歌單條列式排版
@@ -836,9 +862,13 @@
         .mode-btn { color: var(--muted-brown); }
         .mode-btn:hover { color: var(--purple); background: #f3ead7; }
         .mode-btn.active { color: var(--sage-deep); background: var(--sage-soft); }
+        .public-replay-link { color: var(--sage-deep); background: #f7f1e3; border-color: var(--line-warm); }
+        .public-replay-link:hover { color: var(--purple); background: #efe6d2; border-color: var(--sage); }
         .filter-btn { background: #e9e1d0; color: var(--brown); }
         .filter-btn:hover { background: #ded3bd; }
         .filter-btn.active { background: var(--sage); border-color: var(--sage); color: #fff; }
+        .advanced-tag-filter-container { background: #f7f1e3; border-color: var(--line-warm); }
+        .advanced-tag { color: var(--sage-deep); }
         .search-input { background: var(--paper); color: var(--brown); border-color: var(--line-warm); }
         .search-input:focus { background: #fff; border-color: var(--sage); }
         .video-card, .song-row { background: var(--paper); color: var(--brown); border: 1px solid var(--line-warm); box-shadow: 0 10px 28px rgba(95,76,49,.07); }
@@ -953,7 +983,7 @@
                 <span class="section-kicker">SPECIAL EXHIBIT</span>
                 <h2>原創歌曲特別展</h2>
             </div>
-            <div class="original-song-card" id="originalSongContainer"></div>
+           <div class="original-song-list" id="originalSongContainer"></div>
         </section>
 
         <section class="story-section" id="quotes">
@@ -1001,20 +1031,26 @@
         <div class="mode-switch-container">
             <button id="btnVodMode" class="mode-btn active" onclick="switchMode('vod')">📺 VOD 實況存檔</button>
             <button id="btnSongMode" class="mode-btn" onclick="switchMode('song')">🎵 歌單搜尋模式</button>
+            <a class="mode-btn public-replay-link" href="https://drive.google.com/drive/folders/1zHRxLvsD4KXU90hvQ_cIjcTuXiAyts5V?usp=sharing">📁 公開回放庫</a>
         </div>
 
         <div id="vodSection">
             <div class="controls-container">
                 <div class="filter-container" id="vodFilterBtnContainer">
-                    <button class="filter-btn active" onclick="filterVod(this, 'all')">全部</button>
-                    <button class="filter-btn" onclick="filterVod(this, '遊戲')">🎮 遊戲</button>
-                    <button class="filter-btn" onclick="filterVod(this, '唱歌')">🎤 唱歌</button>
-                    <button class="filter-btn" onclick="filterVod(this, '雜談')">💬 雜談</button>
+                    <button class="filter-btn vod-category-btn active" onclick="filterVod(this, 'all')">全部</button>
+                    <button class="filter-btn vod-category-btn" onclick="filterVod(this, '遊戲')">🎮 遊戲</button>
+                    <button class="filter-btn vod-category-btn" onclick="filterVod(this, '唱歌')">🎤 唱歌</button>
+                    <button class="filter-btn vod-category-btn" onclick="filterVod(this, '雜談')">💬 雜談</button>
+                    <button class="filter-btn vod-category-btn" onclick="filterVod(this, '活動')">🎉 活動</button>
+                    <button class="filter-btn vod-category-btn" onclick="filterVod(this, '精華')">🎬 精華</button>
+                    <button class="filter-btn vod-category-btn" onclick="filterVod(this, '其他')">🦖 其他</button>
+                    <button class="filter-btn" id="advancedTagToggle" type="button" onclick="toggleAdvancedTags()" aria-expanded="false">🏷️ 進階標籤</button>
                 </div>
                 <div class="search-container">
                     <input type="text" id="searchVodInput" class="search-input" placeholder="搜尋 VOD 標題...">
                 </div>
             </div>
+            <div class="filter-container advanced-tag-filter-container hidden" id="advancedTagFilterContainer"></div>
             <div class="video-row" id="vodRowContainer"></div>
         </div>
 
@@ -1042,132 +1078,114 @@
         // =========================================================================
         // 【維護專區 1：輪播橫幅資料】
         // =========================================================================
-        const legacyHeroData = [
-            {
-                tag: "",
-                title: "《寶貝1》<br>張懸",
-                desc: "「給你一點甜甜，讓你今夜都好眠✨ 」",
-                meta: "",
-                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1515228468105969814",
-                image: "images/my_cover_01.jpg" 
-            },
-            {
-                tag: "",
-                title: "《不靈不靈》<br>很美味",
-                desc: "",
-                meta: "",
-                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1515665102961905764",
-                image: "images/my_cover_02.jpg" 
-            },
-            {
-                tag: "",
-                title: "《我想要佔據你》<br>告五人",
-                desc: "",
-                meta: "",
-                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1516778060677124106",
-                image: "images/my_cover_03.jpg" 
-            }
-        ];
+ 
 
         // =========================================================================
         // 【維護專區 2：大型 VOD 存檔資料】
         // =========================================================================
-        const legacyVodData = [
-            {
-                title: "【瓦羅然】瓦瓦小公主1V3",
-                category: "遊戲",
-                emoji: "🎮",
-                link: "https://discord.com/channels/1437520274659479625/1438430166773792858/1476758590365765777",
-                image: "" 
-            },
-            {
-                title: "【讀書哼歌】陳綺貞之一心多用的諾諾 ♫",
-                category: "唱歌",
-                emoji: "🎤",
-                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1517492901792186439啊這個link有什麼問題嗎 ",
-                image: "images/cover2.jpg" 
-            },
-            {
-                title: "【🎊 半週年慶祝】溫暖社群棉花台 Q&A 環節 #01",
-                category: "雜談",
-                emoji: "💬",
-                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1505946351383478292",
-                image: ""
-            }
-        ];
+
 
         // =========================================================================
         // 【維護專區 3：純歌單資料庫】 (已新增測試用假資料)
         // 💡 status 填: "已唱" 或 "待練"
         // 💡 language 填: "中文", "英文", "日文"...
         // =========================================================================
-        const legacySongData = [
-            {
-                title: "寶貝",
-                singer: "張懸",
-                language: "中文",
-                status: "已唱",
-                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/000000000000000001",
-                image: "images/my_cover_01.jpg"
-            },
-            {
-                title: "喜歡",
-                singer: "張懸",
-                language: "中文",
-                status: "待練",
-                link: "" 
-            },
-            {
-                title: "不靈不靈",
-                singer: "很美味",
-                language: "中文",
-                status: "已唱",
-                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/000000000000000002",
-                image: "images/my_cover_02.jpg"
-            },
-            {
-                title: "我想要佔據你",
-                singer: "告五人",
-                language: "中文",
-                status: "已唱",
-                link: "https://discord.com/channels/1437520274659479625/1473967136908251321/1515665102961905764",
-                image: "images/my_cover_03.jpg"
-            },
-            {
-                title: "First Love",
-                singer: "宇多田光",
-                language: "日文",
-                status: "已唱",
-                link: "https://discord.com/channels/1437520274659479625/xxxx/xxxx_jp_1" 
-            },
-            {
-                title: "Automatic",
-                singer: "宇多田光",
-                language: "日文",
-                status: "已唱",
-                link: "https://discord.com/channels/1437520274659479625/xxxx/xxxx_jp_2" 
-            },
-            {
-                title: "Flavor Of Life",
-                singer: "宇多田光",
-                language: "日文",
-                status: "待練",
-                link: "" 
-            },
-            {
-                title: "A Thousand Years",
-                singer: "Christina Perri",
-                language: "英文",
-                status: "已唱",
-                link: "https://discord.com/channels/1437520274659479625/xxxx/xxxx_english" 
-            }
-        ];
+      
 
-        // 第三版實際資料全部由 data.js 提供；上方 legacy 資料只保留相容備份，不再使用。
-        const {
-            heroData, vodData, songData, timelineData, originalSong,
-            quoteData, memoryPool, annualReview
-        } = window.museumData;
+        // 網站內容由 data.js 提供。
+		const {
+			contentMap: otherContentMap,
+			heroData,
+			vodData,
+			songData,
+			timelineData,
+			originalSong,
+			originalSongs,
+			quoteData,
+			annualReview
+		} = window.museumData;
+
+        // 將 VOD、歌曲與其他內容自動合併成輪播可查找的索引。
+        // 維護者不需要自己同步 contentMap。
+        const contentMap = { ...otherContentMap };
+        [...vodData, ...songData].forEach(item => {
+            if (!item.id) {
+                console.warn(`資料缺少 id：${item.title || "未命名內容"}`);
+                return;
+            }
+            if (contentMap[item.id]) {
+                console.warn(`id 重複：${item.id}`);
+                return;
+            }
+            contentMap[item.id] = item;
+        });
+
+        // 抽回憶池自動沿用所有 VOD，不需要另外維護。
+        const memoryPool = vodData.map(video => ({
+            ...video,
+            type: `${video.category}回憶`,
+            desc: video.story || "重新打開這段被收藏的 VOD。",
+            icon: video.emoji || "🎬"
+        }));
+
+        function getContent(sourceId) {
+            if (!sourceId) return {};
+
+            const content = contentMap[sourceId];
+            if (!content) {
+                console.warn(`找不到 sourceId：${sourceId}`);
+                return {};
+            }
+            return content;
+        }
+
+        function resolveItem(item = {}) {
+            return item.sourceId ? { ...getContent(item.sourceId), ...item } : item;
+        }
+
+        function getPrimaryLink(content, fallback = "") {
+            return content.link || content.youtube || content.xLink || fallback || "";
+        }
+
+        function getImage(content, fallback = "") {
+            return content.image || fallback || "";
+        }
+
+        function getTitle(content, fallback = "未命名內容") {
+            return content.title || fallback;
+        }
+
+        function getArtist(content, fallback = "") {
+            return content.artist || content.singer || fallback;
+        }
+
+        function getTimelineTitle(item) {
+            if (item.displayTitle) return item.displayTitle;
+            if (!item.sourceId) return getTitle(item);
+            const prefix = item.titlePrefix ? `${item.titlePrefix}` : "";
+            const suffix = item.titleSuffix || "";
+            return `${prefix}〈${getTitle(item)}〉${suffix}`;
+        }
+
+        function validateSourceIds() {
+            const sections = {
+                heroData, timelineData, quoteData,
+                originalSong: [originalSong]
+            };
+            Object.entries(sections).forEach(([sectionName, items]) => {
+                items.forEach(item => {
+                    if (item.sourceId && !contentMap[item.sourceId]) {
+                        console.warn(`${sectionName} 找不到 sourceId：${item.sourceId}`);
+                    }
+                });
+            });
+
+            [...vodData, ...songData].forEach(item => {
+                if (!item.title) console.warn(`${item.id || "未命名資料"} 缺少 title`);
+                if (!item.type) console.warn(`${item.id || item.title} 缺少 type`);
+            });
+        }
+        validateSourceIds();
 
         // =========================================================================
         // 渲染邏輯區：生成 HTML
@@ -1180,19 +1198,25 @@
             let dotsHTML = '<div class="slider-dots">';
             
             // 先加入所有幻燈片
-            heroData.forEach((item, index) => {
+            heroData.forEach((heroItem, index) => {
+                const item = resolveItem(heroItem);
+                const title = getArtist(item)
+                    ? `《${getTitle(item)}》<br>${getArtist(item)}`
+                    : getTitle(item);
+                const link = getPrimaryLink(item);
+                const image = getImage(item);
                 let activeClass = index === 0 ? 'active' : '';
                 sliderHTML += `
                     <div class="slide ${activeClass}">
                         <div class="slide-content">
                             <div class="slide-tag">${item.tag}</div>
-                            <h2 class="slide-title">${item.title}</h2>
+                            <h2 class="slide-title">${title}</h2>
                             <div class="slide-desc">${item.desc}</div>
                             <div class="slide-meta">${item.meta}</div>
-                            <a href="${item.link}" class="slide-btn" target="_blank">立即前往</a>
+                            <a href="${link}" class="slide-btn" target="_blank" rel="noopener">立即前往</a>
                         </div>
                         <div class="slide-image-container">
-                            <img src="${item.image}" alt="封面圖" class="slide-image">
+                            <img src="${image}" alt="${getTitle(item)}封面圖" class="slide-image">
                         </div>
                     </div>
                 `;
@@ -1210,20 +1234,65 @@
 
         // 渲染 VOD 卡片
         const vodRowContainer = document.getElementById('vodRowContainer');
+        let advancedTagsOpen = false;
+        const vodCategoryEmoji = {
+            "遊戲": "🎮",
+            "唱歌": "🎤",
+            "雜談": "💬",
+            "活動": "🎉",
+            "精華": "🎬",
+            "其他": "🦖"
+        };
+
+        function getVodCategory(category) {
+            return Object.hasOwn(vodCategoryEmoji, category) ? category : "其他";
+        }
+
+        function getVodEmoji(category, emoji) {
+            return emoji || vodCategoryEmoji[category] || vodCategoryEmoji["其他"];
+        }
+
+        function normalizeVodTags(tags) {
+            const values = Array.isArray(tags)
+                ? tags
+                : (typeof tags === 'string' ? tags.split(/[,，]/) : []);
+            return [...new Set(values.map(tag => String(tag).trim()).filter(Boolean))];
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
         function renderVod() {
             let html = '';
-            vodData.forEach(video => {
-                let targetAttr = video.link.includes('http') ? 'target="_blank"' : '';
+            vodData.forEach(vodItem => {
+                const video = resolveItem(vodItem);
+                const link = getPrimaryLink(video);
+                const image = getImage(video);
+                const category = getVodCategory(video.category);
+                const emoji = getVodEmoji(category, video.emoji);
+                const vodTags = normalizeVodTags(video.tags);
+                const encodedTags = vodTags.map(tag => encodeURIComponent(tag)).join('|');
+                const advancedTagsHtml = vodTags.length
+                    ? `<div class="vod-advanced-tags ${advancedTagsOpen ? '' : 'hidden'}">${vodTags.map(tag => `<span class="advanced-tag">#${escapeHtml(tag)}</span>`).join('')}</div>`
+                    : '';
+                let targetAttr = link.startsWith('http') ? 'target="_blank" rel="noopener"' : '';
                 html += `
-                    <a href="${video.link}" ${targetAttr} class="video-card" data-category="${video.category}">
+                    <a href="${link}" ${targetAttr} class="video-card" data-category="${category}" data-tags="${encodedTags}">
                         <div class="cover-container">
-                            <div class="icon-cover">${video.emoji}</div>
-                            <img src="${video.image}" alt="${video.category}封面" class="cover-image" onerror="this.style.display='none'">
+                            <div class="icon-cover">${emoji}</div>
+                            <img src="${image}" alt="${category}封面" class="cover-image" onerror="this.style.display='none'">
                         </div>
                         <div class="video-info">
-                            <div class="video-title">${video.title}</div>
+                            <div class="video-title">${getTitle(video)}</div>
                             <div class="tags">
-                                <span class="tag">#${video.category}</span>
+                                <span class="tag">#${category}</span>
+                                ${advancedTagsHtml}
                             </div>
                             <div class="video-story">${video.story || '這段故事正在等待補充。'}</div>
                         </div>
@@ -1238,17 +1307,21 @@
         const songListContainer = document.getElementById('songListContainer');
         function renderSongs() {
             let html = '';
-            songData.forEach(song => {
+            songData.forEach(songItem => {
+                const song = resolveItem(songItem);
+                const link = getPrimaryLink(song);
+                const title = getTitle(song);
+                const artist = getArtist(song);
                 let isPending = (song.status === '待練');
-                let linkAttr = (isPending || song.link === "") ? '' : `href="${song.link}" target="_blank"`;
-                let rowClass = (isPending || song.link === "") ? 'song-row no-link' : 'song-row';
-                let btnHtml = (isPending || song.link === "") 
+                let linkAttr = (isPending || link === "") ? '' : `href="${link}" target="_blank" rel="noopener"`;
+                let rowClass = (isPending || link === "") ? 'song-row no-link' : 'song-row';
+                let btnHtml = (isPending || link === "")
                               ? `<div class="song-play-btn disabled">尚未演唱</div>` 
                               : `<div class="song-play-btn">▶ 前往點聽</div>`;
                 
                 let pendingBadge = isPending ? `<span class="song-badge status-pending">⏳ 待練</span>` : '';
-                let coverHtml = song.image
-                              ? `<img src="${song.image}" alt="${song.title}封面" class="song-cover">`
+                let coverHtml = getImage(song)
+                              ? `<img src="${getImage(song)}" alt="${title}封面" class="song-cover">`
                               : `<div class="song-icon">🎵</div>`;
 
                 html += `
@@ -1256,8 +1329,8 @@
                         ${coverHtml}
                         <div class="song-details">
                             <div class="song-header">
-                                <div class="song-title">${song.title}</div>
-                                <div class="song-singer">${song.singer}</div>
+                                <div class="song-title">${title}</div>
+                                <div class="song-singer">${artist}</div>
                             </div>
                             <div class="song-tags-wrap">
                                 <span class="song-badge">${song.language}</span>
@@ -1275,17 +1348,23 @@
         // 第三版：成長時間軸
         const timelineContainer = document.getElementById('timelineContainer');
         function renderTimeline() {
-            timelineContainer.innerHTML = timelineData.map(item => {
-                const tag = item.link ? 'a' : 'article';
-                const linkAttrs = item.link ? `href="${item.link}" target="_blank" rel="noopener"` : '';
+            timelineContainer.innerHTML = timelineData.map(timelineItem => {
+                const item = resolveItem(timelineItem);
+                const link = getPrimaryLink(item);
+                const tag = link ? 'a' : 'article';
+                const linkAttrs = link ? `href="${link}" target="_blank" rel="noopener"` : '';
+                const date = item.date || "";
+                const icon = item.icon || "🦖";
+                const label = item.label || "";
+                const desc = item.desc || "";
                 return `
                     <div class="timeline-item">
-                        <div class="timeline-date">${item.date}</div>
+                        <div class="timeline-date">${date}</div>
                         <${tag} class="timeline-card" ${linkAttrs}>
-                            <span class="timeline-icon">${item.icon}</span>
-                            <span class="timeline-label">${item.label}</span>
-                            <h3>${item.title}</h3>
-                            <p>${item.desc}</p>
+                            <span class="timeline-icon">${icon}</span>
+                            <span class="timeline-label">${label}</span>
+                            <h3>${getTimelineTitle(item)}</h3>
+                            <p>${desc}</p>
                         </${tag}>
                     </div>`;
             }).join('');
@@ -1295,42 +1374,63 @@
         // 第三版：原創歌曲特別展
         const originalSongContainer = document.getElementById('originalSongContainer');
         function renderOriginalSong() {
+            const song = resolveItem(originalSong);
+            const date = song.date || "";
+            const englishTitle = song.englishTitle || "";
+            const desc = song.desc || "";
+            const credits = Array.isArray(song.credits) ? song.credits : [];
+            const youtube = song.youtube || "";
+            const xLink = song.xLink || "";
+            const creditsHtml = credits.map(credit => `<span>${credit}</span>`).join('');
+            const youtubeButton = youtube
+                ? `<a class="song-action" href="${youtube}" target="_blank" rel="noopener">在 YouTube 聽歌 ▶</a>`
+                : '';
+            const xButton = xLink
+                ? `<a class="song-action secondary" href="${xLink}" target="_blank" rel="noopener">閱讀原始貼文 ↗</a>`
+                : '';
             originalSongContainer.innerHTML = `
                 <div class="song-art">
                     <div class="song-art-icon">✉️🦖</div>
-                    <small>ORIGINAL SONG · ${originalSong.date}</small>
+                    <small>ORIGINAL SONG · ${date}</small>
                 </div>
                 <div class="song-story">
                     <span class="section-kicker">A LETTER IN HER VOICE</span>
-                    <h2>〈${originalSong.title}〉</h2>
-                    <div class="song-en-title">${originalSong.englishTitle}</div>
-                    <p>${originalSong.desc}</p>
-                    <div class="credit-list">${originalSong.credits.map(credit => `<span>${credit}</span>`).join('')}</div>
+                    <h2>〈${getTitle(song)}〉</h2>
+                    <div class="song-en-title">${englishTitle}</div>
+                    <p>${desc}</p>
+                    <div class="credit-list">${creditsHtml}</div>
                     <div class="song-actions">
-                        <a class="song-action" href="${originalSong.youtube}" target="_blank" rel="noopener">在 YouTube 聽歌 ▶</a>
-                        <a class="song-action secondary" href="${originalSong.xLink}" target="_blank" rel="noopener">閱讀原始貼文 ↗</a>
+                        ${youtubeButton}
+                        ${xButton}
                     </div>
                 </div>`;
         }
         renderOriginalSong();
 
-// 第三版：經典語錄
+        // 經典語錄
         const quoteContainer = document.getElementById('quoteContainer');
         function renderQuotes() {
-            quoteContainer.innerHTML = quoteData.map(quote => {
-                const visual = quote.image
-                    ? `<img class="quote-image" src="${quote.image}" alt="${quote.note}插圖">`
-                    : `<span class="quote-icon">${quote.icon}</span>`;
-                const sourceLink = quote.link
-                    ? `<a class="quote-source" href="${quote.link}" target="_blank" rel="noopener">查看原文 ↗</a>`
+            quoteContainer.innerHTML = quoteData.map(quoteItem => {
+                const quote = resolveItem(quoteItem);
+                const title = getTitle(quote, "未命名語錄");
+                const text = quote.text || "這段語錄正在等待補充。";
+                const icon = quote.icon || "💬";
+                const image = getImage(quote);
+                const audio = quote.audio || "";
+                const visual = image
+                    ? `<img class="quote-image" src="${image}" alt="${title}插圖">`
+                    : `<span class="quote-icon">${icon}</span>`;
+                const link = getPrimaryLink(quote);
+                const sourceLink = link
+                    ? `<a class="quote-source" href="${link}" target="_blank" rel="noopener">查看原文 ↗</a>`
                     : '';
-                const audioButton = quote.audio
-                    ? `<button class="quote-audio-btn" type="button" data-audio="${quote.audio}">🔊 播放諾諾音效</button>`
+                const audioButton = audio
+                    ? `<button class="quote-audio-btn" type="button" data-audio="${audio}">🔊 播放諾諾音效</button>`
                     : '';
-                return `<article class="quote-card ${quote.link ? 'has-link' : ''}">
+                return `<article class="quote-card ${link ? 'has-link' : ''}">
                     ${visual}
-                    <blockquote>「${quote.text}」</blockquote>
-                    <small>${quote.note}</small>
+                    <blockquote>「${text}」</blockquote>
+                    <small>${title}</small>
                     ${(sourceLink || audioButton) ? `<div class="quote-actions">${sourceLink}${audioButton}</div>` : ''}
                 </article>`;
             }).join('');
@@ -1348,39 +1448,6 @@
             });
         }
         renderQuotes();
-/* 原版，會重複播放
-        // 第三版：經典語錄
-        const quoteContainer = document.getElementById('quoteContainer');
-        function renderQuotes() {
-            quoteContainer.innerHTML = quoteData.map(quote => {
-                const visual = quote.image
-                    ? `<img class="quote-image" src="${quote.image}" alt="${quote.note}插圖">`
-                    : `<span class="quote-icon">${quote.icon}</span>`;
-                const sourceLink = quote.link
-                    ? `<a class="quote-source" href="${quote.link}" target="_blank" rel="noopener">查看原文 ↗</a>`
-                    : '';
-                const audioButton = quote.audio
-                    ? `<button class="quote-audio-btn" type="button" data-audio="${quote.audio}">🔊 播放諾諾音效</button>`
-                    : '';
-                return `<article class="quote-card ${quote.link ? 'has-link' : ''}">
-                    ${visual}
-                    <blockquote>「${quote.text}」</blockquote>
-                    <small>${quote.note}</small>
-                    ${(sourceLink || audioButton) ? `<div class="quote-actions">${sourceLink}${audioButton}</div>` : ''}
-                </article>`;
-            }).join('');
-
-            quoteContainer.querySelectorAll('.quote-audio-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    const sound = new Audio(button.dataset.audio);
-                    sound.play().catch(() => {
-                        button.textContent = '音效目前無法播放';
-                    });
-                });
-            });
-        }
-        renderQuotes();
-*/
         // 第三版：年度回顧（數字自動從 data.js 計算）
         const annualReviewContainer = document.getElementById('annualReviewContainer');
         function renderAnnualReview() {
@@ -1406,14 +1473,18 @@
             let index = Math.floor(Math.random() * memoryPool.length);
             if (memoryPool.length > 1 && index === lastMemoryIndex) index = (index + 1) % memoryPool.length;
             lastMemoryIndex = index;
-            const memory = memoryPool[index];
+            const memory = resolveItem(memoryPool[index]);
+            const link = getPrimaryLink(memory);
+            const openLink = link
+                ? `<a class="memory-open" href="${link}" target="_blank" rel="noopener">打開這段回憶 ↗</a>`
+                : '';
             memoryResult.classList.remove('empty');
             memoryResult.innerHTML = `
                 <div class="memory-result-icon">${memory.icon}</div>
                 <div class="memory-result-label">${memory.type}</div>
-                <h3>${memory.title}</h3>
+                <h3>${getTitle(memory)}</h3>
                 <p>${memory.desc}</p>
-                <a class="memory-open" href="${memory.link}" target="_blank" rel="noopener">打開這段回憶 ↗</a>`;
+                ${openLink}`;
         });
 
         // =========================================================================
@@ -1442,12 +1513,64 @@
         // VOD 篩選與搜尋 (修正 event.target 問題，改以 this 傳入)
         // =========================================================================
         let currentVodCategory = 'all';
+        let currentVodTag = 'all';
         const searchVodInput = document.getElementById('searchVodInput');
+        const advancedTagToggle = document.getElementById('advancedTagToggle');
+        const advancedTagFilterContainer = document.getElementById('advancedTagFilterContainer');
         searchVodInput.addEventListener('input', applyVodFilters);
+
+        function getCardVodTags(card) {
+            const value = card.getAttribute('data-tags') || '';
+            return value ? value.split('|').map(tag => decodeURIComponent(tag)) : [];
+        }
+
+        function renderAdvancedTagFilters() {
+            const allTags = [...new Set(vodData.flatMap(video => normalizeVodTags(video.tags)))];
+            advancedTagFilterContainer.innerHTML = '';
+
+            const options = [{ value: 'all', label: '全部進階標籤' }]
+                .concat(allTags.map(tag => ({ value: tag, label: `#${tag}` })));
+
+            options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = `filter-btn advanced-tag-btn${index === 0 ? ' active' : ''}`;
+                button.textContent = option.label;
+                button.addEventListener('click', () => filterVodTag(button, option.value));
+                advancedTagFilterContainer.appendChild(button);
+            });
+        }
+
+        function toggleAdvancedTags() {
+            advancedTagsOpen = !advancedTagsOpen;
+            advancedTagToggle.classList.toggle('active', advancedTagsOpen);
+            advancedTagToggle.setAttribute('aria-expanded', String(advancedTagsOpen));
+            advancedTagFilterContainer.classList.toggle('hidden', !advancedTagsOpen);
+            document.querySelectorAll('.vod-advanced-tags').forEach(element => {
+                element.classList.toggle('hidden', !advancedTagsOpen);
+            });
+
+            if (!advancedTagsOpen) {
+                currentVodTag = 'all';
+                advancedTagFilterContainer.querySelectorAll('.advanced-tag-btn').forEach((button, index) => {
+                    button.classList.toggle('active', index === 0);
+                });
+                applyVodFilters();
+            }
+        }
+
+        function filterVodTag(element, tag) {
+            currentVodTag = tag;
+            advancedTagFilterContainer.querySelectorAll('.advanced-tag-btn').forEach(button => {
+                button.classList.remove('active');
+            });
+            element.classList.add('active');
+            applyVodFilters();
+        }
 
         function filterVod(element, category) {
             currentVodCategory = category;
-            const btns = document.getElementById('vodFilterBtnContainer').querySelectorAll('.filter-btn');
+            const btns = document.getElementById('vodFilterBtnContainer').querySelectorAll('.vod-category-btn');
             btns.forEach(btn => btn.classList.remove('active'));
             if (element) {
                 element.classList.add('active');
@@ -1462,10 +1585,12 @@
                 const cat = card.getAttribute('data-category');
                 const title = card.querySelector('.video-title').textContent.toLowerCase();
                 const matchCat = (currentVodCategory === 'all' || cat === currentVodCategory);
+                const matchTag = (currentVodTag === 'all' || getCardVodTags(card).includes(currentVodTag));
                 const matchSearch = title.includes(searchText);
-                card.style.display = (matchCat && matchSearch) ? '' : 'none';
+                card.style.display = (matchCat && matchTag && matchSearch) ? '' : 'none';
             });
         }
+        renderAdvancedTagFilters();
 
         // =========================================================================
         // 歌單 篩選與搜尋 (同時搜歌名與歌手)

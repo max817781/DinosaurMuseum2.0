@@ -9,11 +9,24 @@
  */
 const playgroundLinks = [
     {
-        title: "半周年 MOD 爭權大賽",
+        title: "重返半周年 MOD 爭權大賽",
         desc: "Kahoot 回放挑戰",
         url: "https://max817781.github.io/mod-battle-/",
         external: false
+    },
+	{
+        title: "67踩點之神",
+        desc: "有關於67的音遊",
+        url: "https://max817781.github.io/67godzn/",
+        external: true
+    },
+	{
+		title: "67 Rhythm God",
+		desc: "A rhythm game about 67",
+        url: "https://max817781.github.io/67goden/",
+        external: true
     }
+	
 ];
 
 window.museumData = {
@@ -379,20 +392,20 @@ window.museumData = {
             note: "半周年活動公開朗讀"
         },
 		{
-		    id: "mash_013",
-		    title: "半周年棉花糖 #13",
-		    preview: "雖然剛認識諾諾 但是我每次都在期待...",
-		    text: "雖然剛認識諾諾 但是我每次都在期待諾諾開台\n來到諾諾的台發現好多歡樂 好快樂\n沒有諾諾的一個月 好想諾諾",
-		    date: "2026.05.17",
-		    note: "半周年活動公開朗讀"
+			id: "mash_013",
+			title: "半周年棉花糖 #13",
+			preview: "雖然剛認識諾諾 但是我每次都在期待...",
+			text: "雖然剛認識諾諾 但是我每次都在期待諾諾開台\n來到諾諾的台發現好多歡樂 好快樂\n沒有諾諾的一個月 好想諾諾",
+			date: "2026.06.26",
+			note: "諾諾在一個月後發現!"
 		}
 		
     ],
 
     marshmallowInfo: {
         title: "半周年棉花糖活動",
-        link: "#",
-        buttonText: "查看當時活動棉花糖"
+        link: "https://marshmallow-qa.com/9ccogyujr1l7mqp?t=175z7j&utm_medium=twitter&utm_source=promotion",
+        buttonText: "繼續向諾諾投稿棉花糖!"
     },
 
     timelineData: [

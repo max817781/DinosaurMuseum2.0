@@ -474,6 +474,51 @@
         .top-nav { display: flex; align-items: center; gap: 24px; }
         .top-nav a { color: #dedede; text-decoration: none; font-size: 0.95em; }
         .top-nav a:hover { color: #fff; }
+        .nav-dropdown { position: relative; }
+        .nav-dropdown-toggle {
+            border: 0;
+            padding: 0;
+            background: none;
+            color: #dedede;
+            font: inherit;
+            font-size: .95em;
+            cursor: pointer;
+        }
+        .nav-dropdown-toggle:hover { color: #fff; }
+        .nav-dropdown-arrow { display: inline-block; margin-left: 3px; transition: transform .18s ease; }
+        .nav-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 12px);
+            left: -14px;
+            z-index: 50;
+            min-width: 210px;
+            padding: 9px;
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 15px;
+            background: #fff8e7;
+            box-shadow: 0 16px 36px rgba(70,61,48,.18);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-5px);
+            transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+        }
+        .nav-dropdown.align-right .nav-dropdown-menu { right: 0; left: auto; }
+        .nav-dropdown-menu a {
+            display: block;
+            padding: 10px 12px;
+            border-radius: 10px;
+            color: #554b69;
+            line-height: 1.35;
+        }
+        .nav-dropdown-menu a:hover { color: #617849; background: #eef3d8; }
+        .nav-dropdown-menu small { display: block; margin-top: 3px; color: #786d63; font-size: .78em; }
+        .nav-dropdown:hover .nav-dropdown-menu,
+        .nav-dropdown.open .nav-dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .nav-dropdown.open .nav-dropdown-arrow { transform: rotate(180deg); }
         .home-hero {
             min-height: 720px; padding: 120px 8% 70px; box-sizing: border-box;
             display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr);
@@ -654,6 +699,118 @@
         .memory-result p { color: #aaa4b0; line-height: 1.7; }
         .memory-open { color: #d8eb9d; text-decoration: none; font-weight: bold; }
 
+        /* 半周年棉花糖回憶初版 */
+        .story-section.marshmallow-section {
+            background:
+                radial-gradient(circle at 16% 18%, rgba(255,255,255,.72) 0 4%, transparent 4.5%),
+                radial-gradient(circle at 82% 22%, rgba(255,255,255,.58) 0 5%, transparent 5.5%),
+                linear-gradient(180deg, #a9daf2 0%, #dff2fb 72%, #f8f2df 100%);
+        }
+        .marshmallow-section .section-heading h2 { color: #4f5575; }
+        .marshmallow-section .section-heading p { color: #597184; }
+        .marshmallow-sky {
+            position: relative;
+            min-height: 330px;
+            padding: 28px;
+            border: 1px solid rgba(255,255,255,.7);
+            border-radius: 30px;
+            background: rgba(255,255,255,.18);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.75), 0 20px 45px rgba(70,123,151,.12);
+        }
+        .marshmallow-toolbar { display: flex; justify-content: flex-end; margin-bottom: 22px; }
+        .marshmallow-link, .marshmallow-back {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid rgba(80,116,139,.22);
+            border-radius: 999px;
+            padding: 10px 17px;
+            background: rgba(255,255,255,.76);
+            color: #4d6677;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .marshmallow-link:hover, .marshmallow-back:hover { background: #fff; transform: translateY(-1px); }
+        .marshmallow-cloud-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 28px;
+            align-items: center;
+        }
+        .marshmallow-cloud {
+            position: relative;
+            isolation: isolate;
+            min-height: 138px;
+            padding: 35px 25px 24px;
+            border: 0;
+            border-radius: 48% 52% 44% 56% / 58% 55% 45% 42%;
+            background: rgba(255,255,255,.93);
+            color: #536170;
+            box-shadow: 0 14px 28px rgba(66,112,138,.16);
+            cursor: pointer;
+            transition: transform .22s ease, box-shadow .22s ease;
+        }
+        .marshmallow-cloud::before, .marshmallow-cloud::after {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            border-radius: 50%;
+            background: inherit;
+        }
+        .marshmallow-cloud::before { width: 74px; height: 74px; left: 20%; top: -21px; }
+        .marshmallow-cloud::after { width: 92px; height: 92px; right: 15%; top: -31px; }
+        .marshmallow-cloud:hover, .marshmallow-cloud:focus-visible {
+            transform: translateY(-6px) scale(1.025);
+            box-shadow: 0 20px 36px rgba(66,112,138,.22);
+            outline: none;
+        }
+        .cloud-title { display: block; position: relative; z-index: 1; color: #50566f; font-weight: bold; }
+        .cloud-preview {
+            display: block;
+            position: relative;
+            z-index: 1;
+            max-height: 0;
+            margin-top: 0;
+            overflow: hidden;
+            opacity: 0;
+            color: #71808b;
+            font-size: .88em;
+            line-height: 1.55;
+            transition: opacity .2s ease, max-height .2s ease, margin-top .2s ease;
+        }
+        .marshmallow-cloud:hover .cloud-preview,
+        .marshmallow-cloud:focus-visible .cloud-preview {
+            max-height: 70px;
+            margin-top: 9px;
+            opacity: 1;
+        }
+        .marshmallow-reader {
+            width: min(850px, 100%);
+            min-height: 290px;
+            margin: 18px auto 8px;
+            padding: 48px clamp(28px, 6vw, 70px);
+            border-radius: 72px;
+            background: rgba(255,255,255,.94);
+            color: #536170;
+            box-shadow: 0 22px 44px rgba(66,112,138,.2);
+            text-align: center;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+        .marshmallow-reader:focus { outline: none; }
+        .marshmallow-reader h3 { margin: 4px 0 20px; color: #50566f; font-size: clamp(1.7em, 4vw, 2.5em); }
+        .marshmallow-reader-text {
+            max-width: 700px;
+            margin: 0 auto;
+            white-space: pre-wrap;
+            color: #596a77;
+            line-height: 1.9;
+            text-align: left;
+        }
+        .marshmallow-reader-meta { margin: 22px 0; color: #7b8c98; font-size: .9em; }
+        .marshmallow-back { border: 0; background: #e5f1f6; }
+        .marshmallow-empty { grid-column: 1 / -1; color: #597184; text-align: center; }
+
         .timeline { position: relative; max-width: 980px; margin: 0 auto; }
         .timeline::before { content: ""; position: absolute; left: 118px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(#d9a173,#9fb66c); }
         .timeline-item { display: grid; grid-template-columns: 95px 1fr; gap: 46px; position: relative; padding: 0 0 42px; }
@@ -702,7 +859,11 @@
         #archive { scroll-margin-top: 80px; }
         @media (max-width: 850px) {
             header { padding: 16px 20px; }
-            .brand-text span, .top-nav a:not(.nav-main) { display: none; }
+            .brand-text span, .top-nav > a:not(.nav-main) { display: none; }
+            .top-nav { gap: 10px; }
+            .nav-dropdown-toggle { padding: 8px 6px; font-size: .82em; }
+            .nav-dropdown-menu { top: calc(100% + 6px); min-width: 190px; }
+            .nav-dropdown:first-of-type .nav-dropdown-menu { left: 0; }
             .home-hero { grid-template-columns: 1fr; gap: 38px; padding: 120px 7% 70px; }
             .museum-card { transform: none; }
             .feature-grid { grid-template-columns: 1fr; }
@@ -755,6 +916,11 @@
         .brand-text span { color: var(--sage-deep); }
         .top-nav a { color: var(--brown); }
         .top-nav a:hover { color: var(--sage-deep); }
+        .nav-dropdown-toggle { color: var(--brown); }
+        .nav-dropdown-toggle:hover { color: var(--sage-deep); }
+        .nav-dropdown-menu { border-color: var(--line-warm); background: var(--cream); }
+        .nav-dropdown-menu a { color: var(--purple); }
+        .nav-dropdown-menu a:hover { color: var(--sage-deep); background: var(--sage-soft); }
         .top-nav .nav-main { padding: 9px 15px; border-radius: 999px; background: var(--sage-soft); color: var(--sage-deep); }
         .top-nav .archive-shortcut { font-weight: bold; color: var(--purple); border-bottom: 2px solid var(--yellow); }
 
@@ -885,6 +1051,9 @@
             .identity-card { transform: none; }
             .cover-caption { align-items: flex-start; flex-direction: column; gap: 4px; }
             .quote-card.has-link:hover { transform: none; }
+            .marshmallow-sky { padding: 22px 16px; }
+            .marshmallow-cloud-list { grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 25px 16px; }
+            .marshmallow-reader { border-radius: 35px; padding: 36px 24px; }
         }
 
         .hidden {
@@ -903,9 +1072,23 @@
         </div>
         <nav class="top-nav" aria-label="主要選單">
             <a href="#about">關於諾諾</a>
-            <a href="#timeline">成長足跡</a>
+            <div class="nav-dropdown">
+                <button class="nav-dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+                    成長足跡 <span class="nav-dropdown-arrow">▾</span>
+                </button>
+                <div class="nav-dropdown-menu">
+                    <a href="#marshmallow-memories">半周年棉花糖</a>
+                    <a href="#timeline">成長時間軸</a>
+                </div>
+            </div>
             <a href="#updates">最新動態</a>
-            <a href="#archive" class="archive-shortcut">VOD／歌單館藏</a>
+            <a href="#archive" class="archive-shortcut">館藏</a>
+            <div class="nav-dropdown align-right">
+                <button class="nav-dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+                    恐龍遊樂場 <span class="nav-dropdown-arrow">▾</span>
+                </button>
+                <div class="nav-dropdown-menu" id="playgroundMenu"></div>
+            </div>
             <a href="#random-memory" class="nav-main">抽一段回憶</a>
         </nav>
     </header>
@@ -968,6 +1151,26 @@
                 </div>
             </div>
         </section>
+
+        <div class="story-section marshmallow-section" id="marshmallow-memories" role="region" aria-labelledby="marshmallow-title">
+            <div class="section-heading">
+                <span class="section-kicker">HALF ANNIVERSARY MARSHMALLOW</span>
+                <h2 id="marshmallow-title">半周年棉花糖回憶</h2>
+                <p>那些曾經在直播裡被讀出的匿名心意，被一朵一朵收進雲裡。</p>
+            </div>
+            <div class="marshmallow-sky">
+                <div class="marshmallow-toolbar">
+                    <a class="marshmallow-link" id="marshmallowActivityLink" href="#">查看當時活動棉花糖</a>
+                </div>
+                <div class="marshmallow-cloud-list" id="marshmallowCloudList"></div>
+                <article class="marshmallow-reader hidden" id="marshmallowReader" tabindex="-1" aria-live="polite">
+                    <h3 id="marshmallowReaderTitle"></h3>
+                    <p class="marshmallow-reader-text" id="marshmallowReaderText"></p>
+                    <div class="marshmallow-reader-meta" id="marshmallowReaderMeta"></div>
+                    <button class="marshmallow-back" id="marshmallowBackBtn" type="button">☁️ 回到雲朵列表</button>
+                </article>
+            </div>
+        </div>
 
         <section class="story-section" id="timeline">
             <div class="section-heading">
@@ -1102,6 +1305,8 @@
 			originalSong,
 			originalSongs,
 			quoteData,
+			marshmallowData = [],
+			marshmallowInfo = {},
 			annualReview
 		} = window.museumData;
 
@@ -1186,6 +1391,145 @@
             });
         }
         validateSourceIds();
+
+        // 主導覽列：恐龍遊樂場資料與手機點擊下拉
+        const playgroundMenu = document.getElementById('playgroundMenu');
+        const availablePlaygroundLinks = typeof playgroundLinks !== 'undefined' ? playgroundLinks : [];
+
+        function renderPlaygroundMenu() {
+            playgroundMenu.innerHTML = '';
+
+            availablePlaygroundLinks
+                .filter(item => item.title && item.url)
+                .forEach(item => {
+                    const link = document.createElement('a');
+                    link.href = item.url;
+                    link.textContent = item.title;
+
+                    if (item.desc) {
+                        const desc = document.createElement('small');
+                        desc.textContent = item.desc;
+                        link.appendChild(desc);
+                    }
+
+                    if (item.external) {
+                        link.target = '_blank';
+                        link.rel = 'noopener';
+                    }
+
+                    playgroundMenu.appendChild(link);
+                });
+        }
+
+        const navDropdowns = document.querySelectorAll('.nav-dropdown');
+
+        function closeNavDropdowns(exceptDropdown = null) {
+            navDropdowns.forEach(dropdown => {
+                if (dropdown === exceptDropdown) return;
+                dropdown.classList.remove('open');
+                dropdown.querySelector('.nav-dropdown-toggle').setAttribute('aria-expanded', 'false');
+            });
+        }
+
+        navDropdowns.forEach(dropdown => {
+            const toggle = dropdown.querySelector('.nav-dropdown-toggle');
+            toggle.addEventListener('click', event => {
+                event.stopPropagation();
+                const shouldOpen = !dropdown.classList.contains('open');
+                closeNavDropdowns(dropdown);
+                dropdown.classList.toggle('open', shouldOpen);
+                toggle.setAttribute('aria-expanded', String(shouldOpen));
+            });
+
+            dropdown.querySelector('.nav-dropdown-menu').addEventListener('click', () => {
+                dropdown.classList.remove('open');
+                toggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        document.addEventListener('click', () => closeNavDropdowns());
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape') closeNavDropdowns();
+        });
+
+        renderPlaygroundMenu();
+
+        // 半周年棉花糖回憶：小雲列表與同區塊閱讀模式
+        const marshmallowCloudList = document.getElementById('marshmallowCloudList');
+        const marshmallowReader = document.getElementById('marshmallowReader');
+        const marshmallowReaderTitle = document.getElementById('marshmallowReaderTitle');
+        const marshmallowReaderText = document.getElementById('marshmallowReaderText');
+        const marshmallowReaderMeta = document.getElementById('marshmallowReaderMeta');
+        const marshmallowBackBtn = document.getElementById('marshmallowBackBtn');
+        const marshmallowActivityLink = document.getElementById('marshmallowActivityLink');
+
+        function getMarshmallowPreview(item) {
+            const source = String(item.preview || item.text || "").trim();
+            return source.length > 34 ? `${source.slice(0, 34)}……` : source;
+        }
+
+        function openMarshmallow(item) {
+            marshmallowReaderTitle.textContent = item.title || "一封收藏在雲裡的心意";
+            marshmallowReaderText.textContent = item.text || "這則棉花糖內容正在等待館長整理。";
+            marshmallowReaderMeta.textContent = [item.date, item.note].filter(Boolean).join(" · ");
+            marshmallowCloudList.classList.add('hidden');
+            marshmallowReader.classList.remove('hidden');
+            marshmallowReader.focus();
+        }
+
+        function showMarshmallowList() {
+            marshmallowReader.classList.add('hidden');
+            marshmallowCloudList.classList.remove('hidden');
+        }
+
+        function renderMarshmallowClouds() {
+            marshmallowCloudList.innerHTML = '';
+
+            if (!marshmallowData.length) {
+                const empty = document.createElement('p');
+                empty.className = 'marshmallow-empty';
+                empty.textContent = '棉花糖回憶正在等待館長慢慢整理。';
+                marshmallowCloudList.appendChild(empty);
+                return;
+            }
+
+            marshmallowData.forEach((item, index) => {
+                const cloud = document.createElement('button');
+                cloud.className = 'marshmallow-cloud';
+                cloud.type = 'button';
+                cloud.setAttribute('aria-label', `閱讀${item.title || `棉花糖 #${index + 1}`}`);
+
+                const title = document.createElement('span');
+                title.className = 'cloud-title';
+                title.textContent = item.title || `棉花糖 #${index + 1}`;
+
+                const preview = document.createElement('span');
+                preview.className = 'cloud-preview';
+                preview.textContent = getMarshmallowPreview(item);
+
+                cloud.append(title, preview);
+                cloud.addEventListener('click', () => openMarshmallow(item));
+                marshmallowCloudList.appendChild(cloud);
+            });
+        }
+
+        function renderMarshmallowInfo() {
+            marshmallowActivityLink.textContent = marshmallowInfo.buttonText || "查看當時活動棉花糖";
+            marshmallowActivityLink.href = marshmallowInfo.link || "#";
+            marshmallowActivityLink.setAttribute('aria-label', marshmallowInfo.title || "半周年棉花糖活動");
+
+            if (marshmallowInfo.link && marshmallowInfo.link !== "#") {
+                marshmallowActivityLink.target = "_blank";
+                marshmallowActivityLink.rel = "noopener";
+            } else {
+                marshmallowActivityLink.removeAttribute('target');
+                marshmallowActivityLink.removeAttribute('rel');
+            }
+        }
+
+        marshmallowBackBtn.addEventListener('click', showMarshmallowList);
+        renderMarshmallowClouds();
+        renderMarshmallowInfo();
 
         // =========================================================================
         // 渲染邏輯區：生成 HTML

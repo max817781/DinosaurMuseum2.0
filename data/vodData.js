@@ -428,6 +428,7 @@ window.museumDataParts.vodData = [
         "emoji": "🦖",
         "story": "故事開始的地方，第一聲 Rawr Rawr 被記錄下來。",
         "tags": "初配信,起點收藏,YouTube",
+        "pinnedRank": 1,
         "addedAt": "2026-07-04",
         "streamDate": "2026-01-19"
     },
@@ -441,6 +442,7 @@ window.museumDataParts.vodData = [
         "emoji": "🦖",
         "story": "故事開始的地方，第一聲 Rawr Rawr 被記錄下來。",
         "tags": "初配信,起點收藏,YouTube",
+        "pinnedRank": 2,
         "addedAt": "2026-07-04",
         "streamDate": "2026-01-19"
     },
@@ -454,6 +456,7 @@ window.museumDataParts.vodData = [
         "emoji": "🦖",
         "story": "半週年快樂（煙火）",
         "tags": "初配信,起點收藏,YouTube",
+        "pinnedRank": 3,
         "addedAt": "2026-07-04",
         "streamDate": "2026-01-19"
     },
@@ -467,6 +470,7 @@ window.museumDataParts.vodData = [
         "emoji": "🦖",
         "story": "休息一個月前，致小龍包的一封信。",
         "tags": "初配信,起點收藏,YouTube",
+        "pinnedRank": 4,
         "addedAt": "2026-07-04",
         "streamDate": "2026-01-19"
     }

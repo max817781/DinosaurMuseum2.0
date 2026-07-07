@@ -1844,14 +1844,25 @@
             return getVodDateTime(video.addedAt);
         }
 
+        function getVodPinnedRank(video) {
+            const rank = Number(video.pinnedRank);
+            return Number.isFinite(rank) && rank > 0 ? rank : null;
+        }
+
         function sortVodByAddedAt(videos) {
             return videos
                 .map((video, originalIndex) => ({
                     video,
                     originalIndex,
+                    pinnedRank: getVodPinnedRank(video),
                     addedTime: getVodAddedTime(video)
                 }))
                 .sort((a, b) => {
+                    if (a.pinnedRank !== null && b.pinnedRank !== null) {
+                        return a.pinnedRank - b.pinnedRank || a.originalIndex - b.originalIndex;
+                    }
+                    if (a.pinnedRank !== null) return -1;
+                    if (b.pinnedRank !== null) return 1;
                     if (a.addedTime !== null && b.addedTime !== null) {
                         return b.addedTime - a.addedTime || a.originalIndex - b.originalIndex;
                     }

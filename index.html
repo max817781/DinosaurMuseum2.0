@@ -271,6 +271,28 @@
         .search-input::placeholder {
             color: #999;
         }
+        .vod-search-wrap, .song-search-wrap { position: relative; }
+        .vod-search-wrap .search-input, .song-search-wrap .search-input { padding-right: 48px; }
+        .vod-search-clear, .song-search-clear {
+            position: absolute;
+            top: 50%;
+            right: 6px;
+            display: grid;
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            place-items: center;
+            transform: translateY(-50%);
+            border: 1px solid transparent;
+            border-radius: 50%;
+            background: rgba(85,75,105,.08);
+            color: #786d63;
+            cursor: pointer;
+            font-size: 1.1em;
+            line-height: 1;
+        }
+        .vod-search-clear:hover, .song-search-clear:hover { background: rgba(145,169,111,.2); color: #554b69; }
+        .vod-search-clear:focus-visible, .song-search-clear:focus-visible { outline: 2px solid #91a96f; outline-offset: 1px; }
 
         /* ==================================
            VOD 卡片排版
@@ -278,11 +300,17 @@
         .video-row {
             display: flex;
             gap: 20px;
-            flex-wrap: wrap; 
+            flex-wrap: wrap;
+            align-content: flex-start;
+            min-height: 420px;
+            overflow-anchor: none;
         }
         .video-card {
             position: relative;
+            display: flex;
+            flex-direction: column;
             width: 300px;
+            min-height: 340px;
             transition: transform 0.3s ease;
             text-decoration: none;
             color: white;
@@ -324,9 +352,16 @@
             display: none;
         }
         .video-info {
+            position: relative;
+            flex: 1;
             padding: 10px 0;
         }
         .video-title {
+            display: -webkit-box;
+            min-height: 3.9em;
+            overflow: hidden;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
             font-weight: bold;
             font-size: 1.1em;
             margin-bottom: 5px;
@@ -340,6 +375,81 @@
             margin-right: 10px;
         }
         .video-story { margin-top: 9px; color: #85818a; font-size: .86em; line-height: 1.5; }
+        .new-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 4;
+            border-radius: 999px;
+            padding: 5px 10px;
+            background: #d8eb9d;
+            color: #334124;
+            box-shadow: 0 5px 14px rgba(35,55,26,.18);
+            font-size: .76em;
+            font-weight: 900;
+            letter-spacing: .08em;
+        }
+        .video-info.has-favorite-button { padding-bottom: 48px; }
+        .favorite-btn {
+            position: absolute;
+            right: 4px;
+            bottom: 5px;
+            z-index: 5;
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            border: 1px solid #444;
+            border-radius: 50%;
+            background: #252525;
+            color: #d8a7b7;
+            box-shadow: 0 5px 14px rgba(0,0,0,.16);
+            cursor: pointer;
+            font-size: 1.25em;
+        }
+        .favorite-btn:hover:not(:disabled) { transform: translateY(-1px); background: #333; }
+        .favorite-btn.is-favorite { background: #e884a2; border-color: #e884a2; color: #fff; }
+        .favorite-btn:disabled { opacity: .38; cursor: not-allowed; }
+        .vod-result-summary {
+            margin: 0 0 16px;
+            color: #85818a;
+            font-size: .92em;
+        }
+        .vod-pagination {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 28px;
+            overflow-anchor: none;
+        }
+        .vod-page-btn {
+            min-width: 40px;
+            border: 1px solid #444;
+            border-radius: 999px;
+            padding: 8px 13px;
+            background: #252525;
+            color: #ddd;
+            cursor: pointer;
+        }
+        .vod-page-btn:hover:not(:disabled) { transform: translateY(-1px); background: #333; }
+        .vod-page-btn.active { background: #617849; border-color: #617849; color: #fff; }
+        .vod-page-btn:disabled { opacity: .42; cursor: default; }
+        .vod-page-ellipsis { padding: 6px 2px; color: #85818a; }
+        .vod-empty-state {
+            display: flex;
+            min-height: 320px;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 34px 20px;
+            border: 1px dashed #555;
+            border-radius: 18px;
+            color: #85818a;
+            text-align: center;
+        }
+        .favorite-empty-state { background: rgba(232,132,162,.08); }
         .advanced-tag-filter-container {
             margin: -8px 0 24px;
             padding: 12px 14px;
@@ -364,6 +474,8 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            min-height: 600px;
+            overflow-anchor: none;
         }
         .song-row {
             display: flex;
@@ -424,6 +536,7 @@
         }
         .song-tags-wrap {
             display: flex;
+            flex-wrap: wrap;
             gap: 8px;
             align-items: center;
         }
@@ -439,6 +552,10 @@
             color: #f39c12;
             background-color: transparent;
         }
+        .song-tag-badge {
+            background: rgba(184,168,221,.16);
+            color: #a99bc9;
+        }
         .song-play-btn {
             background-color: #e50914;
             color: white;
@@ -451,6 +568,33 @@
             background-color: #555;
             color: #999;
         }
+        .song-entry { display: flex; flex-direction: column; gap: 8px; }
+        .song-row.has-performances { cursor: default; }
+        .song-row.has-performances:hover { transform: none; }
+        .song-performance-list {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin: 0 14px 6px 130px;
+            padding: 10px 12px;
+            border: 1px solid #333;
+            border-radius: 12px;
+            background: #181818;
+        }
+        .song-performance-label { color: #999; font-size: .82em; font-weight: bold; }
+        .song-performance-link {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 6px 11px;
+            background: #333;
+            color: #ddd;
+            font-size: .82em;
+            text-decoration: none;
+        }
+        .song-performance-link:hover { background: #444; color: #fff; }
+        .song-performance-link.disabled { opacity: .55; cursor: default; }
 
         /* 隱藏區塊用 */
         /* 第二版：全新首頁 */
@@ -871,6 +1015,7 @@
             .song-row { padding: 12px; }
             .song-cover { width: 82px; margin-right: 12px; }
             .song-play-btn { display: none; }
+            .song-performance-list { margin-left: 0; }
             .nono-profile, .x-layout { grid-template-columns: 1fr; }
             .nono-bubble { transform: none; }
             .x-intro { position: static; }
@@ -1023,6 +1168,18 @@
         .hero-slider { background: var(--purple); }
         .slide-content { background: linear-gradient(to right,rgba(61,52,73,.98) 43%,rgba(61,52,73,0) 100%); }
         .slide-tag { color: var(--yellow); }
+        .slide-title {
+            color: #fffaf0;
+            font-weight: 800;
+            letter-spacing: .01em;
+            text-shadow: 0 2px 12px rgba(22,16,29,.46);
+        }
+        .slide-desc {
+            color: #fffdf7;
+            font-weight: 500;
+            text-shadow: 0 1px 8px rgba(22,16,29,.38);
+        }
+        .slide-meta { color: #ded5e8; }
         .container { background: var(--cream); }
         .mode-switch-container { border-bottom-color: var(--line-warm); }
         .mode-btn { color: var(--muted-brown); }
@@ -1035,6 +1192,16 @@
         .filter-btn.active { background: var(--sage); border-color: var(--sage); color: #fff; }
         .advanced-tag-filter-container { background: #f7f1e3; border-color: var(--line-warm); }
         .advanced-tag { color: var(--sage-deep); }
+        .new-badge { background: var(--sage-soft); color: var(--sage-deep); }
+        .favorite-btn { background: var(--paper); border-color: var(--line-warm); color: var(--pink); }
+        .favorite-btn:hover:not(:disabled) { background: #fff1f5; }
+        .favorite-btn.is-favorite { background: var(--pink); border-color: var(--pink); color: #fff; }
+        .vod-result-summary { color: var(--muted-brown); }
+        .vod-page-btn { background: var(--paper); border-color: var(--line-warm); color: var(--brown); }
+        .vod-page-btn:hover:not(:disabled) { background: #f3ead7; }
+        .vod-page-btn.active { background: var(--sage); border-color: var(--sage); color: #fff; }
+        .vod-page-ellipsis, .vod-empty-state { color: var(--muted-brown); }
+        .vod-empty-state { border-color: var(--line-warm); background: rgba(255,255,255,.38); }
         .search-input { background: var(--paper); color: var(--brown); border-color: var(--line-warm); }
         .search-input:focus { background: #fff; border-color: var(--sage); }
         .video-card, .song-row { background: var(--paper); color: var(--brown); border: 1px solid var(--line-warm); box-shadow: 0 10px 28px rgba(95,76,49,.07); }
@@ -1044,6 +1211,10 @@
         .song-badge { background: var(--purple-soft); color: var(--purple); }
         .song-play-btn { background: var(--sage); }
         .song-play-btn.disabled { background: #cbc3b2; color: #776f64; }
+        .song-performance-list { background: #f7f1e3; border-color: var(--line-warm); }
+        .song-performance-label { color: var(--muted-brown); }
+        .song-performance-link { background: var(--sage-soft); color: var(--sage-deep); }
+        .song-performance-link:hover { background: var(--purple-soft); color: var(--purple); }
 
         @media (max-width: 850px) {
             .home-hero { grid-template-columns: 1fr; }
@@ -1054,6 +1225,8 @@
             .marshmallow-sky { padding: 22px 16px; }
             .marshmallow-cloud-list { grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 25px 16px; }
             .marshmallow-reader { border-radius: 35px; padding: 36px 24px; }
+            .vod-search-clear, .song-search-clear { width: 40px; height: 40px; right: 3px; }
+            .vod-search-wrap .search-input, .song-search-wrap .search-input { padding-right: 50px; }
         }
 
         .hidden {
@@ -1234,7 +1407,7 @@
         <div class="mode-switch-container">
             <button id="btnVodMode" class="mode-btn active" onclick="switchMode('vod')">📺 VOD 實況存檔</button>
             <button id="btnSongMode" class="mode-btn" onclick="switchMode('song')">🎵 歌單搜尋模式</button>
-            <a class="mode-btn public-replay-link" href="https://drive.google.com/drive/folders/1zHRxLvsD4KXU90hvQ_cIjcTuXiAyts5V?usp=sharing">📁 公開回放庫</a>
+            <a class="mode-btn public-replay-link" href="https://drive.google.com/drive/folders/1zHRxLvsD4KXU90hvQ_cIjcTuXiAyts5V?usp=sharing" target="_blank" rel="noopener noreferrer">公開回放庫</a>
         </div>
 
         <div id="vodSection">
@@ -1247,14 +1420,18 @@
                     <button class="filter-btn vod-category-btn" onclick="filterVod(this, '活動')">🎉 活動</button>
                     <button class="filter-btn vod-category-btn" onclick="filterVod(this, '精華')">🎬 精華</button>
                     <button class="filter-btn vod-category-btn" onclick="filterVod(this, '其他')">🦖 其他</button>
+                    <button class="filter-btn vod-category-btn" onclick="filterVod(this, 'favorite')">❤️ 我的最愛</button>
                     <button class="filter-btn" id="advancedTagToggle" type="button" onclick="toggleAdvancedTags()" aria-expanded="false">🏷️ 進階標籤</button>
                 </div>
-                <div class="search-container">
+                <div class="search-container vod-search-wrap">
                     <input type="text" id="searchVodInput" class="search-input" placeholder="搜尋 VOD 標題...">
+                    <button class="vod-search-clear hidden" id="vodSearchClearBtn" type="button" aria-label="清除搜尋" title="清除搜尋">×</button>
                 </div>
             </div>
             <div class="filter-container advanced-tag-filter-container hidden" id="advancedTagFilterContainer"></div>
+            <div id="vodResultSummary" class="vod-result-summary" aria-live="polite"></div>
             <div class="video-row" id="vodRowContainer"></div>
+            <div id="vodPagination" class="vod-pagination" aria-label="VOD 分頁"></div>
         </div>
 
 
@@ -1265,17 +1442,32 @@
                     <button class="filter-btn" onclick="filterSong(this, '中文')">中文</button>
                     <button class="filter-btn" onclick="filterSong(this, '英文')">英文</button>
                     <button class="filter-btn" onclick="filterSong(this, '日文')">日文</button>
-                    <button class="filter-btn" onclick="filterSong(this, '待練')">⏳ 待練</button>
+                    <button class="filter-btn" onclick="filterSong(this, '練習中')">🌱 練習中</button>
                 </div>
-                <div class="search-container">
+                <div class="search-container song-search-wrap">
                     <input type="text" id="searchSongInput" class="search-input" placeholder="搜尋 歌手 或 歌名...">
+                    <button class="song-search-clear hidden" id="songSearchClearBtn" type="button" aria-label="清除歌單搜尋" title="清除歌單搜尋">×</button>
                 </div>
             </div>
+            <div id="songResultSummary" class="vod-result-summary" aria-live="polite"></div>
             <div class="song-list-container" id="songListContainer"></div>
+            <div id="songPagination" class="vod-pagination" aria-label="歌單分頁"></div>
         </div>
 
     </div>
 
+    <script src="data/playgroundLinks.js"></script>
+    <script src="data/contentMap.js"></script>
+    <script src="data/heroData.js"></script>
+    <script src="data/vodData.js"></script>
+    <script src="data/songData.js"></script>
+    <script src="data/marshmallowData.js"></script>
+    <script src="data/marshmallowInfo.js"></script>
+    <script src="data/timelineData.js"></script>
+    <script src="data/originalSong.js"></script>
+    <script src="data/originalSongs.js"></script>
+    <script src="data/quoteData.js"></script>
+    <script src="data/annualReview.js"></script>
     <script src="data.js"></script>
     <script>
         // =========================================================================
@@ -1315,7 +1507,11 @@
         const contentMap = { ...otherContentMap };
         [...vodData, ...songData].forEach(item => {
             if (!item.id) {
-                console.warn(`資料缺少 id：${item.title || "未命名內容"}`);
+                if (item.type === "vod") {
+                    console.warn(`VOD 缺少 id，未來無法被 sourceId 穩定引用，也無法加入我的最愛：${item.title || "未命名 VOD"}`);
+                } else {
+                    console.warn(`資料缺少 id：${item.title || "未命名內容"}`);
+                }
                 return;
             }
             if (contentMap[item.id]) {
@@ -1388,6 +1584,29 @@
             [...vodData, ...songData].forEach(item => {
                 if (!item.title) console.warn(`${item.id || "未命名資料"} 缺少 title`);
                 if (!item.type) console.warn(`${item.id || item.title} 缺少 type`);
+            });
+
+            songData.forEach(song => {
+                if (!Array.isArray(song.performances)) return;
+
+                song.performances.forEach(performance => {
+                    const sourceId = performance.sourceId || "";
+                    if (!sourceId || !contentMap[sourceId]) {
+                        const performanceName = performance.label || performance.date || "未命名演唱版本";
+                        console.warn(
+                            `歌曲 ${song.id || "(無 id)"}｜${song.title || "未命名歌曲"}｜${performanceName} 找不到 sourceId：${sourceId || "(未填寫)"}`
+                        );
+                    }
+                });
+            });
+
+            vodData.forEach(video => {
+                if (video.addedAt && getVodDateTime(video.addedAt) === null) {
+                    console.warn(`VOD addedAt 格式無效：${video.id || video.title || "未命名 VOD"}｜${video.addedAt}`);
+                }
+                if (video.streamDate && getVodDateTime(video.streamDate) === null) {
+                    console.warn(`VOD streamDate 格式無效：${video.id || video.title || "未命名 VOD"}｜${video.streamDate}`);
+                }
             });
         }
         validateSourceIds();
@@ -1578,7 +1797,16 @@
 
         // 渲染 VOD 卡片
         const vodRowContainer = document.getElementById('vodRowContainer');
+        const vodResultSummary = document.getElementById('vodResultSummary');
+        const vodPagination = document.getElementById('vodPagination');
+        const VOD_ITEMS_PER_PAGE = 12;
+        const VOD_SEARCH_DEBOUNCE_MS = 200;
+        const NEW_BADGE_DAYS = 14;
+        const FAVORITE_VOD_STORAGE_KEY = "nonoMuseumFavoriteVodIds";
+        let currentVodPage = 1;
         let advancedTagsOpen = false;
+        let favoriteVodIdsCache = null;
+        let vodSearchDebounceTimer = null;
         const vodCategoryEmoji = {
             "遊戲": "🎮",
             "唱歌": "🎤",
@@ -1594,6 +1822,114 @@
 
         function getVodEmoji(category, emoji) {
             return emoji || vodCategoryEmoji[category] || vodCategoryEmoji["其他"];
+        }
+
+        function getVodDateTime(value) {
+            if (typeof value !== 'string') return null;
+            const match = value.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            if (!match) return null;
+
+            const year = Number(match[1]);
+            const month = Number(match[2]);
+            const day = Number(match[3]);
+            const timestamp = Date.UTC(year, month - 1, day);
+            const date = new Date(timestamp);
+            const isValid = date.getUTCFullYear() === year
+                && date.getUTCMonth() === month - 1
+                && date.getUTCDate() === day;
+            return isValid ? timestamp : null;
+        }
+
+        function getVodAddedTime(video) {
+            return getVodDateTime(video.addedAt);
+        }
+
+        function sortVodByAddedAt(videos) {
+            return videos
+                .map((video, originalIndex) => ({
+                    video,
+                    originalIndex,
+                    addedTime: getVodAddedTime(video)
+                }))
+                .sort((a, b) => {
+                    if (a.addedTime !== null && b.addedTime !== null) {
+                        return b.addedTime - a.addedTime || a.originalIndex - b.originalIndex;
+                    }
+                    if (a.addedTime !== null) return -1;
+                    if (b.addedTime !== null) return 1;
+                    return a.originalIndex - b.originalIndex;
+                })
+                .map(item => item.video);
+        }
+
+        function isVodNew(video) {
+            const addedTime = getVodAddedTime(video);
+            if (addedTime === null) return false;
+            const age = Date.now() - addedTime;
+            return age >= 0 && age <= NEW_BADGE_DAYS * 24 * 60 * 60 * 1000;
+        }
+
+        function getFavoriteVodIds() {
+            if (favoriteVodIdsCache !== null) return [...favoriteVodIdsCache];
+
+            try {
+                const parsed = JSON.parse(localStorage.getItem(FAVORITE_VOD_STORAGE_KEY) || "[]");
+                favoriteVodIdsCache = Array.isArray(parsed)
+                    ? [...new Set(parsed.filter(id => typeof id === 'string' && id.trim()).map(id => id.trim()))]
+                    : [];
+            } catch (error) {
+                console.warn("無法讀取 VOD 我的最愛，將暫時使用空收藏清單。", error);
+                favoriteVodIdsCache = [];
+            }
+            return [...favoriteVodIdsCache];
+        }
+
+        function saveFavoriteVodIds(ids) {
+            favoriteVodIdsCache = [...new Set(ids.filter(id => typeof id === 'string' && id.trim()).map(id => id.trim()))];
+            try {
+                localStorage.setItem(FAVORITE_VOD_STORAGE_KEY, JSON.stringify(favoriteVodIdsCache));
+            } catch (error) {
+                console.warn("無法儲存 VOD 我的最愛，本次收藏只保留在目前頁面。", error);
+            }
+        }
+
+        function isVodFavorite(id) {
+            return Boolean(id) && getFavoriteVodIds().includes(id);
+        }
+
+        function updateFavoriteButton(button, id) {
+            const favorite = isVodFavorite(id);
+            button.classList.toggle('is-favorite', favorite);
+            button.textContent = favorite ? '♥' : '♡';
+            button.setAttribute('aria-pressed', String(favorite));
+            button.setAttribute('aria-label', favorite ? '取消收藏這支 VOD' : '收藏這支 VOD');
+            button.title = favorite ? '取消收藏' : '加入我的最愛';
+        }
+
+        function toggleVodFavorite(id, event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            if (!id) {
+                console.warn("VOD 缺少 id，無法加入我的最愛");
+                return;
+            }
+
+            const favoriteIds = getFavoriteVodIds();
+            const nextIds = favoriteIds.includes(id)
+                ? favoriteIds.filter(favoriteId => favoriteId !== id)
+                : [...favoriteIds, id];
+            saveFavoriteVodIds(nextIds);
+
+            if (currentVodCategory === 'favorite') {
+                renderVodPage();
+                return;
+            }
+
+            vodRowContainer.querySelectorAll('.favorite-btn').forEach(button => {
+                if (button.dataset.vodId === id) updateFavoriteButton(button, id);
+            });
         }
 
         function normalizeVodTags(tags) {
@@ -1612,82 +1948,179 @@
                 .replaceAll("'", '&#039;');
         }
 
-        function renderVod() {
+        function getDisplayStory(story) {
+            const normalizedStory = String(story ?? "").trim();
+            if (!normalizedStory || normalizedStory === "這段故事正在等待補充。") return "";
+            return normalizedStory;
+        }
+
+        function renderVod(videos) {
             let html = '';
-            vodData.forEach(vodItem => {
+            videos.forEach(vodItem => {
                 const video = resolveItem(vodItem);
+                const vodId = String(video.id || "").trim();
                 const link = getPrimaryLink(video);
                 const image = getImage(video);
                 const category = getVodCategory(video.category);
                 const emoji = getVodEmoji(category, video.emoji);
+                const story = getDisplayStory(video.story);
                 const vodTags = normalizeVodTags(video.tags);
                 const encodedTags = vodTags.map(tag => encodeURIComponent(tag)).join('|');
                 const advancedTagsHtml = vodTags.length
                     ? `<div class="vod-advanced-tags ${advancedTagsOpen ? '' : 'hidden'}">${vodTags.map(tag => `<span class="advanced-tag">#${escapeHtml(tag)}</span>`).join('')}</div>`
                     : '';
+                const imageHtml = image
+                    ? `<img src="${image}" alt="${category}封面" class="cover-image" loading="lazy" decoding="async" onerror="this.style.display='none'">`
+                    : '';
+                const storyHtml = story
+                    ? `<div class="video-story">${escapeHtml(story)}</div>`
+                    : '';
+                const newBadgeHtml = isVodNew(video) ? '<span class="new-badge">NEW</span>' : '';
+                const favorite = isVodFavorite(vodId);
+                const favoriteButtonHtml = vodId
+                    ? `<button class="favorite-btn${favorite ? ' is-favorite' : ''}" type="button" data-vod-id="${escapeHtml(vodId)}" aria-pressed="${favorite}" aria-label="${favorite ? '取消收藏這支 VOD' : '收藏這支 VOD'}" title="${favorite ? '取消收藏' : '加入我的最愛'}">${favorite ? '♥' : '♡'}</button>`
+                    : '<button class="favorite-btn" type="button" disabled aria-label="這支 VOD 缺少 id，無法收藏" title="缺少 id，無法收藏">♡</button>';
                 let targetAttr = link.startsWith('http') ? 'target="_blank" rel="noopener"' : '';
                 html += `
                     <a href="${link}" ${targetAttr} class="video-card" data-category="${category}" data-tags="${encodedTags}">
                         <div class="cover-container">
+                            ${newBadgeHtml}
                             <div class="icon-cover">${emoji}</div>
-                            <img src="${image}" alt="${category}封面" class="cover-image" onerror="this.style.display='none'">
+                            ${imageHtml}
                         </div>
-                        <div class="video-info">
+                        <div class="video-info has-favorite-button">
                             <div class="video-title">${getTitle(video)}</div>
                             <div class="tags">
                                 <span class="tag">#${category}</span>
                                 ${advancedTagsHtml}
                             </div>
-                            <div class="video-story">${video.story || '這段故事正在等待補充。'}</div>
+                            ${storyHtml}
+                            ${favoriteButtonHtml}
                         </div>
                     </a>
                 `;
             });
             vodRowContainer.innerHTML = html;
+            vodRowContainer.querySelectorAll('.favorite-btn:not(:disabled)').forEach(button => {
+                button.addEventListener('click', event => toggleVodFavorite(button.dataset.vodId, event));
+            });
         }
-        renderVod();
 
         // 渲染 歌單 清單
         const songListContainer = document.getElementById('songListContainer');
-        function renderSongs() {
+        const songResultSummary = document.getElementById('songResultSummary');
+        const songPagination = document.getElementById('songPagination');
+        const searchSongInput = document.getElementById('searchSongInput');
+        const songSearchClearBtn = document.getElementById('songSearchClearBtn');
+        const SONG_SEARCH_DEBOUNCE_MS = 200;
+        const SONG_ITEMS_PER_PAGE = 25;
+        let currentSongPage = 1;
+        let songSearchDebounceTimer = null;
+
+        function normalizeSongSearchKeyword(value) {
+            return String(value || "")
+                .toLowerCase()
+                .trim()
+                .replace(/^#+/, "");
+        }
+
+        function getSongTagList(tags) {
+            const values = Array.isArray(tags)
+                ? tags
+                : String(tags || "").split(/[,，]/);
+            return [...new Set(values.map(tag => String(tag).trim()).filter(Boolean))];
+        }
+
+        function normalizeSongTags(tags) {
+            return getSongTagList(tags).join(" ");
+        }
+
+        function getSongSearchText(song) {
+            return [
+                song.title,
+                song.artist,
+                song.singer,
+                song.language,
+                song.status,
+                normalizeSongTags(song.tags)
+            ].join(" ").toLowerCase();
+        }
+
+        function renderSongPerformances(song, performances) {
+            const links = performances.map(performance => {
+                const source = performance.sourceId ? contentMap[performance.sourceId] : null;
+                const link = source ? getPrimaryLink(source) : "";
+                const label = escapeHtml(performance.label || performance.date || "演唱版本");
+
+                if (!link) {
+                    return `<span class="song-performance-link disabled">${label}</span>`;
+                }
+
+                const targetAttrs = link.startsWith('http') ? 'target="_blank" rel="noopener"' : '';
+                return `<a class="song-performance-link" href="${link}" ${targetAttrs}>${label}</a>`;
+            }).join('');
+
+            return `
+                <div class="song-performance-list">
+                    <span class="song-performance-label">演唱版本</span>
+                    ${links}
+                </div>`;
+        }
+
+        function renderSongs(songs) {
             let html = '';
-            songData.forEach(songItem => {
+            songs.forEach(songItem => {
                 const song = resolveItem(songItem);
                 const link = getPrimaryLink(song);
                 const title = getTitle(song);
                 const artist = getArtist(song);
-                let isPending = (song.status === '待練');
-                let linkAttr = (isPending || link === "") ? '' : `href="${link}" target="_blank" rel="noopener"`;
-                let rowClass = (isPending || link === "") ? 'song-row no-link' : 'song-row';
-                let btnHtml = (isPending || link === "")
-                              ? `<div class="song-play-btn disabled">尚未演唱</div>` 
-                              : `<div class="song-play-btn">▶ 前往點聽</div>`;
+                const songTags = getSongTagList(song.tags);
+                const performances = Array.isArray(song.performances) ? song.performances : [];
+                const hasPerformances = performances.length > 0;
+                let isPending = (song.status === '待練' || song.status === '練習中');
+                let linkAttr = (!hasPerformances && !isPending && link !== "") ? `href="${link}" target="_blank" rel="noopener"` : '';
+                let rowClass = hasPerformances
+                    ? 'song-row has-performances'
+                    : ((isPending || link === "") ? 'song-row no-link' : 'song-row');
+                let btnHtml = hasPerformances
+                    ? `<div class="song-play-btn">${performances.length} 個演唱版本</div>`
+                    : ((isPending || link === "")
+                        ? `<div class="song-play-btn disabled">僅收錄曲目</div>`
+                        : `<div class="song-play-btn">▶ 前往點聽</div>`);
+                const rowTag = hasPerformances ? 'div' : 'a';
                 
-                let pendingBadge = isPending ? `<span class="song-badge status-pending">⏳ 待練</span>` : '';
+                let pendingBadge = isPending ? `<span class="song-badge status-pending">🌱 練習中</span>` : '';
+                const tagBadges = songTags
+                    .map(tag => `<span class="song-badge song-tag-badge">#${escapeHtml(tag)}</span>`)
+                    .join('');
                 let coverHtml = getImage(song)
                               ? `<img src="${getImage(song)}" alt="${title}封面" class="song-cover">`
                               : `<div class="song-icon">🎵</div>`;
+                const performancesHtml = hasPerformances ? renderSongPerformances(song, performances) : '';
 
                 html += `
-                    <a ${linkAttr} class="${rowClass}" data-lang="${song.language}" data-status="${song.status}">
-                        ${coverHtml}
-                        <div class="song-details">
-                            <div class="song-header">
-                                <div class="song-title">${title}</div>
-                                <div class="song-singer">${artist}</div>
+                    <div class="song-entry" data-lang="${song.language}" data-status="${song.status}">
+                        <${rowTag} ${linkAttr} class="${rowClass}">
+                            ${coverHtml}
+                            <div class="song-details">
+                                <div class="song-header">
+                                    <div class="song-title">${title}</div>
+                                    <div class="song-singer">${artist}</div>
+                                </div>
+                                <div class="song-tags-wrap">
+                                    <span class="song-badge">${song.language}</span>
+                                    ${pendingBadge}
+                                    ${tagBadges}
+                                </div>
                             </div>
-                            <div class="song-tags-wrap">
-                                <span class="song-badge">${song.language}</span>
-                                ${pendingBadge}
-                            </div>
-                        </div>
-                        ${btnHtml}
-                    </a>
+                            ${btnHtml}
+                        </${rowTag}>
+                        ${performancesHtml}
+                    </div>
                 `;
             });
             songListContainer.innerHTML = html;
         }
-        renderSongs();
 
         // 第三版：成長時間軸
         const timelineContainer = document.getElementById('timelineContainer');
@@ -1854,19 +2287,51 @@
         }
 
         // =========================================================================
-        // VOD 篩選與搜尋 (修正 event.target 問題，改以 this 傳入)
+        // VOD 篩選、搜尋與真正分頁
         // =========================================================================
         let currentVodCategory = 'all';
         let currentVodTag = 'all';
         const searchVodInput = document.getElementById('searchVodInput');
+        const vodSearchClearBtn = document.getElementById('vodSearchClearBtn');
         const advancedTagToggle = document.getElementById('advancedTagToggle');
         const advancedTagFilterContainer = document.getElementById('advancedTagFilterContainer');
-        searchVodInput.addEventListener('input', applyVodFilters);
 
-        function getCardVodTags(card) {
-            const value = card.getAttribute('data-tags') || '';
-            return value ? value.split('|').map(tag => decodeURIComponent(tag)) : [];
+        function preserveVodListHeight() {
+            const currentListHeight = vodRowContainer.getBoundingClientRect().height;
+            if (currentListHeight > 0) {
+                vodRowContainer.style.minHeight = `${Math.ceil(currentListHeight)}px`;
+            }
         }
+
+        searchVodInput.addEventListener('input', () => {
+            vodSearchClearBtn.classList.toggle('hidden', searchVodInput.value.length === 0);
+            clearTimeout(vodSearchDebounceTimer);
+            vodSearchDebounceTimer = setTimeout(() => {
+                preserveVodListHeight();
+                currentVodPage = 1;
+                applyVodFilters();
+
+                if (searchVodInput.value.trim() === '') {
+                    requestAnimationFrame(() => {
+                        vodRowContainer.style.minHeight = '';
+                    });
+                }
+            }, VOD_SEARCH_DEBOUNCE_MS);
+        });
+
+        vodSearchClearBtn.addEventListener('click', event => {
+            event.preventDefault();
+            event.stopPropagation();
+            clearTimeout(vodSearchDebounceTimer);
+            preserveVodListHeight();
+            searchVodInput.value = '';
+            vodSearchClearBtn.classList.add('hidden');
+            currentVodPage = 1;
+            applyVodFilters();
+            requestAnimationFrame(() => {
+                vodRowContainer.style.minHeight = '';
+            });
+        });
 
         function renderAdvancedTagFilters() {
             const allTags = [...new Set(vodData.flatMap(video => normalizeVodTags(video.tags)))];
@@ -1890,21 +2355,20 @@
             advancedTagToggle.classList.toggle('active', advancedTagsOpen);
             advancedTagToggle.setAttribute('aria-expanded', String(advancedTagsOpen));
             advancedTagFilterContainer.classList.toggle('hidden', !advancedTagsOpen);
-            document.querySelectorAll('.vod-advanced-tags').forEach(element => {
-                element.classList.toggle('hidden', !advancedTagsOpen);
-            });
 
             if (!advancedTagsOpen) {
                 currentVodTag = 'all';
+                currentVodPage = 1;
                 advancedTagFilterContainer.querySelectorAll('.advanced-tag-btn').forEach((button, index) => {
                     button.classList.toggle('active', index === 0);
                 });
-                applyVodFilters();
             }
+            applyVodFilters();
         }
 
         function filterVodTag(element, tag) {
             currentVodTag = tag;
+            currentVodPage = 1;
             advancedTagFilterContainer.querySelectorAll('.advanced-tag-btn').forEach(button => {
                 button.classList.remove('active');
             });
@@ -1914,6 +2378,7 @@
 
         function filterVod(element, category) {
             currentVodCategory = category;
+            currentVodPage = 1;
             const btns = document.getElementById('vodFilterBtnContainer').querySelectorAll('.vod-category-btn');
             btns.forEach(btn => btn.classList.remove('active'));
             if (element) {
@@ -1922,29 +2387,170 @@
             applyVodFilters();
         }
 
-        function applyVodFilters() {
-            const cards = document.querySelectorAll('.video-card');
-            const searchText = searchVodInput.value.toLowerCase();
-            cards.forEach(card => {
-                const cat = card.getAttribute('data-category');
-                const title = card.querySelector('.video-title').textContent.toLowerCase();
-                const matchCat = (currentVodCategory === 'all' || cat === currentVodCategory);
-                const matchTag = (currentVodTag === 'all' || getCardVodTags(card).includes(currentVodTag));
-                const matchSearch = title.includes(searchText);
-                card.style.display = (matchCat && matchTag && matchSearch) ? '' : 'none';
+        function getFilteredVodData() {
+            const searchText = searchVodInput.value.trim().toLowerCase();
+            const favoriteIds = currentVodCategory === 'favorite'
+                ? new Set(getFavoriteVodIds())
+                : null;
+
+            const filteredVodData = vodData.filter(vodItem => {
+                const video = resolveItem(vodItem);
+                const category = getVodCategory(video.category);
+                const tags = normalizeVodTags(video.tags);
+                const story = getDisplayStory(video.story);
+                const searchableText = [
+                    getTitle(video),
+                    category,
+                    tags.join(' '),
+                    story
+                ].join(' ').toLowerCase();
+
+                const matchCategory = currentVodCategory === 'favorite'
+                    ? favoriteIds.has(String(video.id || "").trim())
+                    : (currentVodCategory === 'all' || category === currentVodCategory);
+                const matchTag = currentVodTag === 'all' || tags.includes(currentVodTag);
+                const matchSearch = !searchText || searchableText.includes(searchText);
+                return matchCategory && matchTag && matchSearch;
             });
+
+            return sortVodByAddedAt(filteredVodData);
+        }
+
+        function getVodPageItems(totalPages) {
+            if (totalPages <= 7) {
+                return Array.from({ length: totalPages }, (_, index) => index + 1);
+            }
+            if (currentVodPage <= 4) {
+                return [1, 2, 3, 4, 5, 'ellipsis', totalPages];
+            }
+            if (currentVodPage >= totalPages - 3) {
+                return [1, 'ellipsis', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+            }
+            return [1, 'ellipsis', currentVodPage - 2, currentVodPage - 1, currentVodPage, currentVodPage + 1, currentVodPage + 2, 'ellipsis', totalPages];
+        }
+
+        function renderVodPagination(totalPages) {
+            vodPagination.innerHTML = '';
+            if (totalPages <= 1) return;
+
+            const createPageButton = (label, page, options = {}) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = `vod-page-btn${options.active ? ' active' : ''}`;
+                button.textContent = label;
+                button.disabled = Boolean(options.disabled);
+                if (!button.disabled) button.addEventListener('click', () => changeVodPage(page));
+                return button;
+            };
+
+            vodPagination.appendChild(
+                createPageButton('上一頁', currentVodPage - 1, { disabled: currentVodPage === 1 })
+            );
+
+            getVodPageItems(totalPages).forEach(page => {
+                if (page === 'ellipsis') {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.className = 'vod-page-ellipsis';
+                    ellipsis.textContent = '…';
+                    vodPagination.appendChild(ellipsis);
+                    return;
+                }
+                vodPagination.appendChild(
+                    createPageButton(String(page), page, { active: page === currentVodPage })
+                );
+            });
+
+            vodPagination.appendChild(
+                createPageButton('下一頁', currentVodPage + 1, { disabled: currentVodPage === totalPages })
+            );
+        }
+
+        function renderVodPage() {
+            const filteredVodData = getFilteredVodData();
+            const totalItems = filteredVodData.length;
+
+            if (totalItems === 0) {
+                currentVodPage = 1;
+                vodResultSummary.textContent = '找到 0 支影片';
+                if (currentVodCategory === 'favorite') {
+                    const hasAnyFavorites = getFavoriteVodIds().length > 0;
+                    vodRowContainer.innerHTML = hasAnyFavorites
+                        ? '<p class="vod-empty-state favorite-empty-state">沒有找到符合條件的收藏影片，可以試試其他關鍵字或清除篩選。</p>'
+                        : '<p class="vod-empty-state favorite-empty-state">你還沒有收藏影片。<br>看到喜歡的 VOD，可以點卡片右下角的愛心收藏起來。</p>';
+                } else {
+                    vodRowContainer.innerHTML = '<p class="vod-empty-state">沒有找到符合條件的 VOD，可以試試其他關鍵字或清除篩選。</p>';
+                }
+                vodPagination.innerHTML = '';
+                return;
+            }
+
+            const totalPages = Math.ceil(totalItems / VOD_ITEMS_PER_PAGE);
+            currentVodPage = Math.min(Math.max(currentVodPage, 1), totalPages);
+            const startIndex = (currentVodPage - 1) * VOD_ITEMS_PER_PAGE;
+            const pageVodData = filteredVodData.slice(startIndex, startIndex + VOD_ITEMS_PER_PAGE);
+            const hasFilters = currentVodCategory !== 'all' || currentVodTag !== 'all' || searchVodInput.value.trim() !== '';
+
+            renderVod(pageVodData);
+            vodResultSummary.textContent = `${hasFilters ? '找到' : '共'} ${totalItems} 支影片，目前第 ${currentVodPage} / ${totalPages} 頁`;
+            renderVodPagination(totalPages);
+        }
+
+        function changeVodPage(page) {
+            currentVodPage = page;
+            renderVodPage();
+        }
+
+        function applyVodFilters() {
+            renderVodPage();
         }
         renderAdvancedTagFilters();
+        renderVodPage();
 
         // =========================================================================
-        // 歌單 篩選與搜尋 (同時搜歌名與歌手)
+        // 歌單篩選、搜尋與真正分頁
         // =========================================================================
         let currentSongFilter = 'all';
-        const searchSongInput = document.getElementById('searchSongInput');
-        searchSongInput.addEventListener('input', applySongFilters);
+
+        function preserveSongListHeight() {
+            const currentListHeight = songListContainer.getBoundingClientRect().height;
+            if (currentListHeight > 0) {
+                songListContainer.style.minHeight = `${Math.ceil(currentListHeight)}px`;
+            }
+        }
+
+        searchSongInput.addEventListener('input', () => {
+            songSearchClearBtn.classList.toggle('hidden', searchSongInput.value.length === 0);
+            clearTimeout(songSearchDebounceTimer);
+            songSearchDebounceTimer = setTimeout(() => {
+                preserveSongListHeight();
+                currentSongPage = 1;
+                applySongFilters();
+
+                if (searchSongInput.value.trim() === '') {
+                    requestAnimationFrame(() => {
+                        songListContainer.style.minHeight = '';
+                    });
+                }
+            }, SONG_SEARCH_DEBOUNCE_MS);
+        });
+
+        songSearchClearBtn.addEventListener('click', event => {
+            event.preventDefault();
+            event.stopPropagation();
+            clearTimeout(songSearchDebounceTimer);
+            preserveSongListHeight();
+            searchSongInput.value = '';
+            songSearchClearBtn.classList.add('hidden');
+            currentSongPage = 1;
+            applySongFilters();
+            requestAnimationFrame(() => {
+                songListContainer.style.minHeight = '';
+            });
+        });
 
         function filterSong(element, filterValue) {
             currentSongFilter = filterValue;
+            currentSongPage = 1;
             const btns = document.getElementById('songFilterBtnContainer').querySelectorAll('.filter-btn');
             btns.forEach(btn => btn.classList.remove('active'));
             if (element) {
@@ -1953,31 +2559,102 @@
             applySongFilters();
         }
 
-        function applySongFilters() {
-            const rows = document.querySelectorAll('.song-row');
-            const searchText = searchSongInput.value.toLowerCase();
-            rows.forEach(row => {
-                const lang = row.getAttribute('data-lang');
-                const status = row.getAttribute('data-status');
-                const title = row.querySelector('.song-title').textContent.toLowerCase();
-                const singer = row.querySelector('.song-singer').textContent.toLowerCase();
-                
-                // 檢查是否符合標籤 (如果點選待練，看 status；如果是語系，看 lang)
-                let matchFilter = false;
-                if (currentSongFilter === 'all') {
-                    matchFilter = true;
-                } else if (currentSongFilter === '待練') {
-                    matchFilter = (status === '待練');
-                } else {
-                    matchFilter = (lang === currentSongFilter);
-                }
+        function getFilteredSongData() {
+            const keyword = normalizeSongSearchKeyword(searchSongInput.value);
 
-                // 搜尋框可以搜歌名或歌手
-                const matchSearch = title.includes(searchText) || singer.includes(searchText);
-
-                row.style.display = (matchFilter && matchSearch) ? '' : 'none';
+            return songData.filter(songItem => {
+                const song = resolveItem(songItem);
+                const isPracticing = song.status === '待練' || song.status === '練習中';
+                const matchFilter = currentSongFilter === 'all'
+                    || (currentSongFilter === '練習中' ? isPracticing : song.language === currentSongFilter);
+                const matchSearch = !keyword || getSongSearchText(song).includes(keyword);
+                return matchFilter && matchSearch;
             });
         }
+
+        function getSongPageItems(totalPages) {
+            if (totalPages <= 7) {
+                return Array.from({ length: totalPages }, (_, index) => index + 1);
+            }
+            if (currentSongPage <= 4) {
+                return [1, 2, 3, 4, 5, 'ellipsis', totalPages];
+            }
+            if (currentSongPage >= totalPages - 3) {
+                return [1, 'ellipsis', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+            }
+            return [1, 'ellipsis', currentSongPage - 2, currentSongPage - 1, currentSongPage, currentSongPage + 1, currentSongPage + 2, 'ellipsis', totalPages];
+        }
+
+        function renderSongPagination(totalPages) {
+            songPagination.innerHTML = '';
+            if (totalPages <= 1) return;
+
+            const createPageButton = (label, page, options = {}) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = `vod-page-btn${options.active ? ' active' : ''}`;
+                button.textContent = label;
+                button.disabled = Boolean(options.disabled);
+                if (!button.disabled) button.addEventListener('click', () => changeSongPage(page));
+                return button;
+            };
+
+            songPagination.appendChild(
+                createPageButton('上一頁', currentSongPage - 1, { disabled: currentSongPage === 1 })
+            );
+
+            getSongPageItems(totalPages).forEach(page => {
+                if (page === 'ellipsis') {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.className = 'vod-page-ellipsis';
+                    ellipsis.textContent = '…';
+                    songPagination.appendChild(ellipsis);
+                    return;
+                }
+                songPagination.appendChild(
+                    createPageButton(String(page), page, { active: page === currentSongPage })
+                );
+            });
+
+            songPagination.appendChild(
+                createPageButton('下一頁', currentSongPage + 1, { disabled: currentSongPage === totalPages })
+            );
+        }
+
+        function renderSongPage() {
+            const filteredSongData = getFilteredSongData();
+            const totalItems = filteredSongData.length;
+
+            if (totalItems === 0) {
+                currentSongPage = 1;
+                songResultSummary.textContent = '共 0 首符合搜尋';
+                songListContainer.innerHTML = '<p class="vod-empty-state">沒有找到符合條件的歌曲，可以試試其他關鍵字或清除篩選。</p>';
+                songPagination.innerHTML = '';
+                return;
+            }
+
+            const totalPages = Math.ceil(totalItems / SONG_ITEMS_PER_PAGE);
+            currentSongPage = Math.min(Math.max(currentSongPage, 1), totalPages);
+            const startIndex = (currentSongPage - 1) * SONG_ITEMS_PER_PAGE;
+            const pageSongData = filteredSongData.slice(startIndex, startIndex + SONG_ITEMS_PER_PAGE);
+            const hasFilters = currentSongFilter !== 'all' || searchSongInput.value.trim() !== '';
+
+            renderSongs(pageSongData);
+            songResultSummary.textContent = hasFilters
+                ? `共 ${totalItems} 首符合搜尋，目前第 ${currentSongPage} / ${totalPages} 頁`
+                : `共 ${totalItems} 首歌曲，目前第 ${currentSongPage} / ${totalPages} 頁`;
+            renderSongPagination(totalPages);
+        }
+
+        function changeSongPage(page) {
+            currentSongPage = page;
+            renderSongPage();
+        }
+
+        function applySongFilters() {
+            renderSongPage();
+        }
+        renderSongPage();
 
         // =========================================================================
         // 輪播圖動態控制與計時器邏輯 (安全封裝)

@@ -1534,6 +1534,187 @@
             }
         }
 
+        /* ================================================================
+           手機版第二階段補強：修正小螢幕剩餘跑版
+           ================================================================ */
+        @media (max-width: 850px) {
+            .home-actions,
+            .home-copy,
+            .home-btn,
+            .museum-card,
+            .identity-card,
+            .marshmallow-sky,
+            .marshmallow-reader,
+            .video-card,
+            .song-row {
+                max-width: 100%;
+            }
+
+            .home-actions {
+                width: 100%;
+            }
+
+            .home-btn {
+                white-space: normal;
+                word-break: keep-all;
+                line-height: 1.45;
+            }
+
+            .marshmallow-reader {
+                width: 100%;
+                border-radius: 28px;
+                padding: 30px 20px;
+                box-shadow: 0 16px 38px rgba(74, 93, 112, .14);
+            }
+
+            .marshmallow-reader h3 {
+                font-size: clamp(1.6em, 8vw, 2.15em);
+                line-height: 1.2;
+            }
+
+            .marshmallow-reader-text {
+                max-width: 100%;
+                font-size: 1em;
+                line-height: 1.85;
+                overflow-wrap: anywhere;
+            }
+
+            .marshmallow-toolbar {
+                justify-content: stretch;
+            }
+
+            .marshmallow-link,
+            .marshmallow-back {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+                min-height: 42px;
+            }
+
+            .video-info.has-favorite-button {
+                padding-bottom: 64px;
+            }
+
+            .favorite-btn {
+                right: 14px;
+                bottom: 14px;
+            }
+
+            .video-card {
+                overflow: hidden;
+            }
+
+            .tags,
+            .advanced-tags {
+                overflow-wrap: anywhere;
+                line-height: 1.6;
+            }
+        }
+
+        @media (max-width: 430px) {
+            header {
+                padding: 12px;
+            }
+
+            .brand-wrap {
+                width: 100%;
+            }
+
+            .top-nav {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                overflow: visible;
+                gap: 8px;
+                width: 100%;
+            }
+
+            .top-nav .nav-dropdown,
+            .top-nav .nav-main,
+            .top-nav .archive-shortcut {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .nav-dropdown-toggle,
+            .top-nav .nav-main,
+            .top-nav .archive-shortcut {
+                width: 100%;
+                min-width: 0;
+                justify-content: center;
+                text-align: center;
+                font-size: .9em;
+                padding: 9px 8px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .top-nav .nav-main {
+                grid-column: 1 / -1;
+            }
+
+            .nav-dropdown-menu {
+                left: 0;
+                right: auto;
+                transform: translateY(8px);
+                width: min(260px, calc(100vw - 24px));
+            }
+
+            .nav-dropdown:hover .nav-dropdown-menu,
+            .nav-dropdown.is-open .nav-dropdown-menu {
+                transform: translateY(0);
+            }
+
+            .home-hero {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            .home-copy {
+                min-width: 0;
+            }
+
+            .home-title {
+                overflow-wrap: anywhere;
+            }
+
+            .home-lead {
+                overflow-wrap: anywhere;
+            }
+
+            .identity-card {
+                border-radius: 24px;
+            }
+
+            .identity-card img {
+                border-radius: 18px;
+            }
+
+            .marshmallow-sky {
+                border-radius: 22px;
+                padding: 20px 12px;
+            }
+
+            .marshmallow-reader {
+                border-radius: 24px;
+                padding: 26px 18px;
+            }
+
+            .marshmallow-reader-text {
+                font-size: .98em;
+                line-height: 1.85;
+            }
+
+            .filter-container,
+            .advanced-tag-filter-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .filter-btn {
+                white-space: normal;
+                line-height: 1.35;
+            }
+        }
+
         .hidden {
             display: none !important;
         }

@@ -1229,6 +1229,311 @@
             .vod-search-wrap .search-input, .song-search-wrap .search-input { padding-right: 50px; }
         }
 
+        /* ================================================================
+           手機版第一階段補強：防爆版、導覽、首頁、館藏篩選與卡片
+           ================================================================ */
+        @media (max-width: 850px) {
+            html, body {
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
+            header {
+                position: sticky;
+                top: 0;
+                z-index: 30;
+                flex-wrap: wrap;
+                gap: 10px;
+                padding: 12px 14px;
+            }
+
+            .brand-wrap {
+                min-width: 0;
+                flex: 1 1 auto;
+            }
+
+            .brand-mark {
+                width: 42px;
+                height: 42px;
+                flex: 0 0 auto;
+            }
+
+            .brand-text h1 {
+                font-size: 1em;
+                white-space: nowrap;
+            }
+
+            .top-nav {
+                flex: 1 1 100%;
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                order: 2;
+            }
+
+            .top-nav .nav-dropdown,
+            .top-nav .nav-main,
+            .top-nav .archive-shortcut {
+                flex: 0 1 auto;
+            }
+
+            .nav-dropdown-toggle,
+            .top-nav .nav-main,
+            .top-nav .archive-shortcut {
+                min-height: 40px;
+                padding: 9px 12px;
+                border-radius: 999px;
+                background: rgba(255,255,255,.55);
+                border: 1px solid rgba(221,208,183,.7);
+                white-space: nowrap;
+            }
+
+            .nav-dropdown-menu {
+                left: 50%;
+                right: auto;
+                transform: translateX(-50%) translateY(8px);
+                width: min(260px, calc(100vw - 28px));
+                max-width: calc(100vw - 28px);
+            }
+
+            .nav-dropdown:hover .nav-dropdown-menu,
+            .nav-dropdown.is-open .nav-dropdown-menu {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            .home-hero {
+                min-height: auto;
+                padding: 92px 18px 48px;
+                gap: 24px;
+            }
+
+            .home-title {
+                font-size: clamp(2.35em, 12vw, 3.35em);
+                line-height: 1.08;
+                letter-spacing: -.055em;
+            }
+
+            .home-lead {
+                font-size: 1em;
+                line-height: 1.75;
+            }
+
+            .home-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .home-btn {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .museum-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                width: min(100% - 18px, 1400px);
+                padding: 26px 0 42px;
+            }
+
+            .hero-slider {
+                min-height: 360px;
+            }
+
+            .slide {
+                min-height: 360px;
+            }
+
+            .slide-content {
+                width: 100%;
+                padding: 34px 22px;
+                background: linear-gradient(to bottom, rgba(61,52,73,.96) 0%, rgba(61,52,73,.78) 70%, rgba(61,52,73,.28) 100%);
+            }
+
+            .slide-title {
+                font-size: clamp(1.7em, 9vw, 2.45em);
+                line-height: 1.15;
+            }
+
+            .slide-desc {
+                font-size: .98em;
+                line-height: 1.7;
+            }
+
+            .mode-switch-container {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 10px;
+                align-items: stretch;
+            }
+
+            .mode-btn,
+            .public-replay-link {
+                width: 100%;
+                justify-content: center;
+                min-height: 46px;
+                padding: 11px 14px;
+                text-align: center;
+            }
+
+            .controls-container {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 14px;
+                align-items: stretch;
+            }
+
+            .filter-container {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 9px;
+                width: 100%;
+            }
+
+            .filter-btn {
+                width: 100%;
+                min-height: 42px;
+                padding: 9px 10px;
+                white-space: nowrap;
+                text-align: center;
+            }
+
+            .advanced-tag-filter-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                padding: 12px;
+            }
+
+            .search-container,
+            .vod-search-wrap,
+            .song-search-wrap {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .search-input {
+                width: 100%;
+                min-height: 46px;
+                font-size: 16px;
+            }
+
+            .video-row {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                min-height: 420px;
+            }
+
+            .video-card {
+                min-height: auto;
+            }
+
+            .video-card img,
+            .video-placeholder {
+                height: 180px;
+            }
+
+            .video-title {
+                font-size: 1.08em;
+                line-height: 1.35;
+            }
+
+            .favorite-btn {
+                width: 44px;
+                height: 44px;
+            }
+
+            .song-list-container {
+                min-height: 420px;
+            }
+
+            .song-row {
+                display: block;
+                padding: 16px;
+            }
+
+            .song-header,
+            .song-tags-wrap {
+                flex-wrap: wrap;
+            }
+
+            .song-title {
+                overflow-wrap: anywhere;
+            }
+
+            .song-performance-list {
+                margin-left: 0;
+                margin-top: 12px;
+            }
+
+            .vod-pagination {
+                gap: 8px;
+            }
+
+            .vod-page-btn,
+            .vod-page-ellipsis {
+                min-width: 38px;
+                min-height: 38px;
+            }
+
+            .story-section {
+                padding: 54px 18px;
+            }
+
+            .section-heading h2 {
+                font-size: clamp(2em, 10vw, 3em);
+                line-height: 1.15;
+            }
+
+            .annual-card {
+                padding: 28px 20px;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .top-nav {
+                justify-content: flex-start;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 2px;
+                scrollbar-width: none;
+            }
+
+            .top-nav::-webkit-scrollbar {
+                display: none;
+            }
+
+            .home-hero {
+                padding: 84px 14px 40px;
+            }
+
+            .home-title {
+                font-size: clamp(2.05em, 11vw, 2.8em);
+            }
+
+            .filter-container,
+            .advanced-tag-filter-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+            }
+
+            .filter-btn {
+                font-size: .9em;
+                padding: 9px 7px;
+            }
+
+            .video-card img,
+            .video-placeholder {
+                height: 160px;
+            }
+
+            .slide-content {
+                padding: 28px 18px;
+            }
+        }
+
         .hidden {
             display: none !important;
         }

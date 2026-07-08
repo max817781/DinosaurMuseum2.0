@@ -40,6 +40,7 @@
                 radial-gradient(circle at top right, rgba(232, 223, 243, 0.7), transparent 30%),
                 linear-gradient(180deg, #fff9e9 0%, #f8efd9 100%);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         a {
@@ -488,8 +489,6 @@
                 padding-top: 18px;
             }
 
-            .topbar,
-            .controls,
             .hero,
             .song-row {
                 grid-template-columns: 1fr;
@@ -497,23 +496,108 @@
 
             .topbar,
             .controls {
+                flex-direction: column;
                 align-items: stretch;
+                gap: 14px;
+            }
+
+            .brand {
+                align-items: center;
+            }
+
+            .brand img {
+                width: 52px;
+                height: 52px;
+                flex: 0 0 auto;
+            }
+
+            .brand-title {
+                font-size: 1.55rem;
+            }
+
+            .brand-subtitle {
+                font-size: 0.9rem;
             }
 
             .home-link {
                 width: 100%;
+                min-height: 48px;
+            }
+
+            .hero {
+                gap: 16px;
+                margin-bottom: 18px;
+            }
+
+            .hero-copy {
+                padding: 26px 24px;
+            }
+
+            .hero h2 {
+                font-size: clamp(2.25rem, 12vw, 3.25rem);
+                letter-spacing: -0.06em;
+            }
+
+            .hero p {
+                font-size: 1rem;
+                line-height: 1.85;
             }
 
             .hero-card {
                 min-height: auto;
+                padding: 22px 24px;
+            }
+
+            .songbook-panel {
+                padding: 16px;
+                border-radius: 24px;
+            }
+
+            .filter-row {
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            .filter-btn {
+                width: 100%;
+                min-height: 44px;
+                padding: 10px 12px;
+                white-space: nowrap;
+                text-align: center;
             }
 
             .search-wrap {
                 min-width: 100%;
+                width: 100%;
+            }
+
+            .search-input {
+                width: 100%;
+                font-size: 0.98rem;
             }
 
             .song-row {
                 display: block;
+                padding: 18px;
+                border-radius: 22px;
+            }
+
+            .song-title-line {
+                display: block;
+            }
+
+            .song-title {
+                font-size: 1.18rem;
+                margin-bottom: 8px;
+                overflow-wrap: anywhere;
+            }
+
+            .song-artist {
+                display: block;
+                font-size: 0.98rem;
+                margin-bottom: 10px;
             }
 
             .song-actions {
@@ -522,8 +606,66 @@
                 margin-top: 12px;
             }
 
+            .song-link,
+            .performance-link,
+            .song-muted {
+                min-height: 42px;
+                padding: 9px 14px;
+            }
+
             .song-list {
                 min-height: 420px;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .songbook-page {
+                width: min(100% - 16px, 1180px);
+                padding-top: 14px;
+            }
+
+            .brand {
+                gap: 10px;
+            }
+
+            .brand img {
+                width: 46px;
+                height: 46px;
+                border-radius: 16px;
+            }
+
+            .brand-title {
+                font-size: 1.35rem;
+            }
+
+            .hero-copy {
+                padding: 24px 20px;
+            }
+
+            .hero h2 {
+                font-size: clamp(2rem, 11vw, 2.7rem);
+            }
+
+            .songbook-panel {
+                padding: 14px;
+            }
+
+            .filter-row {
+                gap: 8px;
+            }
+
+            .filter-btn {
+                min-height: 42px;
+                padding: 9px 8px;
+                font-size: 0.92rem;
+            }
+
+            .result-summary {
+                padding: 0 4px;
+            }
+
+            .song-row {
+                padding: 16px;
             }
         }
     </style>

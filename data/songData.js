@@ -11,6 +11,26 @@ window.museumDataParts.songData = [
         "link": "https://discord.com/channels/1437520274659479625/1473967136908251321/1515228468105969814",
         "image": "images/my_cover_01.jpg"
     },
+	{
+        "id": "Little_shooting_star",
+        "type": "song",
+        "title": "小流星",
+        "artist": "汪蘇龍x吳映潔",
+        "language": "中文",
+        "status": "已唱",
+        "link": "",
+        "image": ""
+    },
+	{
+        "id": "A_Little_Happiness",
+        "type": "song",
+        "title": "小幸運",
+        "artist": "田馥甄Hebe",
+        "language": "中文",
+        "status": "已唱",
+        "link": "",
+        "image": ""
+    },
     {
         "id": "song_xihuan",
         "type": "song",
@@ -41,12 +61,12 @@ window.museumDataParts.songData = [
         "link": "https://discord.com/channels/1437520274659479625/1473967136908251321/1516778060677124106",
         "image": "images/my_cover_03.jpg"
     },
-    {
-        "id": "song_thousand_years",
+	{
+        "id": "Iwanttoleaveyou",
         "type": "song",
-        "title": "A Thousand Years",
-        "artist": "Christina Perri",
-        "language": "英文",
+        "title": "想要離開妳",
+        "artist": "黃大謙",
+        "language": "中文",
         "status": "已唱",
         "link": "",
         "image": ""

@@ -1718,9 +1718,228 @@
         .hidden {
             display: none !important;
         }
+
+        /* ================================================================
+           小恐龍探頭彩蛋：點呆毛後播放跳出影片
+           ================================================================ */
+        .nono-peek-widget {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 80;
+            display: grid;
+            gap: 8px;
+            justify-items: end;
+            transition: opacity .22s ease, transform .22s ease;
+        }
+
+        .nono-peek-widget.is-hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(18px);
+        }
+
+        .nono-peek-close {
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(221,208,183,.9);
+            border-radius: 50%;
+            background: rgba(255,253,247,.92);
+            color: var(--brown);
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(74,64,56,.12);
+        }
+
+        .nono-peek-trigger {
+            border: 1px solid rgba(145,169,111,.42);
+            border-radius: 26px;
+            padding: 10px 12px 12px;
+            background: rgba(255,253,247,.94);
+            color: var(--purple);
+            cursor: pointer;
+            box-shadow: 0 18px 42px rgba(74,64,56,.18);
+            display: grid;
+            justify-items: center;
+            gap: 6px;
+            min-width: 124px;
+            animation: nonoPeekFloat 2.6s ease-in-out infinite;
+        }
+
+        .nono-peek-trigger:hover,
+        .nono-peek-trigger:focus-visible {
+            transform: translateY(-3px);
+            background: #fff;
+            outline: none;
+        }
+
+        .nono-peek-trigger img {
+            width: 78px;
+            height: 78px;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 10px rgba(85,75,105,.18));
+        }
+
+        .nono-peek-hint {
+            font-size: .82em;
+            font-weight: 900;
+            color: var(--sage-deep);
+            white-space: nowrap;
+        }
+
+        .nono-pop-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 120;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(32, 28, 36, .54);
+            backdrop-filter: blur(3px);
+        }
+
+        .nono-pop-layer.is-active {
+            display: flex;
+        }
+
+        .nono-pop-card {
+            position: relative;
+            width: min(760px, 94vw);
+            border-radius: 30px;
+            overflow: hidden;
+            background: #111;
+            box-shadow: 0 28px 90px rgba(0,0,0,.34);
+            animation: nonoPopBounce .32s cubic-bezier(.2,1.3,.35,1) both;
+        }
+
+        .nono-pop-video {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 78vh;
+            object-fit: contain;
+            background: #111;
+        }
+
+        .nono-pop-layer.is-waiting .nono-pop-video {
+            filter: saturate(.92) brightness(.92);
+        }
+
+        .nono-hair-hotspot {
+            position: absolute;
+            left: 34%;
+            top: 13%;
+            width: 30%;
+            height: 18%;
+            border: 0;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .01);
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .nono-hair-hotspot::after {
+            content: "點擊呆毛";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: rgba(255,253,247,.94);
+            color: var(--sage-deep);
+            font-size: 1.12em;
+            font-weight: 900;
+            white-space: nowrap;
+            box-shadow: 0 10px 24px rgba(0,0,0,.14);
+            animation: nonoHintPulse 1.5s ease-in-out infinite;
+        }
+
+        .nono-hair-hotspot:hover::after,
+        .nono-hair-hotspot:focus-visible::after {
+            background: #fff;
+            color: var(--purple);
+        }
+
+        .nono-pop-layer:not(.is-waiting) .nono-hair-hotspot {
+            display: none;
+        }
+
+        .nono-pop-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 36px;
+            height: 36px;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255,253,247,.9);
+            color: var(--brown);
+            cursor: pointer;
+            font-size: 1.25em;
+            box-shadow: 0 8px 22px rgba(0,0,0,.18);
+        }
+
+        @keyframes nonoPeekFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes nonoPopBounce {
+            from { transform: scale(.86) translateY(18px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        @keyframes nonoHintPulse {
+            0%, 100% { transform: translateX(-50%) translateY(-50%); }
+            50% { transform: translateX(-50%) translateY(calc(-50% - 4px)); }
+        }
+
+        @media (max-width: 850px) {
+            .nono-peek-widget {
+                right: 12px;
+                bottom: 12px;
+            }
+
+            .nono-peek-trigger {
+                min-width: 104px;
+                border-radius: 22px;
+            }
+
+            .nono-peek-trigger img {
+                width: 64px;
+                height: 64px;
+            }
+
+            .nono-pop-card {
+                width: min(420px, 94vw);
+                border-radius: 24px;
+            }
+
+            .nono-hair-hotspot::after {
+                font-size: 1em;
+                padding: 9px 15px;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="nono-peek-widget" id="nonoPeekWidget" aria-live="polite">
+        <button class="nono-peek-close" id="nonoPeekClose" type="button" aria-label="關閉小恐龍彩蛋">×</button>
+        <button class="nono-peek-trigger" id="nonoPeekTrigger" type="button" aria-label="點一下呆毛，看看諾諾會做什麼">
+            <img src="images/nono-chibi.png" alt="" aria-hidden="true">
+            <span class="nono-peek-hint">點一下呆毛？</span>
+        </button>
+    </div>
+
+    <div class="nono-pop-layer" id="nonoPopLayer" aria-hidden="true">
+        <div class="nono-pop-card" role="dialog" aria-label="諾諾跳出小彩蛋">
+            <button class="nono-pop-close" id="nonoPopClose" type="button" aria-label="關閉影片">×</button>
+            <video class="nono-pop-video" id="nonoPopVideo" src="media/nono-pop.mp4" preload="metadata" playsinline></video>
+            <button class="nono-hair-hotspot" id="nonoHairHotspot" type="button" aria-label="點一下呆毛"></button>
+        </div>
+    </div>
+
     <header>
         <div class="brand-wrap">
             <div class="brand-mark"><img src="images/nono-chibi.png" alt="諾諾角色圖"></div>
@@ -3156,6 +3375,101 @@
         // =========================================================================
         // 輪播圖動態控制與計時器邏輯 (安全封裝)
         // =========================================================================
+        // =========================================================================
+        // 小恐龍探頭彩蛋：點呆毛後播放跳出影片
+        // =========================================================================
+        const NONO_PEEK_STORAGE_KEY = "nonoMuseumIntroSeen";
+        const nonoPeekWidget = document.getElementById('nonoPeekWidget');
+        const nonoPeekTrigger = document.getElementById('nonoPeekTrigger');
+        const nonoPeekClose = document.getElementById('nonoPeekClose');
+        const nonoPopLayer = document.getElementById('nonoPopLayer');
+        const nonoPopVideo = document.getElementById('nonoPopVideo');
+        const nonoPopClose = document.getElementById('nonoPopClose');
+        const nonoHairHotspot = document.getElementById('nonoHairHotspot');
+
+        function hideNonoPeekWidget() {
+            nonoPeekWidget?.classList.add('is-hidden');
+        }
+
+        function showNonoPeekWidget() {
+            nonoPeekWidget?.classList.remove('is-hidden');
+        }
+
+        function openNonoPopLayer({ waitForHair = false } = {}) {
+            nonoPopLayer?.classList.add('is-active');
+            nonoPopLayer?.setAttribute('aria-hidden', 'false');
+            nonoPopLayer?.classList.toggle('is-waiting', waitForHair);
+
+            if (!nonoPopVideo) return;
+            nonoPopVideo.currentTime = 0;
+            nonoPopVideo.muted = false;
+            nonoPopVideo.controls = false;
+
+            if (waitForHair) {
+                nonoPopVideo.pause();
+                return;
+            }
+
+            playNonoPopVideo();
+        }
+
+        function playNonoPopVideo() {
+            if (!nonoPopVideo) return;
+            nonoPopLayer?.classList.remove('is-waiting');
+            const playPromise = nonoPopVideo.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(error => {
+                    console.warn('諾諾跳出影片播放失敗，可能是瀏覽器限制音訊自動播放。', error);
+                    nonoPopVideo.controls = true;
+                });
+            }
+        }
+
+        function closeNonoPopLayer(markPlayed = false) {
+            nonoPopVideo?.pause();
+            nonoPopLayer?.classList.remove('is-active');
+            nonoPopLayer?.classList.remove('is-waiting');
+            nonoPopLayer?.setAttribute('aria-hidden', 'true');
+
+            if (markPlayed) {
+                try {
+                    localStorage.setItem(NONO_PEEK_STORAGE_KEY, 'yes');
+                } catch (error) {
+                    console.warn('無法記錄小恐龍彩蛋狀態。', error);
+                }
+            }
+        }
+
+        try {
+            if (localStorage.getItem(NONO_PEEK_STORAGE_KEY) !== 'yes') {
+                window.setTimeout(() => openNonoPopLayer({ waitForHair: true }), 650);
+            }
+        } catch (error) {
+            console.warn('無法讀取小恐龍彩蛋狀態。', error);
+        }
+
+        showNonoPeekWidget();
+        nonoPeekTrigger?.addEventListener('click', () => openNonoPopLayer({ waitForHair: true }));
+        nonoPeekClose?.addEventListener('click', hideNonoPeekWidget);
+        nonoHairHotspot?.addEventListener('click', () => {
+            try {
+                localStorage.setItem(NONO_PEEK_STORAGE_KEY, 'yes');
+            } catch (error) {
+                console.warn('無法記錄小恐龍開場狀態。', error);
+            }
+            playNonoPopVideo();
+        });
+        nonoPopClose?.addEventListener('click', () => closeNonoPopLayer(true));
+        nonoPopVideo?.addEventListener('ended', () => closeNonoPopLayer(true));
+        nonoPopLayer?.addEventListener('click', event => {
+            if (event.target === nonoPopLayer) closeNonoPopLayer(true);
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && nonoPopLayer?.classList.contains('is-active')) {
+                closeNonoPopLayer(true);
+            }
+        });
+
         let slideIndex = 0;
         let slideIntervalTimer;
         const slides = document.querySelectorAll('.slide');

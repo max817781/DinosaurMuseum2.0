@@ -477,6 +477,44 @@
             min-height: 600px;
             overflow-anchor: none;
         }
+        .songbook-shortcut {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin: 10px 0 16px;
+            padding: 16px 18px;
+            border-radius: 22px;
+            border: 1px solid var(--line-warm, #ddd0b7);
+            background: rgba(255, 253, 247, .72);
+            box-shadow: 0 12px 28px rgba(95,76,49,.07);
+        }
+        .songbook-shortcut-text {
+            color: var(--muted-brown, #786d63);
+            line-height: 1.6;
+        }
+        .songbook-shortcut-text strong {
+            display: block;
+            color: var(--purple, #554b69);
+            font-size: 1.05em;
+        }
+        .songbook-shortcut-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: var(--sage, #91a96f);
+            color: #fff;
+            font-weight: bold;
+            white-space: nowrap;
+            text-decoration: none;
+            box-shadow: 0 10px 22px rgba(97,120,73,.18);
+        }
+        .songbook-shortcut-btn:hover {
+            background: var(--sage-deep, #617849);
+        }
         .song-row {
             display: flex;
             align-items: center;
@@ -1786,6 +1824,70 @@
             white-space: nowrap;
         }
 
+        .nono-pet-bubble {
+            position: relative;
+            max-width: 190px;
+            padding: 10px 14px;
+            border-radius: 18px 18px 6px 18px;
+            background: rgba(255,253,247,.96);
+            color: var(--purple);
+            font-size: .9em;
+            font-weight: 900;
+            box-shadow: 0 12px 28px rgba(74,64,56,.16);
+            border: 1px solid rgba(221,208,183,.78);
+            opacity: 0;
+            transform: translateY(8px);
+            pointer-events: none;
+            transition: opacity .22s ease, transform .22s ease;
+        }
+
+        .nono-pet-bubble.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .nono-pet-menu {
+            width: min(220px, calc(100vw - 28px));
+            padding: 12px;
+            border-radius: 22px;
+            background: rgba(255,253,247,.96);
+            border: 1px solid rgba(221,208,183,.86);
+            box-shadow: 0 18px 44px rgba(74,64,56,.18);
+            display: none;
+            gap: 8px;
+        }
+
+        .nono-peek-widget.is-menu-open .nono-pet-menu {
+            display: grid;
+        }
+
+        .nono-pet-menu-title {
+            color: var(--sage-deep);
+            font-size: .86em;
+            font-weight: 900;
+            padding: 2px 4px 4px;
+        }
+
+        .nono-pet-action {
+            width: 100%;
+            min-height: 40px;
+            border: 0;
+            border-radius: 999px;
+            background: #f3ead7;
+            color: var(--brown);
+            cursor: pointer;
+            font-weight: 900;
+            text-align: left;
+            padding: 9px 13px;
+        }
+
+        .nono-pet-action:hover,
+        .nono-pet-action:focus-visible {
+            background: var(--sage-soft);
+            color: var(--sage-deep);
+            outline: none;
+        }
+
         .nono-pop-layer {
             position: fixed;
             inset: 0;
@@ -1921,14 +2023,32 @@
                 padding: 9px 15px;
             }
         }
+        @media (max-width: 850px) {
+            .songbook-shortcut {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .songbook-shortcut-btn {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="nono-peek-widget" id="nonoPeekWidget" aria-live="polite">
+        <div class="nono-pet-bubble" id="nonoPetBubble">Rawr! Rawr!</div>
+        <div class="nono-pet-menu" id="nonoPetMenu" aria-label="小恐龍導覽選單">
+            <div class="nono-pet-menu-title">小恐龍導覽員</div>
+            <button class="nono-pet-action" type="button" data-pet-action="hair">🦖 點擊呆毛</button>
+            <button class="nono-pet-action" type="button" data-pet-action="memory">🎲 抽一段回憶</button>
+            <button class="nono-pet-action" type="button" data-pet-action="songbook">🎵 看歌單</button>
+            <button class="nono-pet-action" type="button" data-pet-action="archive">📺 回到館藏</button>
+        </div>
         <button class="nono-peek-close" id="nonoPeekClose" type="button" aria-label="關閉小恐龍彩蛋">×</button>
         <button class="nono-peek-trigger" id="nonoPeekTrigger" type="button" aria-label="點一下呆毛，看看諾諾會做什麼">
             <img src="images/nono-chibi.png" alt="" aria-hidden="true">
-            <span class="nono-peek-hint">點一下呆毛？</span>
+            <span class="nono-peek-hint">小恐龍導覽員</span>
         </button>
     </div>
 
@@ -2153,6 +2273,13 @@
                     <input type="text" id="searchSongInput" class="search-input" placeholder="搜尋 歌手 或 歌名...">
                     <button class="song-search-clear hidden" id="songSearchClearBtn" type="button" aria-label="清除歌單搜尋" title="清除歌單搜尋">×</button>
                 </div>
+            </div>
+            <div class="songbook-shortcut">
+                <div class="songbook-shortcut-text">
+                    <strong>想看完整歌單收藏冊？</strong>
+                    <span>獨立歌單頁比較適合分享，也比較適合手機慢慢翻。</span>
+                </div>
+                <a class="songbook-shortcut-btn" href="songbook.html">🎵 開啟獨立歌單頁</a>
             </div>
             <div id="songResultSummary" class="vod-result-summary" aria-live="polite"></div>
             <div class="song-list-container" id="songListContainer"></div>
@@ -3386,6 +3513,10 @@
         const nonoPopVideo = document.getElementById('nonoPopVideo');
         const nonoPopClose = document.getElementById('nonoPopClose');
         const nonoHairHotspot = document.getElementById('nonoHairHotspot');
+        const nonoPetBubble = document.getElementById('nonoPetBubble');
+        const nonoPetMenu = document.getElementById('nonoPetMenu');
+        const nonoPetLines = ["Rawr! Rawr!", "今天也要開心歐", "小籠包!不要跑!"];
+        let nonoPetBubbleTimer = null;
 
         function hideNonoPeekWidget() {
             nonoPeekWidget?.classList.add('is-hidden');
@@ -3395,7 +3526,34 @@
             nonoPeekWidget?.classList.remove('is-hidden');
         }
 
+        function toggleNonoPetMenu(forceOpen = null) {
+            if (!nonoPeekWidget) return;
+            const shouldOpen = forceOpen === null
+                ? !nonoPeekWidget.classList.contains('is-menu-open')
+                : forceOpen;
+            nonoPeekWidget.classList.toggle('is-menu-open', shouldOpen);
+            if (shouldOpen) showNonoPetBubble("今天想去哪裡？");
+        }
+
+        function showNonoPetBubble(line = "") {
+            if (!nonoPetBubble) return;
+            const text = line || nonoPetLines[Math.floor(Math.random() * nonoPetLines.length)];
+            nonoPetBubble.textContent = text;
+            nonoPetBubble.classList.add('is-visible');
+            clearTimeout(nonoPetBubbleTimer);
+            nonoPetBubbleTimer = window.setTimeout(() => {
+                nonoPetBubble.classList.remove('is-visible');
+            }, 3600);
+        }
+
+        function scrollToMuseumSection(selector) {
+            const target = document.querySelector(selector);
+            if (!target) return;
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
         function openNonoPopLayer({ waitForHair = false } = {}) {
+            toggleNonoPetMenu(false);
             nonoPopLayer?.classList.add('is-active');
             nonoPopLayer?.setAttribute('aria-hidden', 'false');
             nonoPopLayer?.classList.toggle('is-waiting', waitForHair);
@@ -3449,8 +3607,30 @@
         }
 
         showNonoPeekWidget();
-        nonoPeekTrigger?.addEventListener('click', () => openNonoPopLayer({ waitForHair: true }));
-        nonoPeekClose?.addEventListener('click', hideNonoPeekWidget);
+        nonoPeekTrigger?.addEventListener('click', () => toggleNonoPetMenu());
+        nonoPeekClose?.addEventListener('click', () => {
+            toggleNonoPetMenu(false);
+            hideNonoPeekWidget();
+        });
+        nonoPetMenu?.addEventListener('click', event => {
+            const button = event.target.closest('[data-pet-action]');
+            if (!button) return;
+
+            const action = button.dataset.petAction;
+            if (action === 'hair') {
+                openNonoPopLayer({ waitForHair: true });
+            } else if (action === 'memory') {
+                toggleNonoPetMenu(false);
+                scrollToMuseumSection('#random-memory');
+                document.getElementById('drawMemoryBtn')?.click();
+            } else if (action === 'songbook') {
+                toggleNonoPetMenu(false);
+                window.location.href = 'songbook.html';
+            } else if (action === 'archive') {
+                toggleNonoPetMenu(false);
+                scrollToMuseumSection('#archive');
+            }
+        });
         nonoHairHotspot?.addEventListener('click', () => {
             try {
                 localStorage.setItem(NONO_PEEK_STORAGE_KEY, 'yes');
@@ -3467,8 +3647,17 @@
         document.addEventListener('keydown', event => {
             if (event.key === 'Escape' && nonoPopLayer?.classList.contains('is-active')) {
                 closeNonoPopLayer(true);
+            } else if (event.key === 'Escape') {
+                toggleNonoPetMenu(false);
             }
         });
+
+        window.setTimeout(() => showNonoPetBubble(), 2400);
+        window.setInterval(() => {
+            if (!nonoPopLayer?.classList.contains('is-active') && !nonoPeekWidget?.classList.contains('is-hidden')) {
+                showNonoPetBubble();
+            }
+        }, 26000);
 
         let slideIndex = 0;
         let slideIntervalTimer;

@@ -1126,5 +1126,38 @@ window.museumDataParts.songData = [
         "link": "",
         "image": "",
         "tags": ""
+    },
+    {
+        "id": "song_zhi_dui_ni_you_gan_jue",
+        "type": "song",
+        "title": "只對你有感覺",
+        "artist": "飛輪海 x 田馥甄Hebe",
+        "language": "中文",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_lian_ai_shi_shen_me",
+        "type": "song",
+        "title": "戀愛是什麼",
+        "artist": "珍珠美人魚",
+        "language": "中文",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_hei_an_de_ba_luo_ke",
+        "type": "song",
+        "title": "黑暗的巴洛克",
+        "artist": "珍珠美人魚",
+        "language": "中文",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
     }
 ];

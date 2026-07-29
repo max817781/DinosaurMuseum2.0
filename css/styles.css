@@ -1349,7 +1349,7 @@
         .outfit-polaroid-name {
             padding-top: 8px;
             color: var(--purple);
-            font-size: clamp(.72rem,.95vw,.92rem);
+            font-size: clamp(1rem, 1.3vw, 1.3rem);
             font-weight: 900;
             line-height: 1.2;
         }
@@ -1363,9 +1363,9 @@
             background: #fffaf0;
             color: var(--brown);
         }
-        .outfit-polaroid-back strong { color: var(--purple); font-size: 1.05em; }
-        .outfit-polaroid-back time { color: var(--sage-deep); font-size: .86em; font-weight: 900; }
-        .outfit-polaroid-back span { color: var(--muted-brown); font-size: .82em; line-height: 1.5; }
+        .outfit-polaroid-back strong { color: var(--purple); font-size: 1.5rem; }
+        .outfit-polaroid-back time { color: var(--sage-deep); font-size: 1.15rem; font-weight: 900; }
+        .outfit-polaroid-back span { color: var(--muted-brown); font-size: 1.1rem; line-height: 1.5; }
         .cover-caption { display: flex; justify-content: space-between; gap: 18px; align-items: center; padding: 18px 14px 8px; color: var(--purple); }
         .cover-caption strong { font-size: 1.1em; }
         .cover-caption span { color: var(--sage-deep); font-size: .9em; }
@@ -1870,7 +1870,7 @@
             }
             .outfit-egg-back { padding: 16px; }
             .outfit-polaroid-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
-            .outfit-polaroid-name { font-size: .82rem; }
+            .outfit-polaroid-name { font-size: 1.1rem; }
             .egg-stamp-card { padding: 30px 22px 24px; }
             .egg-stamp-record { grid-template-columns: 1fr; justify-items: center; text-align: center; }
             .egg-stamp-footer { flex-direction: column; align-items: stretch; text-align: center; }

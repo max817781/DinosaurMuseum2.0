@@ -14,6 +14,7 @@
         originalSong: parts.originalSong || {},
         originalSongs: parts.originalSongs || [],
         quoteData: parts.quoteData || [],
-        annualReview: parts.annualReview || {}
+        annualReview: parts.annualReview || {},
+        easterEggData: parts.easterEggData || {}
     };
 })();

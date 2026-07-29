@@ -4,2036 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>恐龍諾諾博物館｜午後森林風格版</title>
-    <style>
-        body {
-            background-color: #141414;
-            color: #ffffff;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-        header {
-            position: absolute;
-            top: 0;
-            width: 100%;
-            padding: 20px 40px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
-            z-index: 100;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-        }
-        h1 {
-            margin: 0;
-            font-size: 2em;
-            color: #e50914;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-        
-        /* 輪播橫幅區域 */
-        .hero-slider {
-            position: relative;
-            width: 100%;
-            height: 500px;
-            background-color: #000;
-            overflow: hidden;
-            display: flex;
-        }
-        .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            z-index: 1;
-        }
-        .slide.active {
-            opacity: 1;
-            z-index: 10;
-        }
-        .slide-content {
-            width: 45%;
-            height: 100%;
-            padding: 0 5% 0 10%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            background: linear-gradient(to right, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
-            z-index: 2;
-        }
-        .slide-tag {
-            color: #4CAF50;
-            font-size: 1em;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        .slide-title {
-            font-size: 2.5em;
-            margin: 0 0 10px 0;
-            font-weight: bold;
-            line-height: 1.2;
-        }
-        .slide-desc {
-            font-size: 1.1em;
-            color: #e0e0e0;
-            margin-bottom: 15px;
-        }
-        .slide-meta {
-            font-size: 0.9em;
-            color: #888;
-            margin-bottom: 30px;
-        }
-        .slide-btn {
-            background-color: transparent;
-            color: #fff;
-            border: 1px solid #fff;
-            padding: 10px 30px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-size: 1.1em;
-            width: fit-content;
-            transition: background-color 0.3s, color 0.3s;
-            position: relative;
-            z-index: 20;
-        }
-        .slide-btn:hover {
-            background-color: #fff;
-            color: #000;
-        }
-        .slide-image-container {
-            position: absolute;
-            right: 0;
-            top: 0;
-            width: 70%;
-            height: 100%;
-            z-index: 0;
-        }
-        .slide-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%);
-            mask-image: linear-gradient(to right, transparent 0%, black 30%);
-        }
-        
-        /* 左右切換按鈕 */
-        .nav-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-            font-size: 2em;
-            padding: 15px 20px;
-            cursor: pointer;
-            z-index: 50; /* 提高層級確保不被擋住 */
-            transition: background-color 0.3s, transform 0.3s;
-            border-radius: 8px;
-        }
-        .nav-arrow:hover {
-            background-color: rgba(0, 0, 0, 0.9);
-            transform: translateY(-50%) scale(1.1);
-        }
-        .prev-arrow {
-            left: 20px;
-        }
-        .next-arrow {
-            right: 20px;
-        }
-
-        /* 輪播指示點 */
-        .slider-dots {
-            position: absolute;
-            bottom: 20px;
-            width: 100%;
-            text-align: center;
-            z-index: 30;
-        }
-        .dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            background-color: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            margin: 0 6px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        .dot.active {
-            background-color: #fff;
-            transform: scale(1.3);
-        }
-
-        /* 內容容器 */
-        .container {
-            padding: 40px;
-            position: relative;
-            z-index: 5;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* ==================================
-           模式切換按鈕區 (VOD模式 / 歌單模式) 
-           ================================== */
-        .mode-switch-container {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 15px;
-        }
-        .mode-btn {
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 1.5em;
-            font-weight: bold;
-            cursor: pointer;
-            padding: 10px 20px;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-        }
-        .mode-btn:hover {
-            color: #fff;
-            background-color: #222;
-        }
-        .mode-btn.active {
-            color: #e50914;
-            background-color: #1a1a1a;
-        }
-        .public-replay-link {
-            margin-left: auto;
-            border: 1px solid #444;
-            background: #181818;
-            color: #aaa;
-            font-size: 1em;
-            text-decoration: none;
-        }
-
-        /* 標籤分類與搜尋列控制區 */
-        .controls-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .filter-container {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .filter-btn {
-            background-color: #333;
-            color: #fff;
-            border: 2px solid transparent;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .filter-btn:hover {
-            background-color: #555;
-        }
-        .filter-btn.active {
-            background-color: #e50914;
-            border-color: #e50914;
-        }
-
-        /* 搜尋框樣式 */
-        .search-input {
-            background-color: #333;
-            color: #fff;
-            border: 2px solid transparent;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.95em;
-            outline: none;
-            width: 280px;
-            transition: all 0.3s ease;
-        }
-        .search-input:focus {
-            background-color: #444;
-            border-color: #e50914;
-        }
-        .search-input::placeholder {
-            color: #999;
-        }
-        .vod-search-wrap, .song-search-wrap { position: relative; }
-        .vod-search-wrap .search-input, .song-search-wrap .search-input { padding-right: 48px; }
-        .vod-search-clear, .song-search-clear {
-            position: absolute;
-            top: 50%;
-            right: 6px;
-            display: grid;
-            width: 34px;
-            height: 34px;
-            padding: 0;
-            place-items: center;
-            transform: translateY(-50%);
-            border: 1px solid transparent;
-            border-radius: 50%;
-            background: rgba(85,75,105,.08);
-            color: #786d63;
-            cursor: pointer;
-            font-size: 1.1em;
-            line-height: 1;
-        }
-        .vod-search-clear:hover, .song-search-clear:hover { background: rgba(145,169,111,.2); color: #554b69; }
-        .vod-search-clear:focus-visible, .song-search-clear:focus-visible { outline: 2px solid #91a96f; outline-offset: 1px; }
-
-        /* ==================================
-           VOD 卡片排版
-           ================================== */
-        .video-row {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            align-content: flex-start;
-            min-height: 420px;
-            overflow-anchor: none;
-        }
-        .video-card {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            width: 300px;
-            min-height: 340px;
-            transition: transform 0.3s ease;
-            text-decoration: none;
-            color: white;
-        }
-        .video-card:hover {
-            transform: scale(1.05);
-            z-index: 10;
-        }
-        .cover-container {
-            position: relative;
-            width: 100%;
-            height: 168px;
-            background-color: #333;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .icon-cover {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 5em;
-            z-index: 1; 
-        }
-        .cover-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 2; 
-        }
-        .cover-image[src=""] {
-            display: none;
-        }
-        .video-info {
-            position: relative;
-            flex: 1;
-            padding: 10px 0;
-        }
-        .video-title {
-            display: -webkit-box;
-            min-height: 3.9em;
-            overflow: hidden;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 3;
-            font-weight: bold;
-            font-size: 1.1em;
-            margin-bottom: 5px;
-            line-height: 1.3;
-        }
-        .tags {
-            font-size: 0.9em;
-            color: #a3a3a3;
-        }
-        .tag {
-            margin-right: 10px;
-        }
-        .video-story { margin-top: 9px; color: #85818a; font-size: .86em; line-height: 1.5; }
-        .new-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 4;
-            border-radius: 999px;
-            padding: 5px 10px;
-            background: #d8eb9d;
-            color: #334124;
-            box-shadow: 0 5px 14px rgba(35,55,26,.18);
-            font-size: .76em;
-            font-weight: 900;
-            letter-spacing: .08em;
-        }
-        .video-info.has-favorite-button { padding-bottom: 48px; }
-        .favorite-btn {
-            position: absolute;
-            right: 4px;
-            bottom: 5px;
-            z-index: 5;
-            display: grid;
-            width: 42px;
-            height: 42px;
-            place-items: center;
-            border: 1px solid #444;
-            border-radius: 50%;
-            background: #252525;
-            color: #d8a7b7;
-            box-shadow: 0 5px 14px rgba(0,0,0,.16);
-            cursor: pointer;
-            font-size: 1.25em;
-        }
-        .favorite-btn:hover:not(:disabled) { transform: translateY(-1px); background: #333; }
-        .favorite-btn.is-favorite { background: #e884a2; border-color: #e884a2; color: #fff; }
-        .favorite-btn:disabled { opacity: .38; cursor: not-allowed; }
-        .vod-result-summary {
-            margin: 0 0 16px;
-            color: #85818a;
-            font-size: .92em;
-        }
-        .vod-pagination {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            margin-top: 28px;
-            overflow-anchor: none;
-        }
-        .vod-page-btn {
-            min-width: 40px;
-            border: 1px solid #444;
-            border-radius: 999px;
-            padding: 8px 13px;
-            background: #252525;
-            color: #ddd;
-            cursor: pointer;
-        }
-        .vod-page-btn:hover:not(:disabled) { transform: translateY(-1px); background: #333; }
-        .vod-page-btn.active { background: #617849; border-color: #617849; color: #fff; }
-        .vod-page-btn:disabled { opacity: .42; cursor: default; }
-        .vod-page-ellipsis { padding: 6px 2px; color: #85818a; }
-        .vod-empty-state {
-            display: flex;
-            min-height: 320px;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 34px 20px;
-            border: 1px dashed #555;
-            border-radius: 18px;
-            color: #85818a;
-            text-align: center;
-        }
-        .favorite-empty-state { background: rgba(232,132,162,.08); }
-        .advanced-tag-filter-container {
-            margin: -8px 0 24px;
-            padding: 12px 14px;
-            border: 1px solid #333;
-            border-radius: 14px;
-        }
-        .vod-advanced-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px 10px;
-            margin-top: 5px;
-        }
-        .advanced-tag {
-            color: #8f8a98;
-            font-size: .88em;
-        }
-
-        /* ==================================
-           歌單條列式排版
-           ================================== */
-        .song-list-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            min-height: 600px;
-            overflow-anchor: none;
-        }
-        .songbook-shortcut {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            margin: 10px 0 16px;
-            padding: 16px 18px;
-            border-radius: 22px;
-            border: 1px solid var(--line-warm, #ddd0b7);
-            background: rgba(255, 253, 247, .72);
-            box-shadow: 0 12px 28px rgba(95,76,49,.07);
-        }
-        .songbook-shortcut-text {
-            color: var(--muted-brown, #786d63);
-            line-height: 1.6;
-        }
-        .songbook-shortcut-text strong {
-            display: block;
-            color: var(--purple, #554b69);
-            font-size: 1.05em;
-        }
-        .songbook-shortcut-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 42px;
-            padding: 10px 16px;
-            border-radius: 999px;
-            background: var(--sage, #91a96f);
-            color: #fff;
-            font-weight: bold;
-            white-space: nowrap;
-            text-decoration: none;
-            box-shadow: 0 10px 22px rgba(97,120,73,.18);
-        }
-        .songbook-shortcut-btn:hover {
-            background: var(--sage-deep, #617849);
-        }
-        .song-row {
-            display: flex;
-            align-items: center;
-            background-color: #1f1f1f;
-            padding: 15px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            color: white;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .song-row:hover {
-            background-color: #2e2e2e;
-            transform: translateX(5px);
-        }
-        /* 如果待練或沒有連結，讓它看起來不能點 */
-        .song-row.no-link {
-            cursor: default;
-        }
-        .song-row.no-link:hover {
-            transform: none;
-        }
-        
-        .song-icon {
-            font-size: 1.8em;
-            margin-right: 20px;
-            width: 40px;
-            text-align: center;
-        }
-        .song-cover {
-            width: 112px;
-            aspect-ratio: 16 / 9;
-            object-fit: cover;
-            flex-shrink: 0;
-            margin-right: 18px;
-            border-radius: 9px;
-            border: 1px solid rgba(255,255,255,.1);
-            box-shadow: 0 5px 16px rgba(0,0,0,.3);
-        }
-        .song-details {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .song-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .song-title {
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-        .song-singer {
-            font-size: 0.95em;
-            color: #aaa;
-        }
-        .song-tags-wrap {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: center;
-        }
-        .song-badge {
-            background-color: #333;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            color: #ccc;
-        }
-        .song-badge.status-pending {
-            border: 1px solid #f39c12;
-            color: #f39c12;
-            background-color: transparent;
-        }
-        .song-tag-badge {
-            background: rgba(184,168,221,.16);
-            color: #a99bc9;
-        }
-        .song-play-btn {
-            background-color: #e50914;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.9em;
-        }
-        .song-play-btn.disabled {
-            background-color: #555;
-            color: #999;
-        }
-        .song-entry { display: flex; flex-direction: column; gap: 8px; }
-        .song-row.has-performances { cursor: default; }
-        .song-row.has-performances:hover { transform: none; }
-        .song-performance-list {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 8px;
-            margin: 0 14px 6px 130px;
-            padding: 10px 12px;
-            border: 1px solid #333;
-            border-radius: 12px;
-            background: #181818;
-        }
-        .song-performance-label { color: #999; font-size: .82em; font-weight: bold; }
-        .song-performance-link {
-            display: inline-flex;
-            align-items: center;
-            border-radius: 999px;
-            padding: 6px 11px;
-            background: #333;
-            color: #ddd;
-            font-size: .82em;
-            text-decoration: none;
-        }
-        .song-performance-link:hover { background: #444; color: #fff; }
-        .song-performance-link.disabled { opacity: .55; cursor: default; }
-
-        /* 隱藏區塊用 */
-        /* 第二版：全新首頁 */
-        html { scroll-behavior: smooth; }
-        header {
-            position: fixed;
-            display: flex;
-            justify-content: space-between;
-            background: rgba(10, 10, 12, 0.76);
-            backdrop-filter: blur(14px);
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-        .brand-wrap { display: flex; align-items: center; gap: 12px; }
-        .brand-mark {
-            width: 38px; height: 38px; display: grid; place-items: center;
-            border-radius: 12px; background: linear-gradient(135deg, #c9825b, #e6b97a);
-            box-shadow: 0 8px 24px rgba(201, 130, 91, 0.28);
-        }
-        .brand-text h1 { font-size: 1.25em; line-height: 1; }
-        .brand-text span { display: block; margin-top: 5px; color: #9d9d9d; font-size: 0.72em; letter-spacing: 0.08em; }
-        .top-nav { display: flex; align-items: center; gap: 24px; }
-        .top-nav a { color: #dedede; text-decoration: none; font-size: 0.95em; }
-        .top-nav a:hover { color: #fff; }
-        .nav-dropdown { position: relative; }
-        .nav-dropdown-toggle {
-            border: 0;
-            padding: 0;
-            background: none;
-            color: #dedede;
-            font: inherit;
-            font-size: .95em;
-            cursor: pointer;
-        }
-        .nav-dropdown-toggle:hover { color: #fff; }
-        .nav-dropdown-arrow { display: inline-block; margin-left: 3px; transition: transform .18s ease; }
-        .nav-dropdown-menu {
-            position: absolute;
-            top: calc(100% + 12px);
-            left: -14px;
-            z-index: 50;
-            min-width: 210px;
-            padding: 9px;
-            border: 1px solid rgba(255,255,255,.12);
-            border-radius: 15px;
-            background: #fff8e7;
-            box-shadow: 0 16px 36px rgba(70,61,48,.18);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-5px);
-            transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
-        }
-        .nav-dropdown.align-right .nav-dropdown-menu { right: 0; left: auto; }
-        .nav-dropdown-menu a {
-            display: block;
-            padding: 10px 12px;
-            border-radius: 10px;
-            color: #554b69;
-            line-height: 1.35;
-        }
-        .nav-dropdown-menu a:hover { color: #617849; background: #eef3d8; }
-        .nav-dropdown-menu small { display: block; margin-top: 3px; color: #786d63; font-size: .78em; }
-        .nav-dropdown:hover .nav-dropdown-menu,
-        .nav-dropdown.open .nav-dropdown-menu {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        .nav-dropdown.open .nav-dropdown-arrow { transform: rotate(180deg); }
-        .home-hero {
-            min-height: 720px; padding: 120px 8% 70px; box-sizing: border-box;
-            display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr);
-            align-items: center; gap: 70px; position: relative; overflow: hidden;
-            background: radial-gradient(circle at 82% 28%, rgba(201,130,91,.23), transparent 28%),
-                        radial-gradient(circle at 15% 80%, rgba(230,185,122,.13), transparent 28%),
-                        linear-gradient(145deg, #11100f 0%, #211c19 54%, #12110f 100%);
-        }
-        .home-hero::before {
-            content: ""; position: absolute; inset: 0; opacity: .16;
-            background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
-            background-size: 48px 48px; mask-image: linear-gradient(to bottom, black, transparent);
-        }
-        .home-copy, .museum-card { position: relative; z-index: 1; }
-        .eyebrow { color: #e6b97a; font-size: .85em; font-weight: bold; letter-spacing: .16em; text-transform: uppercase; }
-        .home-title { max-width: 760px; margin: 18px 0 22px; font-size: clamp(3em, 5.4vw, 5.4em); line-height: 1.04; letter-spacing: -.045em; }
-        .home-title em { color: #e1a276; font-style: normal; }
-        .home-lead { max-width: 650px; color: #bdbdc5; font-size: 1.12em; line-height: 1.8; }
-        .home-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
-        .home-btn {
-            padding: 13px 24px; border-radius: 999px; color: #fff; text-decoration: none;
-            font-weight: bold; border: 1px solid rgba(255,255,255,.18); transition: transform .2s, background .2s;
-        }
-        .home-btn:hover { transform: translateY(-2px); }
-        .home-btn.primary { border-color: #c9825b; background: #c9825b; box-shadow: 0 12px 30px rgba(201,130,91,.25); }
-        .home-btn.secondary { background: rgba(255,255,255,.06); }
-        .museum-card {
-            padding: 36px; border: 1px solid rgba(255,255,255,.12); border-radius: 28px;
-            background: linear-gradient(145deg, rgba(255,255,255,.1), rgba(255,255,255,.035));
-            box-shadow: 0 30px 70px rgba(0,0,0,.38); backdrop-filter: blur(14px); transform: rotate(2deg);
-        }
-        .museum-card .dino { font-size: 4.8em; }
-        .museum-card h2 { margin: 18px 0 10px; font-size: 1.8em; }
-        .museum-card p { color: #aaa; line-height: 1.7; }
-        .museum-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 25px; }
-        .museum-stat { padding: 15px 8px; text-align: center; border-radius: 14px; background: rgba(0,0,0,.24); }
-        .museum-stat strong { display: block; font-size: 1em; color: #f1d5ae; }
-        .museum-stat span { color: #888; font-size: .75em; }
-        .about-site { padding: 90px 8%; background: #101012; }
-        .section-kicker { color: #d99a70; font-weight: bold; }
-        .about-site h2 { margin: 10px 0 14px; font-size: clamp(2em, 4vw, 3.4em); }
-        .about-site > p { max-width: 760px; color: #aaa; line-height: 1.8; }
-        .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 36px; }
-        .feature-card { padding: 28px; border-radius: 18px; background: #19191c; border: 1px solid #29292d; }
-        .feature-icon { font-size: 1.8em; }
-        .feature-card h3 { margin: 16px 0 9px; }
-        .feature-card p { margin: 0; color: #96969e; line-height: 1.65; }
-        .memory-note {
-            max-width: 920px; margin: 54px 0 0; padding: 30px 34px;
-            border-left: 3px solid #c9825b; border-radius: 0 16px 16px 0;
-            background: linear-gradient(90deg, rgba(201,130,91,.12), rgba(201,130,91,.02));
-            color: #d9c5b7; font-size: 1.15em; line-height: 1.8;
-        }
-        .memory-note strong { color: #fff; }
-        /* 諾諾個人感：小恐龍手帳 */
-        .nono-profile {
-            display: grid; grid-template-columns: 1.1fr .9fr; gap: 28px;
-            margin-top: 38px; align-items: stretch;
-        }
-        .profile-note, .nono-bubble {
-            position: relative; padding: 34px; border-radius: 26px;
-            overflow: hidden;
-        }
-        .profile-note {
-            background: #17171a; border: 1px solid rgba(185, 170, 221, .25);
-            box-shadow: 0 22px 50px rgba(0,0,0,.22);
-        }
-        .profile-note::after {
-            content: "🦖"; position: absolute; right: 24px; bottom: -18px;
-            font-size: 7em; opacity: .12; transform: rotate(-8deg);
-        }
-        .profile-note h3 { margin: 8px 0 16px; font-size: 2em; color: #d9ccef; }
-        .profile-note p { max-width: 680px; color: #beb8c7; line-height: 1.85; }
-        .rawr-line { color: #d8eb9d; font-weight: bold; letter-spacing: .04em; }
-        .dino-tags { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 22px; }
-        .dino-tag {
-            padding: 8px 12px; border-radius: 999px; background: rgba(158,181,104,.13);
-            border: 1px solid rgba(188,213,123,.25); color: #d8eb9d; font-size: .85em;
-        }
-        .nono-bubble {
-            display: flex; flex-direction: column; justify-content: space-between;
-            background: linear-gradient(145deg, #dfeeb4, #f4df9d); color: #28251f;
-            transform: rotate(1.5deg); box-shadow: 0 22px 50px rgba(0,0,0,.24);
-        }
-        .nono-bubble .bubble-icons { font-size: 3.3em; letter-spacing: .08em; }
-        .nono-bubble blockquote { margin: 25px 0; font-size: 1.2em; line-height: 1.7; font-weight: bold; }
-        .nono-bubble small { color: #5f5a49; }
-        .x-section {
-            padding: 90px 8%; background: linear-gradient(180deg, #101012, #151419);
-        }
-        .x-layout {
-            display: grid; grid-template-columns: minmax(260px,.72fr) minmax(340px,1.28fr);
-            gap: 32px; margin-top: 30px; align-items: start;
-        }
-        .x-intro {
-            position: sticky; top: 105px; padding: 30px; border-radius: 24px;
-            background: #1c1b20; border: 1px solid #302d38;
-        }
-        .x-intro .x-handle { color: #b8a8dd; font-weight: bold; }
-        .x-intro h2 { font-size: 2.4em; margin: 12px 0; }
-        .x-intro p { color: #aaa4b0; line-height: 1.75; }
-        .x-link {
-            display: inline-block; margin-top: 16px; padding: 11px 18px; border-radius: 999px;
-            background: #eef5d2; color: #24251f; text-decoration: none; font-weight: bold;
-        }
-        .x-frame {
-            min-height: 560px; padding: 16px; border-radius: 26px;
-            background: #f4f1e8; box-shadow: 0 20px 55px rgba(0,0,0,.26);
-        }
-        .x-frame .twitter-timeline {
-            min-height: 528px; display: flex; align-items: center; justify-content: center;
-            padding: 30px; box-sizing: border-box; border: 2px dashed #d2cab8;
-            border-radius: 18px; color: #4b463d; text-align: center; text-decoration: none;
-            line-height: 1.8;
-        }
-        .x-fallback-icon { display: block; font-size: 4em; margin-bottom: 14px; }
-        .x-fallback-title { display: block; color: #28251f; font-size: 1.25em; font-weight: bold; }
-        .x-frame .twitter-tweet {
-            margin: 0 auto !important; color: #28251f;
-        }
-        .post-fallback {
-            min-height: 490px; display: flex; flex-direction: column; justify-content: center;
-            padding: 42px; box-sizing: border-box; color: #302c25;
-        }
-        .post-fallback .post-rawr { color: #6f638f; font-weight: bold; }
-        .post-fallback p { font-size: 1.28em; line-height: 1.8; }
-        .post-fallback a { color: #5c4f7d; font-weight: bold; }
-        .x-profile-banner {
-            position: relative; display: block; max-width: 900px; margin: 30px auto 0;
-            overflow: hidden; border-radius: 28px; border: 1px solid #302d38;
-            background: #fff; box-shadow: 0 24px 60px rgba(0,0,0,.32);
-            transition: transform .25s ease, box-shadow .25s ease;
-        }
-        .x-profile-banner:hover { transform: translateY(-4px); box-shadow: 0 30px 70px rgba(0,0,0,.4); }
-        .x-profile-banner img { display: block; width: 100%; height: auto; }
-        .x-banner-cta {
-            position: absolute; right: 20px; bottom: 20px; padding: 11px 18px;
-            border-radius: 999px; background: rgba(16,16,18,.9); color: #fff;
-            font-weight: bold; box-shadow: 0 8px 24px rgba(0,0,0,.3);
-        }
-        .selected-post { max-width: 720px; margin: 55px auto 0; }
-        .selected-post-title { margin-bottom: 18px; text-align: center; }
-        .selected-post-title span { color: #b8a8dd; font-weight: bold; letter-spacing: .1em; }
-        .selected-post-title h2 { margin: 8px 0 0; font-size: 2em; }
-        .selected-post .x-frame { min-height: 480px; }
-        /* 第三版：回憶探索功能 */
-        .story-section { padding: 95px 8%; position: relative; overflow: hidden; }
-        .story-section:nth-of-type(even) { background: #111113; }
-        .section-heading { max-width: 780px; margin-bottom: 38px; }
-        .section-heading h2 { margin: 10px 0 14px; font-size: clamp(2.2em, 4.5vw, 4em); line-height: 1.08; }
-        .section-heading p { color: #aaa4b0; line-height: 1.8; }
-
-        .memory-draw-section {
-            background: radial-gradient(circle at 78% 30%, rgba(180,204,113,.16), transparent 28%),
-                        linear-gradient(145deg, #17161b, #101012);
-        }
-        .memory-draw-wrap { display: grid; grid-template-columns: .8fr 1.2fr; gap: 30px; align-items: stretch; }
-        .memory-machine {
-            padding: 36px; border-radius: 28px; background: linear-gradient(145deg, #dfeeb4, #f0dca0);
-            color: #28251f; box-shadow: 0 24px 60px rgba(0,0,0,.3);
-        }
-        .memory-machine .machine-icon { font-size: 4em; }
-        .memory-machine h2 { margin: 15px 0 10px; font-size: 2em; }
-        .memory-machine p { line-height: 1.7; color: #5d584a; }
-        .draw-btn {
-            margin-top: 20px; border: 0; border-radius: 999px; padding: 13px 22px;
-            background: #302b3d; color: #fff; font-weight: bold; cursor: pointer; font-size: 1em;
-        }
-        .draw-btn:hover { transform: translateY(-2px); }
-        .memory-result {
-            display: flex; flex-direction: column; justify-content: center; min-height: 280px;
-            padding: 40px; border-radius: 28px; border: 1px dashed #4b4655; background: #1b1a20;
-        }
-        .memory-result.empty { color: #77727d; text-align: center; }
-        .memory-result-icon { font-size: 3.6em; }
-        .memory-result-label { margin-top: 14px; color: #b8a8dd; font-weight: bold; letter-spacing: .1em; }
-        .memory-result h3 { margin: 8px 0; font-size: 2em; }
-        .memory-result p { color: #aaa4b0; line-height: 1.7; }
-        .memory-open { color: #d8eb9d; text-decoration: none; font-weight: bold; }
-
-        /* 半周年棉花糖回憶初版 */
-        .story-section.marshmallow-section {
-            background:
-                radial-gradient(circle at 16% 18%, rgba(255,255,255,.72) 0 4%, transparent 4.5%),
-                radial-gradient(circle at 82% 22%, rgba(255,255,255,.58) 0 5%, transparent 5.5%),
-                linear-gradient(180deg, #a9daf2 0%, #dff2fb 72%, #f8f2df 100%);
-        }
-        .marshmallow-section .section-heading h2 { color: #4f5575; }
-        .marshmallow-section .section-heading p { color: #597184; }
-        .marshmallow-sky {
-            position: relative;
-            min-height: 330px;
-            padding: 28px;
-            border: 1px solid rgba(255,255,255,.7);
-            border-radius: 30px;
-            background: rgba(255,255,255,.18);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.75), 0 20px 45px rgba(70,123,151,.12);
-        }
-        .marshmallow-toolbar { display: flex; justify-content: flex-end; margin-bottom: 22px; }
-        .marshmallow-link, .marshmallow-back {
-            display: inline-flex;
-            align-items: center;
-            border: 1px solid rgba(80,116,139,.22);
-            border-radius: 999px;
-            padding: 10px 17px;
-            background: rgba(255,255,255,.76);
-            color: #4d6677;
-            font-weight: bold;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .marshmallow-link:hover, .marshmallow-back:hover { background: #fff; transform: translateY(-1px); }
-        .marshmallow-cloud-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 28px;
-            align-items: center;
-        }
-        .marshmallow-cloud {
-            position: relative;
-            isolation: isolate;
-            min-height: 138px;
-            padding: 35px 25px 24px;
-            border: 0;
-            border-radius: 48% 52% 44% 56% / 58% 55% 45% 42%;
-            background: rgba(255,255,255,.93);
-            color: #536170;
-            box-shadow: 0 14px 28px rgba(66,112,138,.16);
-            cursor: pointer;
-            transition: transform .22s ease, box-shadow .22s ease;
-        }
-        .marshmallow-cloud::before, .marshmallow-cloud::after {
-            content: "";
-            position: absolute;
-            z-index: -1;
-            border-radius: 50%;
-            background: inherit;
-        }
-        .marshmallow-cloud::before { width: 74px; height: 74px; left: 20%; top: -21px; }
-        .marshmallow-cloud::after { width: 92px; height: 92px; right: 15%; top: -31px; }
-        .marshmallow-cloud:hover, .marshmallow-cloud:focus-visible {
-            transform: translateY(-6px) scale(1.025);
-            box-shadow: 0 20px 36px rgba(66,112,138,.22);
-            outline: none;
-        }
-        .cloud-title { display: block; position: relative; z-index: 1; color: #50566f; font-weight: bold; }
-        .cloud-preview {
-            display: block;
-            position: relative;
-            z-index: 1;
-            max-height: 0;
-            margin-top: 0;
-            overflow: hidden;
-            opacity: 0;
-            color: #71808b;
-            font-size: .88em;
-            line-height: 1.55;
-            transition: opacity .2s ease, max-height .2s ease, margin-top .2s ease;
-        }
-        .marshmallow-cloud:hover .cloud-preview,
-        .marshmallow-cloud:focus-visible .cloud-preview {
-            max-height: 70px;
-            margin-top: 9px;
-            opacity: 1;
-        }
-        .marshmallow-reader {
-            width: min(850px, 100%);
-            min-height: 290px;
-            margin: 18px auto 8px;
-            padding: 48px clamp(28px, 6vw, 70px);
-            border-radius: 72px;
-            background: rgba(255,255,255,.94);
-            color: #536170;
-            box-shadow: 0 22px 44px rgba(66,112,138,.2);
-            text-align: center;
-            overflow-wrap: anywhere;
-            word-break: break-word;
-        }
-        .marshmallow-reader:focus { outline: none; }
-        .marshmallow-reader h3 { margin: 4px 0 20px; color: #50566f; font-size: clamp(1.7em, 4vw, 2.5em); }
-        .marshmallow-reader-text {
-            max-width: 700px;
-            margin: 0 auto;
-            white-space: pre-wrap;
-            color: #596a77;
-            line-height: 1.9;
-            text-align: left;
-        }
-        .marshmallow-reader-meta { margin: 22px 0; color: #7b8c98; font-size: .9em; }
-        .marshmallow-back { border: 0; background: #e5f1f6; }
-        .marshmallow-empty { grid-column: 1 / -1; color: #597184; text-align: center; }
-
-        .timeline { position: relative; max-width: 980px; margin: 0 auto; }
-        .timeline::before { content: ""; position: absolute; left: 118px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(#d9a173,#9fb66c); }
-        .timeline-item { display: grid; grid-template-columns: 95px 1fr; gap: 46px; position: relative; padding: 0 0 42px; }
-        .timeline-date { padding-top: 20px; color: #e6b97a; font-weight: bold; text-align: right; }
-        .timeline-card {
-            position: relative; padding: 28px 30px; border-radius: 22px; background: #1b1a1f;
-            border: 1px solid #302d38; color: #fff; text-decoration: none;
-        }
-        .timeline-card::before { content: ""; position: absolute; left: -30px; top: 27px; width: 13px; height: 13px; border-radius: 50%; background: #c9df86; box-shadow: 0 0 0 7px #17161a; }
-        .timeline-card:hover { background: #232129; transform: translateX(3px); }
-        .timeline-label { color: #a99bc9; font-size: .82em; font-weight: bold; letter-spacing: .1em; }
-        .timeline-card h3 { margin: 9px 0; font-size: 1.4em; }
-        .timeline-card p { margin: 0; color: #aaa4b0; line-height: 1.7; }
-        .timeline-icon { float: right; font-size: 2.1em; }
-
-        .original-song-section { background: linear-gradient(145deg, #1d1822, #101012); }
-        .original-song-card { display: grid; grid-template-columns: .82fr 1.18fr; max-width: 1100px; margin: 0 auto; border-radius: 32px; overflow: hidden; border: 1px solid #3b3445; box-shadow: 0 28px 70px rgba(0,0,0,.32); }
-        .song-art { min-height: 420px; padding: 46px; display: flex; flex-direction: column; justify-content: space-between; background: radial-gradient(circle at 70% 20%, rgba(216,235,157,.32), transparent 25%), linear-gradient(145deg,#9f8bc5,#4f426b); }
-        .song-art-icon { font-size: 6em; }
-        .song-art small { color: #eee8f7; letter-spacing: .12em; }
-        .song-story { padding: 48px; background: #18171c; }
-        .song-story h2 { margin: 10px 0 6px; font-size: 3em; }
-        .song-en-title { color: #c6b7e3; font-size: 1.1em; }
-        .song-story > p { color: #b3adb9; line-height: 1.8; }
-        .credit-list { display: grid; gap: 8px; margin: 25px 0; color: #918b98; font-size: .9em; }
-        .song-actions { display: flex; flex-wrap: wrap; gap: 12px; }
-        .song-action { padding: 11px 18px; border-radius: 999px; text-decoration: none; font-weight: bold; background: #dfeaaf; color: #27271f; }
-        .song-action.secondary { background: #29262f; color: #ddd5e8; border: 1px solid #484151; }
-
-        .quote-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
-        .quote-card { display: flex; flex-direction: column; min-height: 230px; padding: 28px; border-radius: 24px; background: #1b1a1f; border: 1px solid #312e38; color: #fff; text-decoration: none; }
-        .quote-card:nth-child(2) { transform: rotate(1deg); background: #dfeeb4; color: #2b2923; }
-        .quote-icon { font-size: 2.4em; }
-        .quote-card blockquote { margin: 20px 0; font-size: 1.18em; line-height: 1.65; font-weight: bold; flex-grow: 1; }
-        .quote-card small { color: #988fa2; }
-        .quote-card:nth-child(2) small { color: #656050; }
-
-        .annual-card { max-width: 1100px; margin: 0 auto; padding: 55px; border-radius: 34px; background: linear-gradient(135deg,#201d26,#18171b); border: 1px solid #393440; }
-        .annual-year { font-size: clamp(4em,10vw,8em); font-weight: 900; line-height: .9; color: #d8eb9d; opacity: .92; }
-        .annual-card h2 { margin: 22px 0 10px; font-size: 2.4em; }
-        .annual-card > p { max-width: 760px; color: #aaa4b0; line-height: 1.8; }
-        .annual-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 35px; }
-        .annual-stat { padding: 22px; border-radius: 18px; background: rgba(255,255,255,.045); }
-        .annual-stat strong { display: block; color: #e6b97a; font-size: 2em; }
-        .annual-stat span { color: #908a95; }
-        #archive { scroll-margin-top: 80px; }
-        @media (max-width: 850px) {
-            header { padding: 16px 20px; }
-            .brand-text span, .top-nav > a:not(.nav-main) { display: none; }
-            .top-nav { gap: 10px; }
-            .nav-dropdown-toggle { padding: 8px 6px; font-size: .82em; }
-            .nav-dropdown-menu { top: calc(100% + 6px); min-width: 190px; }
-            .nav-dropdown:first-of-type .nav-dropdown-menu { left: 0; }
-            .home-hero { grid-template-columns: 1fr; gap: 38px; padding: 120px 7% 70px; }
-            .museum-card { transform: none; }
-            .feature-grid { grid-template-columns: 1fr; }
-            .home-title { font-size: clamp(3em, 15vw, 5em); }
-            .song-row { padding: 12px; }
-            .song-cover { width: 82px; margin-right: 12px; }
-            .song-play-btn { display: none; }
-            .song-performance-list { margin-left: 0; }
-            .nono-profile, .x-layout { grid-template-columns: 1fr; }
-            .nono-bubble { transform: none; }
-            .x-intro { position: static; }
-            .x-profile-banner { border-radius: 18px; }
-            .x-banner-cta { right: 12px; bottom: 12px; font-size: .84em; }
-            .memory-draw-wrap, .original-song-card { grid-template-columns: 1fr; }
-            .timeline::before { left: 10px; }
-            .timeline-item { grid-template-columns: 1fr; gap: 10px; padding-left: 38px; }
-            .timeline-date { text-align: left; padding-top: 0; }
-            .timeline-card::before { left: -34px; }
-            .quote-grid, .annual-stats { grid-template-columns: 1fr; }
-            .quote-card:nth-child(2) { transform: none; }
-            .song-art { min-height: 280px; }
-            .song-story, .annual-card { padding: 30px; }
-        }
-
-        /* ================================================================
-           第四版定調：午後森林裡的小恐龍回憶手帳
-           ================================================================ */
-        :root {
-            --cream: #fff8e7;
-            --cream-deep: #f4ead0;
-            --paper: #fffdf7;
-            --sage: #91a96f;
-            --sage-deep: #617849;
-            --sage-soft: #dfe9bd;
-            --yellow: #f1cd69;
-            --purple: #554b69;
-            --purple-soft: #dcd3e8;
-            --pink: #e884a2;
-            --brown: #4a4038;
-            --muted-brown: #786d63;
-            --line-warm: #ddd0b7;
-        }
-        body { background: var(--cream); color: var(--brown); font-family: "Trebuchet MS", "Microsoft JhengHei", sans-serif; }
-        header {
-            background: rgba(255,248,231,.9); border-bottom: 1px solid rgba(97,120,73,.18);
-            box-shadow: 0 6px 24px rgba(78,68,52,.06);
-        }
-        .brand-mark { width: 48px; height: 48px; overflow: hidden; padding: 0; background: var(--paper); border: 2px solid var(--yellow); }
-        .brand-mark img { width: 100%; height: 100%; object-fit: cover; object-position: top; transform: scale(1.22); }
-        .brand-text h1 { color: var(--purple); }
-        .brand-text span { color: var(--sage-deep); }
-        .top-nav a { color: var(--brown); }
-        .top-nav a:hover { color: var(--sage-deep); }
-        .nav-dropdown-toggle { color: var(--brown); }
-        .nav-dropdown-toggle:hover { color: var(--sage-deep); }
-        .nav-dropdown-menu { border-color: var(--line-warm); background: var(--cream); }
-        .nav-dropdown-menu a { color: var(--purple); }
-        .nav-dropdown-menu a:hover { color: var(--sage-deep); background: var(--sage-soft); }
-        .top-nav .nav-main { padding: 9px 15px; border-radius: 999px; background: var(--sage-soft); color: var(--sage-deep); }
-        .top-nav .archive-shortcut { font-weight: bold; color: var(--purple); border-bottom: 2px solid var(--yellow); }
-
-        .home-hero {
-            min-height: 760px; grid-template-columns: minmax(340px,.78fr) minmax(520px,1.22fr);
-            background: radial-gradient(circle at 8% 15%, rgba(241,205,105,.28), transparent 26%),
-                        radial-gradient(circle at 86% 12%, rgba(145,169,111,.22), transparent 27%),
-                        linear-gradient(145deg, #fffdf5, #f7edcf 60%, #e8edcf);
-        }
-        .home-hero::before { opacity: .28; background-image: linear-gradient(rgba(97,120,73,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(97,120,73,.08) 1px, transparent 1px); }
-        .eyebrow, .section-kicker { color: var(--sage-deep); }
-        .home-title { color: var(--purple); font-size: clamp(3em,4.3vw,4.4em); line-height: 1.08; }
-        .home-title em { color: var(--sage-deep); white-space: nowrap; }
-        .home-lead { color: var(--muted-brown); }
-        .home-btn { color: var(--brown); border-color: var(--line-warm); }
-        .home-btn.primary { background: var(--sage); border-color: var(--sage); color: #fff; box-shadow: 0 14px 32px rgba(97,120,73,.22); }
-        .home-btn.secondary { background: rgba(255,255,255,.7); }
-        .identity-card { padding: 12px; border-radius: 32px; background: rgba(255,255,255,.78); border: 1px solid rgba(97,120,73,.2); transform: rotate(1deg); }
-        .identity-card img { display: block; width: 100%; aspect-ratio: 1.5/1; object-fit: cover; border-radius: 23px; }
-        .cover-caption { display: flex; justify-content: space-between; gap: 18px; align-items: center; padding: 18px 14px 8px; color: var(--purple); }
-        .cover-caption strong { font-size: 1.1em; }
-        .cover-caption span { color: var(--sage-deep); font-size: .9em; }
-
-        .about-site { background: var(--cream-deep); }
-        .about-site h2, .section-heading h2 { color: var(--purple); }
-        .about-site > p, .section-heading p { color: var(--muted-brown); }
-        .profile-note { background: var(--paper); border-color: rgba(145,169,111,.38); box-shadow: 0 20px 45px rgba(95,76,49,.1); }
-        .profile-note h3 { color: var(--purple); }
-        .profile-note p { color: var(--muted-brown); }
-        .rawr-line { color: var(--sage-deep); }
-        .dino-tag { background: #eef3d8; border-color: #cbd9a4; color: var(--sage-deep); }
-        .nono-bubble { background: linear-gradient(145deg,#fff4c7,#eadff1); color: var(--brown); border: 1px solid rgba(85,75,105,.12); }
-        .nono-bubble blockquote { color: var(--purple); }
-        .chibi-image { display: block; width: min(230px,75%); margin: -15px auto 5px; filter: drop-shadow(0 12px 18px rgba(85,75,105,.14)); }
-        .memory-note { background: linear-gradient(90deg,rgba(232,132,162,.13),rgba(255,255,255,.25)); border-left-color: var(--pink); color: var(--brown); }
-        .memory-note strong { color: var(--purple); }
-
-        .story-section { background: var(--cream); }
-        .story-section:nth-of-type(even) { background: #f4f0df; }
-        .memory-draw-section { background: radial-gradient(circle at 78% 30%,rgba(145,169,111,.22),transparent 30%),linear-gradient(145deg,#f8edca,#edf1d4); }
-        .memory-machine { background: linear-gradient(145deg,#dfe9bd,#fff0b8); color: var(--brown); box-shadow: 0 22px 50px rgba(95,76,49,.12); }
-        .memory-machine p { color: var(--muted-brown); }
-        .draw-btn { background: var(--purple); color: #fff; }
-        .memory-result { background: var(--paper); border-color: var(--sage); box-shadow: 0 18px 42px rgba(95,76,49,.08); }
-        .memory-result.empty, .memory-result p { color: var(--muted-brown); }
-        .memory-result-label { color: var(--sage-deep); }
-        .memory-result h3 { color: var(--purple); }
-        .memory-open { color: var(--sage-deep); }
-
-        .timeline::before { background: linear-gradient(var(--yellow),var(--sage)); }
-        .timeline-date { color: var(--sage-deep); }
-        .timeline-card { background: var(--paper); border-color: var(--line-warm); color: var(--brown); box-shadow: 0 12px 30px rgba(95,76,49,.07); }
-        .timeline-card::before { background: var(--pink); box-shadow: 0 0 0 7px var(--cream); }
-        .timeline-card:hover { background: #fff9df; }
-        .timeline-label { color: var(--sage-deep); }
-        .timeline-card h3 { color: var(--purple); }
-        .timeline-card p { color: var(--muted-brown); }
-
-        .original-song-section { background: linear-gradient(145deg,#eee6f3,#f7efda); }
-        .original-song-card { border-color: #d8cce3; box-shadow: 0 24px 55px rgba(85,75,105,.13); }
-        .song-art { background: radial-gradient(circle at 70% 20%,rgba(241,205,105,.38),transparent 27%),linear-gradient(145deg,#aabf7d,#74678b); }
-        .song-story { background: var(--paper); }
-        .song-story h2 { color: var(--purple); }
-        .song-en-title { color: var(--sage-deep); }
-        .song-story > p, .credit-list { color: var(--muted-brown); }
-        .song-action { background: var(--sage); color: #fff; }
-        .song-action.secondary { background: var(--purple-soft); color: var(--purple); border-color: #c8bbd6; }
-
-        .quote-card { background: var(--paper); border-color: var(--line-warm); color: var(--brown); box-shadow: 0 14px 34px rgba(95,76,49,.08); }
-        .quote-card:nth-child(2) { background: var(--sage-soft); }
-        .quote-card small, .quote-card:nth-child(2) small { color: var(--muted-brown); }
-        .quote-card.has-link { cursor: pointer; transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease; }
-        .quote-card.has-link:hover { transform: translateY(-8px) rotate(-.4deg); border-color: var(--sage); box-shadow: 0 22px 44px rgba(95,76,49,.16); }
-        .quote-card.has-link:hover .quote-icon { transform: scale(1.12) rotate(-6deg); }
-        .quote-icon { transition: transform .24s ease; }
-        .quote-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
-        .quote-source, .quote-audio-btn {
-            display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px;
-            font-size: .82em; font-weight: bold; text-decoration: none;
-        }
-        .quote-source { color: #fff; background: var(--sage); }
-        .quote-source:hover { background: var(--sage-deep); }
-        .quote-audio-btn { border: 1px solid #cdbfd9; background: var(--purple-soft); color: var(--purple); cursor: pointer; }
-        .quote-image { width: 100%; height: auto; object-fit: contain; filter: drop-shadow(0 8px 12px rgba(85,75,105,.13)); }
-		//width: 100%; height: auto;
-		// .quote-image { width: 72px; height: 72px; object-fit: contain; filter: drop-shadow(0 8px 12px rgba(85,75,105,.13)); }
-        .quote-placeholder-note { display: inline-block; color: var(--muted-brown); font-size: .75em; }
-        .annual-card { background: linear-gradient(135deg,#fbf2cf,#e7eccd); border-color: #d7d3a9; box-shadow: 0 22px 55px rgba(95,76,49,.1); }
-        .annual-year { color: var(--sage-deep); }
-        .annual-card h2 { color: var(--purple); }
-        .annual-card > p, .annual-stat span { color: var(--muted-brown); }
-        .annual-stat { background: rgba(255,255,255,.6); }
-        .annual-stat strong { color: var(--pink); }
-
-        .x-section { background: linear-gradient(180deg,#f5ecd6,#eee7d9); }
-        .x-profile-banner { border-color: var(--line-warm); box-shadow: 0 22px 55px rgba(95,76,49,.14); }
-        .selected-post-title h2 { color: var(--purple); }
-        .selected-post-title span { color: var(--sage-deep); }
-
-        .hero-slider { background: var(--purple); }
-        .slide-content { background: linear-gradient(to right,rgba(61,52,73,.98) 43%,rgba(61,52,73,0) 100%); }
-        .slide-tag { color: var(--yellow); }
-        .slide-title {
-            color: #fffaf0;
-            font-weight: 800;
-            letter-spacing: .01em;
-            text-shadow: 0 2px 12px rgba(22,16,29,.46);
-        }
-        .slide-desc {
-            color: #fffdf7;
-            font-weight: 500;
-            text-shadow: 0 1px 8px rgba(22,16,29,.38);
-        }
-        .slide-meta { color: #ded5e8; }
-        .container { background: var(--cream); }
-        .mode-switch-container { border-bottom-color: var(--line-warm); }
-        .mode-btn { color: var(--muted-brown); }
-        .mode-btn:hover { color: var(--purple); background: #f3ead7; }
-        .mode-btn.active { color: var(--sage-deep); background: var(--sage-soft); }
-        .public-replay-link { color: var(--sage-deep); background: #f7f1e3; border-color: var(--line-warm); }
-        .public-replay-link:hover { color: var(--purple); background: #efe6d2; border-color: var(--sage); }
-        .filter-btn { background: #e9e1d0; color: var(--brown); }
-        .filter-btn:hover { background: #ded3bd; }
-        .filter-btn.active { background: var(--sage); border-color: var(--sage); color: #fff; }
-        .advanced-tag-filter-container { background: #f7f1e3; border-color: var(--line-warm); }
-        .advanced-tag { color: var(--sage-deep); }
-        .new-badge { background: var(--sage-soft); color: var(--sage-deep); }
-        .favorite-btn { background: var(--paper); border-color: var(--line-warm); color: var(--pink); }
-        .favorite-btn:hover:not(:disabled) { background: #fff1f5; }
-        .favorite-btn.is-favorite { background: var(--pink); border-color: var(--pink); color: #fff; }
-        .vod-result-summary { color: var(--muted-brown); }
-        .vod-page-btn { background: var(--paper); border-color: var(--line-warm); color: var(--brown); }
-        .vod-page-btn:hover:not(:disabled) { background: #f3ead7; }
-        .vod-page-btn.active { background: var(--sage); border-color: var(--sage); color: #fff; }
-        .vod-page-ellipsis, .vod-empty-state { color: var(--muted-brown); }
-        .vod-empty-state { border-color: var(--line-warm); background: rgba(255,255,255,.38); }
-        .search-input { background: var(--paper); color: var(--brown); border-color: var(--line-warm); }
-        .search-input:focus { background: #fff; border-color: var(--sage); }
-        .video-card, .song-row { background: var(--paper); color: var(--brown); border: 1px solid var(--line-warm); box-shadow: 0 10px 28px rgba(95,76,49,.07); }
-        .video-card:hover, .song-row:hover { background: #fff9df; }
-        .video-title, .song-title { color: var(--purple); }
-        .tags, .song-singer, .video-story { color: var(--muted-brown); }
-        .song-badge { background: var(--purple-soft); color: var(--purple); }
-        .song-play-btn { background: var(--sage); }
-        .song-play-btn.disabled { background: #cbc3b2; color: #776f64; }
-        .song-performance-list { background: #f7f1e3; border-color: var(--line-warm); }
-        .song-performance-label { color: var(--muted-brown); }
-        .song-performance-link { background: var(--sage-soft); color: var(--sage-deep); }
-        .song-performance-link:hover { background: var(--purple-soft); color: var(--purple); }
-
-        @media (max-width: 850px) {
-            .home-hero { grid-template-columns: 1fr; }
-            .home-title { font-size: clamp(2.75em,11.5vw,3.5em); }
-            .identity-card { transform: none; }
-            .cover-caption { align-items: flex-start; flex-direction: column; gap: 4px; }
-            .quote-card.has-link:hover { transform: none; }
-            .marshmallow-sky { padding: 22px 16px; }
-            .marshmallow-cloud-list { grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 25px 16px; }
-            .marshmallow-reader { border-radius: 35px; padding: 36px 24px; }
-            .vod-search-clear, .song-search-clear { width: 40px; height: 40px; right: 3px; }
-            .vod-search-wrap .search-input, .song-search-wrap .search-input { padding-right: 50px; }
-        }
-
-        /* ================================================================
-           手機版第一階段補強：防爆版、導覽、首頁、館藏篩選與卡片
-           ================================================================ */
-        @media (max-width: 850px) {
-            html, body {
-                max-width: 100%;
-                overflow-x: hidden;
-            }
-
-            header {
-                position: sticky;
-                top: 0;
-                z-index: 30;
-                flex-wrap: wrap;
-                gap: 10px;
-                padding: 12px 14px;
-            }
-
-            .brand-wrap {
-                min-width: 0;
-                flex: 1 1 auto;
-            }
-
-            .brand-mark {
-                width: 42px;
-                height: 42px;
-                flex: 0 0 auto;
-            }
-
-            .brand-text h1 {
-                font-size: 1em;
-                white-space: nowrap;
-            }
-
-            .top-nav {
-                flex: 1 1 100%;
-                width: 100%;
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 8px;
-                order: 2;
-            }
-
-            .top-nav .nav-dropdown,
-            .top-nav .nav-main,
-            .top-nav .archive-shortcut {
-                flex: 0 1 auto;
-            }
-
-            .nav-dropdown-toggle,
-            .top-nav .nav-main,
-            .top-nav .archive-shortcut {
-                min-height: 40px;
-                padding: 9px 12px;
-                border-radius: 999px;
-                background: rgba(255,255,255,.55);
-                border: 1px solid rgba(221,208,183,.7);
-                white-space: nowrap;
-            }
-
-            .nav-dropdown-menu {
-                left: 50%;
-                right: auto;
-                transform: translateX(-50%) translateY(8px);
-                width: min(260px, calc(100vw - 28px));
-                max-width: calc(100vw - 28px);
-            }
-
-            .nav-dropdown:hover .nav-dropdown-menu,
-            .nav-dropdown.is-open .nav-dropdown-menu {
-                transform: translateX(-50%) translateY(0);
-            }
-
-            .home-hero {
-                min-height: auto;
-                padding: 92px 18px 48px;
-                gap: 24px;
-            }
-
-            .home-title {
-                font-size: clamp(2.35em, 12vw, 3.35em);
-                line-height: 1.08;
-                letter-spacing: -.055em;
-            }
-
-            .home-lead {
-                font-size: 1em;
-                line-height: 1.75;
-            }
-
-            .home-actions {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .home-btn {
-                width: 100%;
-                justify-content: center;
-                text-align: center;
-            }
-
-            .museum-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .container {
-                width: min(100% - 18px, 1400px);
-                padding: 26px 0 42px;
-            }
-
-            .hero-slider {
-                min-height: 360px;
-            }
-
-            .slide {
-                min-height: 360px;
-            }
-
-            .slide-content {
-                width: 100%;
-                padding: 34px 22px;
-                background: linear-gradient(to bottom, rgba(61,52,73,.96) 0%, rgba(61,52,73,.78) 70%, rgba(61,52,73,.28) 100%);
-            }
-
-            .slide-title {
-                font-size: clamp(1.7em, 9vw, 2.45em);
-                line-height: 1.15;
-            }
-
-            .slide-desc {
-                font-size: .98em;
-                line-height: 1.7;
-            }
-
-            .mode-switch-container {
-                display: grid;
-                grid-template-columns: 1fr;
-                gap: 10px;
-                align-items: stretch;
-            }
-
-            .mode-btn,
-            .public-replay-link {
-                width: 100%;
-                justify-content: center;
-                min-height: 46px;
-                padding: 11px 14px;
-                text-align: center;
-            }
-
-            .controls-container {
-                display: grid;
-                grid-template-columns: 1fr;
-                gap: 14px;
-                align-items: stretch;
-            }
-
-            .filter-container {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 9px;
-                width: 100%;
-            }
-
-            .filter-btn {
-                width: 100%;
-                min-height: 42px;
-                padding: 9px 10px;
-                white-space: nowrap;
-                text-align: center;
-            }
-
-            .advanced-tag-filter-container {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                padding: 12px;
-            }
-
-            .search-container,
-            .vod-search-wrap,
-            .song-search-wrap {
-                width: 100%;
-                min-width: 0;
-            }
-
-            .search-input {
-                width: 100%;
-                min-height: 46px;
-                font-size: 16px;
-            }
-
-            .video-row {
-                grid-template-columns: 1fr;
-                gap: 16px;
-                min-height: 420px;
-            }
-
-            .video-card {
-                min-height: auto;
-            }
-
-            .video-card img,
-            .video-placeholder {
-                height: 180px;
-            }
-
-            .video-title {
-                font-size: 1.08em;
-                line-height: 1.35;
-            }
-
-            .favorite-btn {
-                width: 44px;
-                height: 44px;
-            }
-
-            .song-list-container {
-                min-height: 420px;
-            }
-
-            .song-row {
-                display: block;
-                padding: 16px;
-            }
-
-            .song-header,
-            .song-tags-wrap {
-                flex-wrap: wrap;
-            }
-
-            .song-title {
-                overflow-wrap: anywhere;
-            }
-
-            .song-performance-list {
-                margin-left: 0;
-                margin-top: 12px;
-            }
-
-            .vod-pagination {
-                gap: 8px;
-            }
-
-            .vod-page-btn,
-            .vod-page-ellipsis {
-                min-width: 38px;
-                min-height: 38px;
-            }
-
-            .story-section {
-                padding: 54px 18px;
-            }
-
-            .section-heading h2 {
-                font-size: clamp(2em, 10vw, 3em);
-                line-height: 1.15;
-            }
-
-            .annual-card {
-                padding: 28px 20px;
-            }
-        }
-
-        @media (max-width: 430px) {
-            .top-nav {
-                justify-content: flex-start;
-                overflow-x: auto;
-                flex-wrap: nowrap;
-                padding-bottom: 2px;
-                scrollbar-width: none;
-            }
-
-            .top-nav::-webkit-scrollbar {
-                display: none;
-            }
-
-            .home-hero {
-                padding: 84px 14px 40px;
-            }
-
-            .home-title {
-                font-size: clamp(2.05em, 11vw, 2.8em);
-            }
-
-            .filter-container,
-            .advanced-tag-filter-container {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 8px;
-            }
-
-            .filter-btn {
-                font-size: .9em;
-                padding: 9px 7px;
-            }
-
-            .video-card img,
-            .video-placeholder {
-                height: 160px;
-            }
-
-            .slide-content {
-                padding: 28px 18px;
-            }
-        }
-
-        /* ================================================================
-           手機版第二階段補強：修正小螢幕剩餘跑版
-           ================================================================ */
-        @media (max-width: 850px) {
-            .home-actions,
-            .home-copy,
-            .home-btn,
-            .museum-card,
-            .identity-card,
-            .marshmallow-sky,
-            .marshmallow-reader,
-            .video-card,
-            .song-row {
-                max-width: 100%;
-            }
-
-            .home-actions {
-                width: 100%;
-            }
-
-            .home-btn {
-                white-space: normal;
-                word-break: keep-all;
-                line-height: 1.45;
-            }
-
-            .marshmallow-reader {
-                width: 100%;
-                border-radius: 28px;
-                padding: 30px 20px;
-                box-shadow: 0 16px 38px rgba(74, 93, 112, .14);
-            }
-
-            .marshmallow-reader h3 {
-                font-size: clamp(1.6em, 8vw, 2.15em);
-                line-height: 1.2;
-            }
-
-            .marshmallow-reader-text {
-                max-width: 100%;
-                font-size: 1em;
-                line-height: 1.85;
-                overflow-wrap: anywhere;
-            }
-
-            .marshmallow-toolbar {
-                justify-content: stretch;
-            }
-
-            .marshmallow-link,
-            .marshmallow-back {
-                width: 100%;
-                justify-content: center;
-                text-align: center;
-                min-height: 42px;
-            }
-
-            .video-info.has-favorite-button {
-                padding-bottom: 64px;
-            }
-
-            .favorite-btn {
-                right: 14px;
-                bottom: 14px;
-            }
-
-            .video-card {
-                overflow: hidden;
-            }
-
-            .tags,
-            .advanced-tags {
-                overflow-wrap: anywhere;
-                line-height: 1.6;
-            }
-        }
-
-        @media (max-width: 430px) {
-            header {
-                padding: 12px;
-            }
-
-            .brand-wrap {
-                width: 100%;
-            }
-
-            .top-nav {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                overflow: visible;
-                gap: 8px;
-                width: 100%;
-            }
-
-            .top-nav .nav-dropdown,
-            .top-nav .nav-main,
-            .top-nav .archive-shortcut {
-                width: 100%;
-                min-width: 0;
-            }
-
-            .nav-dropdown-toggle,
-            .top-nav .nav-main,
-            .top-nav .archive-shortcut {
-                width: 100%;
-                min-width: 0;
-                justify-content: center;
-                text-align: center;
-                font-size: .9em;
-                padding: 9px 8px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .top-nav .nav-main {
-                grid-column: 1 / -1;
-            }
-
-            .nav-dropdown-menu {
-                left: 0;
-                right: auto;
-                transform: translateY(8px);
-                width: min(260px, calc(100vw - 24px));
-            }
-
-            .nav-dropdown:hover .nav-dropdown-menu,
-            .nav-dropdown.is-open .nav-dropdown-menu {
-                transform: translateY(0);
-            }
-
-            .home-hero {
-                padding-left: 18px;
-                padding-right: 18px;
-            }
-
-            .home-copy {
-                min-width: 0;
-            }
-
-            .home-title {
-                overflow-wrap: anywhere;
-            }
-
-            .home-lead {
-                overflow-wrap: anywhere;
-            }
-
-            .identity-card {
-                border-radius: 24px;
-            }
-
-            .identity-card img {
-                border-radius: 18px;
-            }
-
-            .marshmallow-sky {
-                border-radius: 22px;
-                padding: 20px 12px;
-            }
-
-            .marshmallow-reader {
-                border-radius: 24px;
-                padding: 26px 18px;
-            }
-
-            .marshmallow-reader-text {
-                font-size: .98em;
-                line-height: 1.85;
-            }
-
-            .filter-container,
-            .advanced-tag-filter-container {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
-            .filter-btn {
-                white-space: normal;
-                line-height: 1.35;
-            }
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* ================================================================
-           小恐龍探頭彩蛋：點呆毛後播放跳出影片
-           ================================================================ */
-        .nono-peek-widget {
-            position: fixed;
-            right: 22px;
-            bottom: 22px;
-            z-index: 80;
-            display: grid;
-            gap: 8px;
-            justify-items: end;
-            transition: opacity .22s ease, transform .22s ease;
-        }
-
-        .nono-peek-widget.is-hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(18px);
-        }
-
-        .nono-peek-close {
-            width: 30px;
-            height: 30px;
-            border: 1px solid rgba(221,208,183,.9);
-            border-radius: 50%;
-            background: rgba(255,253,247,.92);
-            color: var(--brown);
-            cursor: pointer;
-            box-shadow: 0 8px 18px rgba(74,64,56,.12);
-        }
-
-        .nono-peek-trigger {
-            border: 1px solid rgba(145,169,111,.42);
-            border-radius: 26px;
-            padding: 10px 12px 12px;
-            background: rgba(255,253,247,.94);
-            color: var(--purple);
-            cursor: pointer;
-            box-shadow: 0 18px 42px rgba(74,64,56,.18);
-            display: grid;
-            justify-items: center;
-            gap: 6px;
-            min-width: 124px;
-            animation: nonoPeekFloat 2.6s ease-in-out infinite;
-        }
-
-        .nono-peek-trigger:hover,
-        .nono-peek-trigger:focus-visible {
-            transform: translateY(-3px);
-            background: #fff;
-            outline: none;
-        }
-
-        .nono-peek-trigger img {
-            width: 78px;
-            height: 78px;
-            object-fit: contain;
-            filter: drop-shadow(0 8px 10px rgba(85,75,105,.18));
-        }
-
-        .nono-peek-hint {
-            font-size: .82em;
-            font-weight: 900;
-            color: var(--sage-deep);
-            white-space: nowrap;
-        }
-
-        .nono-pet-bubble {
-            position: relative;
-            max-width: 190px;
-            padding: 10px 14px;
-            border-radius: 18px 18px 6px 18px;
-            background: rgba(255,253,247,.96);
-            color: var(--purple);
-            font-size: .9em;
-            font-weight: 900;
-            box-shadow: 0 12px 28px rgba(74,64,56,.16);
-            border: 1px solid rgba(221,208,183,.78);
-            opacity: 0;
-            transform: translateY(8px);
-            pointer-events: none;
-            transition: opacity .22s ease, transform .22s ease;
-        }
-
-        .nono-pet-bubble.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .nono-pet-menu {
-            width: min(220px, calc(100vw - 28px));
-            padding: 12px;
-            border-radius: 22px;
-            background: rgba(255,253,247,.96);
-            border: 1px solid rgba(221,208,183,.86);
-            box-shadow: 0 18px 44px rgba(74,64,56,.18);
-            display: none;
-            gap: 8px;
-        }
-
-        .nono-peek-widget.is-menu-open .nono-pet-menu {
-            display: grid;
-        }
-
-        .nono-pet-menu-title {
-            color: var(--sage-deep);
-            font-size: .86em;
-            font-weight: 900;
-            padding: 2px 4px 4px;
-        }
-
-        .nono-pet-action {
-            width: 100%;
-            min-height: 40px;
-            border: 0;
-            border-radius: 999px;
-            background: #f3ead7;
-            color: var(--brown);
-            cursor: pointer;
-            font-weight: 900;
-            text-align: left;
-            padding: 9px 13px;
-        }
-
-        .nono-pet-action:hover,
-        .nono-pet-action:focus-visible {
-            background: var(--sage-soft);
-            color: var(--sage-deep);
-            outline: none;
-        }
-
-        .nono-pop-layer {
-            position: fixed;
-            inset: 0;
-            z-index: 120;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 18px;
-            background: rgba(32, 28, 36, .54);
-            backdrop-filter: blur(3px);
-        }
-
-        .nono-pop-layer.is-active {
-            display: flex;
-        }
-
-        .nono-pop-card {
-            position: relative;
-            width: min(760px, 94vw);
-            border-radius: 30px;
-            overflow: hidden;
-            background: #111;
-            box-shadow: 0 28px 90px rgba(0,0,0,.34);
-            animation: nonoPopBounce .32s cubic-bezier(.2,1.3,.35,1) both;
-        }
-
-        .nono-pop-video {
-            display: block;
-            width: 100%;
-            height: auto;
-            max-height: 78vh;
-            object-fit: contain;
-            background: #111;
-        }
-
-        .nono-pop-layer.is-waiting .nono-pop-video {
-            filter: saturate(.92) brightness(.92);
-        }
-
-        .nono-hair-hotspot {
-            position: absolute;
-            left: 34%;
-            top: 13%;
-            width: 30%;
-            height: 18%;
-            border: 0;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, .01);
-            cursor: pointer;
-            z-index: 2;
-        }
-
-        .nono-hair-hotspot::after {
-            content: "點擊呆毛";
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translateX(-50%) translateY(-50%);
-            padding: 10px 18px;
-            border-radius: 999px;
-            background: rgba(255,253,247,.94);
-            color: var(--sage-deep);
-            font-size: 1.12em;
-            font-weight: 900;
-            white-space: nowrap;
-            box-shadow: 0 10px 24px rgba(0,0,0,.14);
-            animation: nonoHintPulse 1.5s ease-in-out infinite;
-        }
-
-        .nono-hair-hotspot:hover::after,
-        .nono-hair-hotspot:focus-visible::after {
-            background: #fff;
-            color: var(--purple);
-        }
-
-        .nono-pop-layer:not(.is-waiting) .nono-hair-hotspot {
-            display: none;
-        }
-
-        .nono-pop-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 36px;
-            height: 36px;
-            border: 0;
-            border-radius: 50%;
-            background: rgba(255,253,247,.9);
-            color: var(--brown);
-            cursor: pointer;
-            font-size: 1.25em;
-            box-shadow: 0 8px 22px rgba(0,0,0,.18);
-        }
-
-        @keyframes nonoPeekFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        @keyframes nonoPopBounce {
-            from { transform: scale(.86) translateY(18px); opacity: 0; }
-            to { transform: scale(1) translateY(0); opacity: 1; }
-        }
-
-        @keyframes nonoHintPulse {
-            0%, 100% { transform: translateX(-50%) translateY(-50%); }
-            50% { transform: translateX(-50%) translateY(calc(-50% - 4px)); }
-        }
-
-        @media (max-width: 850px) {
-            .nono-peek-widget {
-                right: 12px;
-                bottom: 12px;
-            }
-
-            .nono-peek-trigger {
-                min-width: 104px;
-                border-radius: 22px;
-            }
-
-            .nono-peek-trigger img {
-                width: 64px;
-                height: 64px;
-            }
-
-            .nono-pop-card {
-                width: min(420px, 94vw);
-                border-radius: 24px;
-            }
-
-            .nono-hair-hotspot::after {
-                font-size: 1em;
-                padding: 9px 15px;
-            }
-        }
-        @media (max-width: 850px) {
-            .songbook-shortcut {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .songbook-shortcut-btn {
-                width: 100%;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <div class="nono-peek-widget" id="nonoPeekWidget" aria-live="polite">
@@ -2043,6 +14,7 @@
             <button class="nono-pet-action" type="button" data-pet-action="hair">🦖 點擊呆毛</button>
             <button class="nono-pet-action" type="button" data-pet-action="memory">🎲 抽一段回憶</button>
             <button class="nono-pet-action" type="button" data-pet-action="songbook">🎵 看歌單</button>
+            <button class="nono-pet-action" id="easterEggStampMenuBtn" type="button" data-pet-action="stamps" hidden>🐾 彩蛋集章卡</button>
             <button class="nono-pet-action" type="button" data-pet-action="archive">📺 回到館藏</button>
         </div>
         <button class="nono-peek-close" id="nonoPeekClose" type="button" aria-label="關閉小恐龍彩蛋">×</button>
@@ -2058,6 +30,53 @@
             <video class="nono-pop-video" id="nonoPopVideo" src="media/nono-pop.mp4" preload="metadata" playsinline></video>
             <button class="nono-hair-hotspot" id="nonoHairHotspot" type="button" aria-label="點一下呆毛"></button>
         </div>
+    </div>
+
+    <div class="egg-stamp-layer" id="eggStampLayer" aria-hidden="true">
+        <section class="egg-stamp-card" role="dialog" aria-modal="true" aria-labelledby="eggStampTitle">
+            <button class="egg-stamp-close" id="eggStampClose" type="button" aria-label="收起彩蛋集章卡">×</button>
+            <div class="egg-stamp-kicker" id="eggStampKicker">Dinosaur Museum Secret Passport</div>
+            <h2 id="eggStampTitle">彩蛋集章卡</h2>
+            <p class="egg-stamp-intro" id="eggStampIntro">你在博物館裡找到了一個藏起來的小秘密。每次發現彩蛋，這張卡就會留下新的足跡。</p>
+            <div class="egg-stamp-records" id="eggStampRecords"></div>
+            <div class="egg-stamp-footer">
+                <small id="eggStampStoredMessage">已收進右下角的小恐龍導覽員 🦖</small>
+                <div class="egg-stamp-actions">
+                    <button class="egg-stamp-reset" id="eggStampReset" type="button">重置彩蛋</button>
+                    <button class="egg-stamp-return" id="eggStampReturn" type="button">再看看新衣裝</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tft-shop-layer" id="tftShopLayer" aria-hidden="true">
+        <section class="tft-shop-panel" role="dialog" aria-modal="true" aria-labelledby="tftShopTitle">
+            <button class="tft-shop-close" id="tftShopClose" type="button" aria-label="關閉五星衣裝商店">×</button>
+            <div class="tft-shop-header">
+                <span class="tft-shop-level">LV. 8</span>
+                <div>
+                    <small id="tftShopSubtitle">本回合五星衣裝商店</small>
+                    <h2 id="tftShopTitle">TFT小公主</h2>
+                </div>
+                <div class="tft-shop-controls">
+                    <button class="tft-shop-refresh" id="tftShopRefresh" type="button" aria-label="花費2金幣刷新商店" title="花費2金幣刷新商店">刷新 🪙 2</button>
+                    <span class="tft-shop-gold" id="tftShopGoldText">🪙 67</span>
+                </div>
+            </div>
+            <div class="tft-shop-grid" id="tftShopGrid"></div>
+            <p class="tft-shop-hint">三張同名卡會自動合成；沒有合成時，選完五張收起商店</p>
+            <div class="tft-upgrade-reveal" id="tftUpgradeReveal" aria-hidden="true">
+                <div class="tft-upgrade-burst"></div>
+                <img id="tftUpgradeImage" src="" alt="">
+                <strong id="tftUpgradeName"></strong>
+                <span>⭐⭐⭐⭐⭐</span>
+            </div>
+        </section>
+    </div>
+
+    <div class="orange-easter-layer" id="orangeEasterLayer" aria-hidden="true">
+        <div class="orange-rain-field" id="orangeRainField"></div>
+        <div class="orange-punch" id="orangePunch" aria-hidden="true">👊</div>
     </div>
 
     <header>
@@ -2102,9 +121,23 @@
                     <a class="home-btn secondary" href="#about">先認識諾諾</a>
                 </div>
             </div>
-            <aside class="museum-card identity-card" aria-label="小恐龍諾諾形象封面">
-                <img src="images/nono-main-cover.jpg" alt="小恐龍諾諾坐在窗邊抱著恐龍玩偶的封面">
-                <div class="cover-caption"><strong>Little Dino YanYan</strong><span>一座會慢慢長大的回憶館 🌱</span></div>
+            <aside class="museum-card identity-card" id="outfitEggCard" aria-label="小恐龍諾諾形象封面">
+                <div class="outfit-egg-stage">
+                    <div class="outfit-egg-stage-inner">
+                        <div class="outfit-egg-face outfit-egg-front">
+                            <img src="images/nono-main-cover.jpg" alt="小恐龍諾諾坐在窗邊抱著恐龍玩偶的封面">
+                            <button class="outfit-egg-hotspot" id="outfitEggHotspot" type="button" aria-label="小恐龍的頭"></button>
+                        </div>
+                        <div class="outfit-egg-face outfit-egg-back" id="outfitEggGallery" aria-hidden="true">
+                            <div class="outfit-polaroid-grid" id="outfitPolaroidGrid"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cover-caption">
+                    <strong>Little Dino YanYan</strong>
+                    <span>一座會慢慢長大的回憶館 🌱</span>
+                    <button class="outfit-view-toggle" id="outfitViewToggle" type="button" hidden>回到原本照片 ↩</button>
+                </div>
             </aside>
         </section>
 
@@ -2124,6 +157,10 @@
                         <span class="dino-tag">日本語を勉強中</span>
                         <span class="dino-tag">💛 Soup dumplings</span>
                     </div>
+                    <button class="profile-dino-egg" id="guessEggHotspot" type="button" aria-label="自我介紹裡的小恐龍" aria-pressed="false">
+                        <span class="profile-dino-emoji" aria-hidden="true">🦖</span>
+                        <span class="profile-dino-eyepatch" aria-hidden="true"></span>
+                    </button>
                 </article>
                 <aside class="nono-bubble">
                     <img class="chibi-image" src="images/nono-chibi.png" alt="諾諾與小恐龍的Q版形象">
@@ -2141,7 +178,10 @@
                     <span class="section-kicker">TAKE ME BACK</span>
                     <h2>帶我回到某一天</h2>
                     <p>不用想要看什麼，讓小恐龍從收藏裡抽出一段歌聲、一場活動，或一個曾經笑過的瞬間。</p>
-                    <button class="draw-btn" id="drawMemoryBtn" type="button">抽一張回憶卡 ✨</button>
+                    <div class="memory-button-row">
+                        <button class="draw-btn" id="drawMemoryBtn" type="button">抽一張回憶卡 ✨</button>
+                        <button class="tft-replay-btn" id="tftReplayBtn" type="button" hidden>🪙 TFT商店</button>
+                    </div>
                 </div>
                 <div class="memory-result empty" id="memoryResult" aria-live="polite">
                     <div class="memory-result-icon">💭</div>
@@ -2163,6 +203,7 @@
                 <div class="marshmallow-cloud-list" id="marshmallowCloudList"></div>
                 <article class="marshmallow-reader hidden" id="marshmallowReader" tabindex="-1" aria-live="polite">
                     <h3 id="marshmallowReaderTitle"></h3>
+                    <button class="marshmallow-orange-replay" id="marshmallowOrangeReplay" type="button" aria-label="重播哈橘彩蛋" title="重播哈橘彩蛋" hidden>🍊</button>
                     <p class="marshmallow-reader-text" id="marshmallowReaderText"></p>
                     <div class="marshmallow-reader-meta" id="marshmallowReaderMeta"></div>
                     <button class="marshmallow-back" id="marshmallowBackBtn" type="button">☁️ 回到雲朵列表</button>
@@ -2300,6 +341,7 @@
     <script src="data/originalSongs.js"></script>
     <script src="data/quoteData.js"></script>
     <script src="data/annualReview.js"></script>
+    <script src="data/easterEggData.js"></script>
     <script src="data.js"></script>
     <script>
         // =========================================================================
@@ -2331,7 +373,8 @@
 			quoteData,
 			marshmallowData = [],
 			marshmallowInfo = {},
-			annualReview
+			annualReview,
+			easterEggData = {}
 		} = window.museumData;
 
         // 將 VOD、歌曲與其他內容自動合併成輪播可查找的索引。
@@ -2513,6 +556,26 @@
         const marshmallowReaderMeta = document.getElementById('marshmallowReaderMeta');
         const marshmallowBackBtn = document.getElementById('marshmallowBackBtn');
         const marshmallowActivityLink = document.getElementById('marshmallowActivityLink');
+        const marshmallowOrangeReplay = document.getElementById('marshmallowOrangeReplay');
+        let activeMarshmallowId = "";
+
+        function isStoredEasterEggUnlocked(eggId) {
+            try {
+                const storageKey = easterEggData.storageKey || "nonoMuseumUnlockedEasterEggs";
+                const storedValue = JSON.parse(localStorage.getItem(storageKey) || "[]");
+                return Array.isArray(storedValue) && storedValue.includes(eggId);
+            } catch (error) {
+                console.warn('無法讀取彩蛋狀態。', error);
+                return false;
+            }
+        }
+
+        function updateMarshmallowOrangeReplay(item) {
+            if (!marshmallowOrangeReplay) return;
+            const canReplay = item?.id === "mash_005"
+                && isStoredEasterEggUnlocked("harju-scolding");
+            marshmallowOrangeReplay.hidden = !canReplay;
+        }
 
         function getMarshmallowPreview(item) {
             const source = String(item.preview || item.text || "").trim();
@@ -2520,15 +583,23 @@
         }
 
         function openMarshmallow(item) {
+            activeMarshmallowId = item.id || "";
             marshmallowReaderTitle.textContent = item.title || "一封收藏在雲裡的心意";
             marshmallowReaderText.textContent = item.text || "這則棉花糖內容正在等待館長整理。";
             marshmallowReaderMeta.textContent = [item.date, item.note].filter(Boolean).join(" · ");
+            updateMarshmallowOrangeReplay(item);
             marshmallowCloudList.classList.add('hidden');
             marshmallowReader.classList.remove('hidden');
             marshmallowReader.focus();
+
+            if (item.id === "mash_005" && !isStoredEasterEggUnlocked("harju-scolding")) {
+                window.setTimeout(() => startOrangeEasterEgg({ firstUnlock: true }), 180);
+            }
         }
 
         function showMarshmallowList() {
+            activeMarshmallowId = "";
+            if (marshmallowOrangeReplay) marshmallowOrangeReplay.hidden = true;
             marshmallowReader.classList.add('hidden');
             marshmallowCloudList.classList.remove('hidden');
         }
@@ -2553,6 +624,13 @@
                 const title = document.createElement('span');
                 title.className = 'cloud-title';
                 title.textContent = item.title || `棉花糖 #${index + 1}`;
+                if (item.id === "mash_005" && isStoredEasterEggUnlocked("harju-scolding")) {
+                    const marker = document.createElement('span');
+                    marker.className = 'cloud-orange-marker';
+                    marker.textContent = '🍊';
+                    marker.setAttribute('aria-hidden', 'true');
+                    title.appendChild(marker);
+                }
 
                 const preview = document.createElement('span');
                 preview.className = 'cloud-preview';
@@ -2579,6 +657,9 @@
         }
 
         marshmallowBackBtn.addEventListener('click', showMarshmallowList);
+        marshmallowOrangeReplay?.addEventListener('click', () => {
+            startOrangeEasterEgg({ firstUnlock: false });
+        });
         renderMarshmallowClouds();
         renderMarshmallowInfo();
 
@@ -2760,10 +841,21 @@
             }
 
             const favoriteIds = getFavoriteVodIds();
-            const nextIds = favoriteIds.includes(id)
-                ? favoriteIds.filter(favoriteId => favoriteId !== id)
-                : [...favoriteIds, id];
+            const isAdding = !favoriteIds.includes(id);
+            const nextIds = isAdding
+                ? [...favoriteIds, id]
+                : favoriteIds.filter(favoriteId => favoriteId !== id);
             saveFavoriteVodIds(nextIds);
+
+            if (isAdding && typeof isFavoriteEggAnimating !== 'undefined' && !isFavoriteEggAnimating) {
+                if (typeof availableEasterEggs !== 'undefined') {
+                    const eggDef = availableEasterEggs.find(e => e.triggerSourceId === id && e.type === 'favorite');
+                    if (eggDef && typeof triggerFavoriteEgg === 'function') {
+                        const targetCard = (event && event.currentTarget) ? event.currentTarget.closest('.video-card') : null;
+                        triggerFavoriteEgg(eggDef, targetCard);
+                    }
+                }
+            }
 
             if (currentVodCategory === 'favorite') {
                 renderVodPage();
@@ -3064,6 +1156,19 @@
                     button.currentSound.play().catch(() => {
                         button.textContent = '音效目前無法播放';
                     });
+                    if (typeof getUnlockedEasterEggs === 'function') {
+                        const EGG_ID = "nono-audio-egg";
+                        const unlockedEggs = getUnlockedEasterEggs();
+                        if (!unlockedEggs.includes(EGG_ID)) {
+                            unlockedEggs.push(EGG_ID);
+                            saveUnlockedEasterEggs(unlockedEggs);
+                            if (typeof syncEasterEggUI === 'function') syncEasterEggUI();
+                            if (typeof showNonoPetBubble === 'function') showNonoPetBubble("Rawr！是不是很大聲！📢");
+                            window.setTimeout(() => {
+                                if (typeof openEggStampCard === 'function') openEggStampCard({ celebrate: true });
+                            }, 500);
+                        }
+                    }
                 });
             });
         }
@@ -3515,8 +1620,66 @@
         const nonoHairHotspot = document.getElementById('nonoHairHotspot');
         const nonoPetBubble = document.getElementById('nonoPetBubble');
         const nonoPetMenu = document.getElementById('nonoPetMenu');
+        const availableEasterEggs = Array.isArray(easterEggData.eggs) ? easterEggData.eggs : [];
+        const outfitEggDefinition = availableEasterEggs.find(egg => egg.id === "outfit-memory-wall") || {};
+        const guessEggDefinition = availableEasterEggs.find(egg => egg.id === "draw-and-guess") || {};
+        const tftEggDefinition = availableEasterEggs.find(egg => egg.id === "tft-princess") || {};
+        const harjuEggDefinition = availableEasterEggs.find(egg => egg.id === "harju-scolding") || {};
+        const EASTER_EGG_STORAGE_KEY = easterEggData.storageKey || "nonoMuseumUnlockedEasterEggs";
+        const OUTFIT_EGG_ID = outfitEggDefinition.id || "outfit-memory-wall";
+        const OUTFIT_EGG_TRIGGER_CLICKS = Math.max(1, Number(outfitEggDefinition.triggerClicks) || 3);
+        const GUESS_EGG_ID = guessEggDefinition.id || "draw-and-guess";
+        const GUESS_EGG_TRIGGER_CLICKS = Math.max(1, Number(guessEggDefinition.triggerClicks) || 3);
+        const TFT_EGG_ID = tftEggDefinition.id || "tft-princess";
+        const TFT_EGG_TRIGGER_CLICKS = Math.max(1, Number(tftEggDefinition.triggerClicks) || 3);
+        const HARJU_EGG_ID = harjuEggDefinition.id || "harju-scolding";
+        const HARJU_SOURCE_ID = harjuEggDefinition.triggerSourceId || "mash_005";
+        const outfitEggCard = document.getElementById('outfitEggCard');
+        const outfitEggHotspot = document.getElementById('outfitEggHotspot');
+        const outfitEggGallery = document.getElementById('outfitEggGallery');
+        const outfitPolaroidGrid = document.getElementById('outfitPolaroidGrid');
+        const outfitViewToggle = document.getElementById('outfitViewToggle');
+        const guessEggHotspot = document.getElementById('guessEggHotspot');
+        const easterEggStampMenuBtn = document.getElementById('easterEggStampMenuBtn');
+        const eggStampLayer = document.getElementById('eggStampLayer');
+        const eggStampClose = document.getElementById('eggStampClose');
+        const eggStampReturn = document.getElementById('eggStampReturn');
+        const eggStampReset = document.getElementById('eggStampReset');
+        const eggStampKicker = document.getElementById('eggStampKicker');
+        const eggStampTitle = document.getElementById('eggStampTitle');
+        const eggStampIntro = document.getElementById('eggStampIntro');
+        const eggStampRecords = document.getElementById('eggStampRecords');
+        const eggStampStoredMessage = document.getElementById('eggStampStoredMessage');
+        const tftShopLayer = document.getElementById('tftShopLayer');
+        const tftShopClose = document.getElementById('tftShopClose');
+        const tftShopGrid = document.getElementById('tftShopGrid');
+        const tftShopTitle = document.getElementById('tftShopTitle');
+        const tftShopSubtitle = document.getElementById('tftShopSubtitle');
+        const tftReplayBtn = document.getElementById('tftReplayBtn');
+        const tftUpgradeReveal = document.getElementById('tftUpgradeReveal');
+        const tftUpgradeImage = document.getElementById('tftUpgradeImage');
+        const tftUpgradeName = document.getElementById('tftUpgradeName');
+        const orangeEasterLayer = document.getElementById('orangeEasterLayer');
+        const orangeRainField = document.getElementById('orangeRainField');
         const nonoPetLines = ["Rawr! Rawr!", "今天也要開心歐", "小籠包!不要跑!"];
         let nonoPetBubbleTimer = null;
+        let outfitEggTapCount = 0;
+        let outfitEggTapTimer = null;
+        let guessEggTapCount = 0;
+        let guessEggTapTimer = null;
+        let tftEggTapCount = 0;
+        let tftEggTapTimer = null;
+        let tftStampPending = false;
+        let tftPickedCount = 0;
+        let tftPickedByName = new Map();
+        let tftUpgradeTimer = null;
+        let tftUpgradeAudio = null;
+        let tftCurrentGold = 67;
+        const tftShopGoldText = document.getElementById('tftShopGoldText');
+        const tftShopRefresh = document.getElementById('tftShopRefresh');
+        let orangeEasterRunning = false;
+        let orangeEasterTimers = [];
+        let isFavoriteEggAnimating = false;
 
         function hideNonoPeekWidget() {
             nonoPeekWidget?.classList.add('is-hidden');
@@ -3544,6 +1707,523 @@
             nonoPetBubbleTimer = window.setTimeout(() => {
                 nonoPetBubble.classList.remove('is-visible');
             }, 3600);
+        }
+
+        function getUnlockedEasterEggs() {
+            try {
+                const storedValue = JSON.parse(localStorage.getItem(EASTER_EGG_STORAGE_KEY) || "[]");
+                return Array.isArray(storedValue) ? storedValue.filter(Boolean) : [];
+            } catch (error) {
+                console.warn('無法讀取彩蛋集章卡狀態。', error);
+                return [];
+            }
+        }
+
+        function saveUnlockedEasterEggs(eggIds) {
+            try {
+                localStorage.setItem(EASTER_EGG_STORAGE_KEY, JSON.stringify([...new Set(eggIds)]));
+            } catch (error) {
+                console.warn('無法儲存彩蛋集章卡狀態。', error);
+            }
+        }
+
+        function hasUnlockedEasterEgg(eggId) {
+            return getUnlockedEasterEggs().includes(eggId);
+        }
+
+        function renderOutfitPolaroids() {
+            if (!outfitPolaroidGrid) return;
+            outfitPolaroidGrid.innerHTML = '';
+
+            const cards = Array.isArray(outfitEggDefinition.cards) ? outfitEggDefinition.cards : [];
+            cards.forEach(item => {
+                const card = document.createElement('button');
+                card.className = 'outfit-polaroid';
+                card.type = 'button';
+                card.setAttribute('aria-label', `翻開${item.name || "衣裝"}拍立得`);
+
+                const inner = document.createElement('span');
+                inner.className = 'outfit-polaroid-inner';
+
+                const front = document.createElement('span');
+                front.className = 'outfit-polaroid-face outfit-polaroid-front';
+                const image = document.createElement('img');
+                image.src = item.image || '';
+                image.alt = item.name || 'YanYan 衣裝';
+                image.loading = 'lazy';
+                image.decoding = 'async';
+                const name = document.createElement('span');
+                name.className = 'outfit-polaroid-name';
+                name.textContent = item.name || '未命名衣裝';
+                front.append(image, name);
+
+                const back = document.createElement('span');
+                back.className = 'outfit-polaroid-face outfit-polaroid-back';
+                const backTitle = document.createElement('strong');
+                backTitle.textContent = item.backTitle || item.name || '未命名衣裝';
+                const date = document.createElement('time');
+                date.textContent = item.date || '日期待補';
+                if (item.dateTime) date.dateTime = item.dateTime;
+                const desc = document.createElement('span');
+                desc.textContent = item.desc || '';
+                back.append(backTitle, date);
+                if (desc.textContent) back.appendChild(desc);
+
+                inner.append(front, back);
+                card.appendChild(inner);
+                card.addEventListener('click', () => {
+                    const usesTouchInteraction = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+                    if (usesTouchInteraction) card.classList.toggle('is-flipped');
+                });
+                outfitPolaroidGrid.appendChild(card);
+            });
+        }
+
+        function renderStampRecords() {
+            if (!eggStampRecords) return;
+            eggStampRecords.innerHTML = '';
+            const unlockedEggIds = getUnlockedEasterEggs();
+
+            availableEasterEggs
+                .filter(egg => unlockedEggIds.includes(egg.id))
+                .forEach(egg => {
+                    const record = document.createElement('div');
+                    record.className = 'egg-stamp-record';
+
+                    const stamp = document.createElement('div');
+                    stamp.className = 'egg-paw-stamp';
+                    stamp.setAttribute('aria-label', '紅色小恐龍印章');
+                    const dinosaur = document.createElement('span');
+                    dinosaur.className = 'egg-dino-stamp-mark';
+                    dinosaur.setAttribute('aria-hidden', 'true');
+                    dinosaur.textContent = '🦖';
+                    stamp.appendChild(dinosaur);
+
+                    const copy = document.createElement('div');
+                    copy.className = 'egg-stamp-copy';
+                    const title = document.createElement('strong');
+                    title.textContent = egg.stampTitle || egg.title || '博物館彩蛋';
+                    const desc = document.createElement('span');
+                    desc.textContent = egg.stampDesc || '';
+                    copy.append(title, desc);
+
+                    record.append(stamp, copy);
+                    eggStampRecords.appendChild(record);
+                });
+        }
+
+        function renderEasterEggContent() {
+            const passport = easterEggData.passport || {};
+            if (eggStampKicker) eggStampKicker.textContent = passport.kicker || 'Dinosaur Museum Secret Passport';
+            if (eggStampTitle) eggStampTitle.textContent = passport.title || '彩蛋集章卡';
+            if (eggStampIntro) eggStampIntro.textContent = passport.intro || '';
+            if (eggStampStoredMessage) {
+                eggStampStoredMessage.textContent = passport.storedMessage || '已收進右下角的小恐龍導覽員 🦖';
+            }
+            renderOutfitPolaroids();
+            renderStampRecords();
+        }
+
+        function syncEasterEggUI() {
+            const hasAnyEgg = getUnlockedEasterEggs().length > 0;
+            const hasOutfitEgg = hasUnlockedEasterEgg(OUTFIT_EGG_ID);
+            const hasGuessEgg = hasUnlockedEasterEgg(GUESS_EGG_ID);
+            const hasTftEgg = hasUnlockedEasterEgg(TFT_EGG_ID);
+            const hasHarjuEgg = hasUnlockedEasterEgg(HARJU_EGG_ID);
+
+            easterEggStampMenuBtn?.toggleAttribute('hidden', !hasAnyEgg);
+            outfitViewToggle?.toggleAttribute('hidden', !hasOutfitEgg);
+            tftReplayBtn?.toggleAttribute('hidden', !hasTftEgg);
+            if (marshmallowOrangeReplay) {
+                marshmallowOrangeReplay.hidden = !(hasHarjuEgg && activeMarshmallowId === HARJU_SOURCE_ID);
+            }
+            if (outfitEggHotspot) outfitEggHotspot.disabled = hasOutfitEgg;
+            guessEggHotspot?.classList.toggle('is-eyepatched', hasGuessEgg);
+            guessEggHotspot?.setAttribute('aria-pressed', String(hasGuessEgg));
+            const galleryIsVisible = outfitEggCard?.classList.contains('is-outfit-revealed');
+            document.querySelectorAll('.outfit-polaroid').forEach(card => {
+                card.tabIndex = hasOutfitEgg && galleryIsVisible ? 0 : -1;
+            });
+            renderStampRecords();
+            updateOutfitViewToggle();
+        }
+
+        function setOutfitGalleryVisible(showGallery) {
+            const canShowGallery = showGallery && hasUnlockedEasterEgg(OUTFIT_EGG_ID);
+            outfitEggCard?.classList.toggle('is-outfit-revealed', canShowGallery);
+            outfitEggGallery?.setAttribute('aria-hidden', String(!canShowGallery));
+            document.querySelectorAll('.outfit-polaroid').forEach(card => {
+                card.tabIndex = canShowGallery ? 0 : -1;
+            });
+            updateOutfitViewToggle();
+        }
+
+        function updateOutfitViewToggle() {
+            if (!outfitViewToggle) return;
+            const galleryIsVisible = outfitEggCard?.classList.contains('is-outfit-revealed');
+            outfitViewToggle.textContent = galleryIsVisible
+                ? "回到原本照片 ↩"
+                : "查看衣裝回憶 🎞";
+        }
+
+        function openEggStampCard({ celebrate = false } = {}) {
+            if (!eggStampLayer || getUnlockedEasterEggs().length === 0) return;
+            toggleNonoPetMenu(false);
+            renderStampRecords();
+            eggStampLayer.classList.add('is-active');
+            eggStampLayer.classList.toggle('is-celebrating', celebrate);
+            eggStampLayer.setAttribute('aria-hidden', 'false');
+            window.setTimeout(() => eggStampClose?.focus(), 50);
+        }
+
+        function closeEggStampCard() {
+            if (!eggStampLayer) return;
+            eggStampLayer.classList.remove('is-active', 'is-celebrating');
+            eggStampLayer.setAttribute('aria-hidden', 'true');
+        }
+
+        function unlockOutfitMemoryWall() {
+            const unlockedEggs = getUnlockedEasterEggs();
+            const isFirstUnlock = !unlockedEggs.includes(OUTFIT_EGG_ID);
+
+            if (isFirstUnlock) {
+                unlockedEggs.push(OUTFIT_EGG_ID);
+                saveUnlockedEasterEggs(unlockedEggs);
+            }
+
+            syncEasterEggUI();
+            setOutfitGalleryVisible(true);
+            showNonoPetBubble(outfitEggDefinition.unlockBubble || "找到衣裝回憶牆了！🦖");
+            if (isFirstUnlock) {
+                window.setTimeout(() => openEggStampCard({ celebrate: true }), 920);
+            }
+        }
+
+        function unlockGuessEgg() {
+            const unlockedEggs = getUnlockedEasterEggs();
+            const isFirstUnlock = !unlockedEggs.includes(GUESS_EGG_ID);
+
+            if (isFirstUnlock) {
+                unlockedEggs.push(GUESS_EGG_ID);
+                saveUnlockedEasterEggs(unlockedEggs);
+            }
+
+            syncEasterEggUI();
+            showNonoPetBubble(guessEggDefinition.unlockBubble || "妳畫我猜！小恐龍戴上眼罩了！🦖");
+            if (isFirstUnlock) {
+                window.setTimeout(() => openEggStampCard({ celebrate: true }), 620);
+            }
+        }
+
+        function renderTftShopCards() {
+            if (!tftShopGrid) return;
+            tftShopGrid.innerHTML = '';
+            tftPickedCount = 0;
+            tftPickedByName = new Map();
+
+            const cardPool = Array.isArray(tftEggDefinition.cards) ? tftEggDefinition.cards : [];
+            const drawCount = Math.max(1, Number(tftEggDefinition.drawCount) || 5);
+            if (cardPool.length === 0) return;
+
+            for (let index = 0; index < drawCount; index += 1) {
+                const item = cardPool[Math.floor(Math.random() * cardPool.length)];
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.className = 'tft-shop-card';
+                card.dataset.cardName = item.name || '五星衣裝卡';
+                card.setAttribute('aria-label', `選擇五星卡：${item.name || "衣裝卡"}`);
+                card.innerHTML = `
+                    <img src="${item.image || ""}" alt="${item.name || "五星衣裝卡"}" loading="lazy" decoding="async">
+                    <span class="tft-shop-card-copy">
+                        <strong class="tft-shop-card-name">${item.name || "五星衣裝卡"}</strong>
+                        <span class="tft-shop-stars" aria-label="五星">⭐⭐⭐⭐⭐</span>
+                    </span>`;
+                card.addEventListener('click', () => pickTftShopCard(card, item));
+                tftShopGrid.appendChild(card);
+            }
+        }
+
+        function hideTftUpgradeReveal() {
+            clearTimeout(tftUpgradeTimer);
+            tftUpgradeReveal?.classList.remove('is-active');
+            tftUpgradeReveal?.setAttribute('aria-hidden', 'true');
+        }
+
+        function playTftUpgradeSound(onEndedCallback) {
+            const soundPath = String(tftEggDefinition.upgradeSound || '').trim();
+            if (!soundPath) {
+                if (onEndedCallback) setTimeout(onEndedCallback, 1850);
+                return;
+            }
+            try {
+                tftUpgradeAudio?.pause();
+                tftUpgradeAudio = new Audio(soundPath);
+                tftUpgradeAudio.volume = .72;
+                if (onEndedCallback) {
+                    tftUpgradeAudio.onended = onEndedCallback;
+                }
+                const playPromise = tftUpgradeAudio.play();
+                if (playPromise && typeof playPromise.catch === 'function') {
+                    playPromise.catch((error) => {
+                        console.warn('TFT 音效播放失敗', error);
+                        if (onEndedCallback) setTimeout(onEndedCallback, 1850);
+                    });
+                }
+            } catch (error) {
+                // 音效檔尚未放入時，彩蛋仍可正常遊玩。
+                if (onEndedCallback) setTimeout(onEndedCallback, 1850);
+            }
+        }
+
+        function showTftUpgrade(item) {
+            if (!tftUpgradeReveal) return;
+            tftShopGrid?.querySelectorAll('.tft-shop-card').forEach(card => {
+                if (card.dataset.cardName === item.name) card.classList.add('is-golden-match');
+            });
+            if (tftUpgradeImage) {
+                tftUpgradeImage.src = item.image || '';
+                tftUpgradeImage.alt = `${item.name || "五星衣裝"}升級`;
+            }
+            if (tftUpgradeName) tftUpgradeName.textContent = `${item.name || "五星衣裝"}・三星合成！`;
+            tftUpgradeReveal.classList.add('is-active');
+            tftUpgradeReveal.setAttribute('aria-hidden', 'false');
+            
+            clearTimeout(tftUpgradeTimer);
+            playTftUpgradeSound(() => {
+                hideTftUpgradeReveal();
+                
+                let count = Number(localStorage.getItem('tftUpgradeCount') || 0) + 1;
+                localStorage.setItem('tftUpgradeCount', count);
+                
+                if (count >= 3 && !hasUnlockedEasterEgg("tft-graduation")) {
+                    closeTftShop({ showStamp: false });
+                    unlockTftGraduation();
+                } else {
+                    closeTftShop();
+                }
+            });
+        }
+
+        function pickTftShopCard(card, item) {
+            if (!card || card.disabled) return;
+            card.disabled = true;
+            card.classList.add('is-picked');
+            tftPickedCount += 1;
+
+            const cardName = item.name || '五星衣裝卡';
+            const sameCardCount = (tftPickedByName.get(cardName) || 0) + 1;
+            tftPickedByName.set(cardName, sameCardCount);
+            if (sameCardCount === 3) showTftUpgrade(item);
+
+            const totalCards = tftShopGrid?.querySelectorAll('.tft-shop-card').length || 0;
+            if (totalCards > 0 && tftPickedCount >= totalCards) {
+                if (!tftUpgradeReveal?.classList.contains('is-active')) {
+                    window.setTimeout(() => closeTftShop(), 520);
+                }
+            }
+        }
+
+        function openTftShop() {
+            if (!tftShopLayer) return;
+            tftCurrentGold = 67;
+            if (tftShopTitle) tftShopTitle.textContent = tftEggDefinition.shopTitle || 'TFT小公主';
+            if (tftShopSubtitle) tftShopSubtitle.textContent = tftEggDefinition.shopSubtitle || '本回合五星衣裝商店';
+            if (tftShopGoldText) tftShopGoldText.textContent = `🪙 ${tftCurrentGold}`;
+            if (tftShopRefresh) tftShopRefresh.disabled = (tftCurrentGold < 2);
+            renderTftShopCards();
+            hideTftUpgradeReveal();
+            tftShopLayer.classList.add('is-active');
+            tftShopLayer.setAttribute('aria-hidden', 'false');
+            window.setTimeout(() => tftShopClose?.focus(), 80);
+        }
+
+        function closeTftShop({ showStamp = true } = {}) {
+            if (!tftShopLayer) return;
+            hideTftUpgradeReveal();
+            tftUpgradeAudio?.pause();
+            tftShopLayer.classList.remove('is-active');
+            tftShopLayer.setAttribute('aria-hidden', 'true');
+            if (showStamp && tftStampPending) {
+                tftStampPending = false;
+                window.setTimeout(() => openEggStampCard({ celebrate: true }), 360);
+            }
+        }
+
+        function unlockTftPrincess() {
+            const unlockedEggs = getUnlockedEasterEggs();
+            const isFirstUnlock = !unlockedEggs.includes(TFT_EGG_ID);
+
+            if (isFirstUnlock) {
+                unlockedEggs.push(TFT_EGG_ID);
+                saveUnlockedEasterEggs(unlockedEggs);
+            }
+
+            tftStampPending = isFirstUnlock;
+            syncEasterEggUI();
+            showNonoPetBubble(tftEggDefinition.unlockBubble || "五星小公主商店出現了！⭐⭐⭐⭐⭐");
+            openTftShop();
+        }
+
+        function unlockTftGraduation() {
+            const EGG_ID = "tft-graduation";
+            const unlockedEggs = getUnlockedEasterEggs();
+            if (!unlockedEggs.includes(EGG_ID)) {
+                unlockedEggs.push(EGG_ID);
+                saveUnlockedEasterEggs(unlockedEggs);
+                syncEasterEggUI();
+                const eggDef = availableEasterEggs.find(e => e.id === EGG_ID) || {};
+                showNonoPetBubble(eggDef.unlockBubble || "恭喜畢業！⭐⭐⭐⭐⭐");
+                window.setTimeout(() => openEggStampCard({ celebrate: true }), 280);
+            }
+        }
+
+        function triggerFavoriteEgg(eggDef, targetCard) {
+            const unlockedEggs = getUnlockedEasterEggs();
+            const isFirstUnlock = !unlockedEggs.includes(eggDef.id);
+            
+            if (!isFirstUnlock) {
+                return;
+            }
+
+            isFavoriteEggAnimating = true;
+            unlockedEggs.push(eggDef.id);
+            saveUnlockedEasterEggs(unlockedEggs);
+            syncEasterEggUI();
+            showNonoPetBubble(eggDef.unlockBubble || "發現隱藏的彩蛋了！");
+
+            const onComplete = () => {
+                isFavoriteEggAnimating = false;
+                window.setTimeout(() => openEggStampCard({ celebrate: true }), 280);
+            };
+
+            if (eggDef.animationType === "rain") {
+                playKirisameRainAnimation(onComplete);
+            } else {
+                onComplete();
+            }
+        }
+
+        function playKirisameRainAnimation(onComplete) {
+            const rainLayer = document.createElement('div');
+            rainLayer.className = 'kirisame-rain-layer';
+            document.body.appendChild(rainLayer);
+            
+            for (let i = 0; i < 60; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'kirisame-drop';
+                drop.style.left = Math.random() * 100 + 'vw';
+                drop.style.animationDuration = (Math.random() * 0.4 + 0.6) + 's';
+                drop.style.animationDelay = (Math.random() * 1.5) + 's';
+                rainLayer.appendChild(drop);
+            }
+            
+            void rainLayer.offsetWidth;
+            rainLayer.style.opacity = '1';
+            
+            window.setTimeout(() => {
+                rainLayer.style.opacity = '0';
+                window.setTimeout(() => {
+                    rainLayer.remove();
+                    if (onComplete) onComplete();
+                }, 2000);
+            }, 6000);
+        }
+
+        function clearOrangeEasterTimers() {
+            orangeEasterTimers.forEach(timerId => window.clearTimeout(timerId));
+            orangeEasterTimers = [];
+        }
+
+        function createOrangeParticles() {
+            if (!orangeRainField) return;
+            orangeRainField.innerHTML = '';
+            const orangeCount = window.innerWidth <= 600 ? 58 : 88;
+
+            for (let index = 0; index < orangeCount; index += 1) {
+                const orange = document.createElement('span');
+                const xPercent = Math.random() * 97;
+                const direction = xPercent < 50 ? -1 : 1;
+                orange.className = 'orange-particle';
+                orange.textContent = '🍊';
+                orange.setAttribute('aria-hidden', 'true');
+                orange.style.setProperty('--orange-x', `${xPercent.toFixed(2)}vw`);
+                orange.style.setProperty('--orange-size', `${(1.55 + Math.random() * 2.1).toFixed(2)}rem`);
+                orange.style.setProperty('--orange-delay', `${(Math.random() * 1.2).toFixed(2)}s`);
+                orange.style.setProperty('--orange-duration', `${(1.15 + Math.random() * .72).toFixed(2)}s`);
+                orange.style.setProperty('--orange-land-y', `${(20 + Math.random() * 94).toFixed(2)}vh`);
+                orange.style.setProperty('--orange-rotation', `${Math.round(-160 + Math.random() * 320)}deg`);
+                orange.style.setProperty('--orange-scatter-x', `${(direction * (42 + Math.random() * 76)).toFixed(2)}vw`);
+                orange.style.setProperty('--orange-scatter-y', `${(-58 + Math.random() * 116).toFixed(2)}vh`);
+                orange.style.setProperty('--orange-scatter-rotation', `${Math.round(-720 + Math.random() * 1440)}deg`);
+                orangeRainField.appendChild(orange);
+            }
+        }
+
+        function finishOrangeEasterEgg({ shouldUnlock = false } = {}) {
+            clearOrangeEasterTimers();
+            orangeEasterLayer?.classList.remove('is-active', 'is-punched');
+            orangeEasterLayer?.setAttribute('aria-hidden', 'true');
+            if (orangeRainField) orangeRainField.innerHTML = '';
+            orangeEasterRunning = false;
+
+            if (!shouldUnlock || hasUnlockedEasterEgg(HARJU_EGG_ID)) return;
+
+            const unlockedEggs = getUnlockedEasterEggs();
+            unlockedEggs.push(HARJU_EGG_ID);
+            saveUnlockedEasterEggs(unlockedEggs);
+            syncEasterEggUI();
+            renderMarshmallowClouds();
+            updateMarshmallowOrangeReplay({ id: activeMarshmallowId });
+            showNonoPetBubble(harjuEggDefinition.unlockBubble || "哈橘！嚴厲斥責！🍊👊");
+            window.setTimeout(() => openEggStampCard({ celebrate: true }), 280);
+        }
+
+        function startOrangeEasterEgg({ firstUnlock = false } = {}) {
+            if (orangeEasterRunning || !orangeEasterLayer || !orangeRainField) return;
+
+            orangeEasterRunning = true;
+            clearOrangeEasterTimers();
+            createOrangeParticles();
+            orangeEasterLayer.classList.remove('is-punched');
+            orangeEasterLayer.classList.add('is-active');
+            orangeEasterLayer.setAttribute('aria-hidden', 'false');
+
+            const shouldUnlock = firstUnlock && !hasUnlockedEasterEgg(HARJU_EGG_ID);
+            orangeEasterTimers.push(window.setTimeout(() => {
+                orangeEasterLayer.classList.add('is-punched');
+            }, 3000));
+            orangeEasterTimers.push(window.setTimeout(() => {
+                finishOrangeEasterEgg({ shouldUnlock });
+            }, 4050));
+        }
+
+        function resetEasterEggProgress() {
+            const confirmed = window.confirm("確定要重置彩蛋嗎？\n重置後，集章卡與已解鎖的衣裝回憶都會恢復成尚未發現。");
+            if (!confirmed) return;
+
+            try {
+                localStorage.removeItem(EASTER_EGG_STORAGE_KEY);
+                localStorage.removeItem('tftUpgradeCount');
+            } catch (error) {
+                console.warn('無法重置彩蛋集章卡狀態。', error);
+            }
+
+            closeEggStampCard();
+            tftStampPending = false;
+            closeTftShop({ showStamp: false });
+            clearOrangeEasterTimers();
+            orangeEasterRunning = false;
+            orangeEasterLayer?.classList.remove('is-active', 'is-punched');
+            orangeEasterLayer?.setAttribute('aria-hidden', 'true');
+            if (orangeRainField) orangeRainField.innerHTML = '';
+            if (marshmallowOrangeReplay) marshmallowOrangeReplay.hidden = true;
+            setOutfitGalleryVisible(false);
+            guessEggHotspot?.classList.remove('is-eyepatched');
+            guessEggHotspot?.setAttribute('aria-pressed', 'false');
+            document.querySelectorAll('.outfit-polaroid').forEach(card => card.classList.remove('is-flipped'));
+            syncEasterEggUI();
+            renderMarshmallowClouds();
+            showNonoPetBubble("彩蛋足跡已經重置囉！");
         }
 
         function scrollToMuseumSection(selector) {
@@ -3607,6 +2287,8 @@
         }
 
         showNonoPeekWidget();
+        renderEasterEggContent();
+        syncEasterEggUI();
         nonoPeekTrigger?.addEventListener('click', () => toggleNonoPetMenu());
         nonoPeekClose?.addEventListener('click', () => {
             toggleNonoPetMenu(false);
@@ -3626,10 +2308,102 @@
             } else if (action === 'songbook') {
                 toggleNonoPetMenu(false);
                 window.location.href = 'songbook.html';
+            } else if (action === 'stamps') {
+                openEggStampCard();
             } else if (action === 'archive') {
                 toggleNonoPetMenu(false);
                 scrollToMuseumSection('#archive');
             }
+        });
+        outfitEggHotspot?.addEventListener('click', () => {
+            outfitEggTapCount += 1;
+            clearTimeout(outfitEggTapTimer);
+            outfitEggTapTimer = window.setTimeout(() => {
+                outfitEggTapCount = 0;
+            }, 2200);
+
+            outfitEggHotspot.classList.remove('is-tapped');
+            void outfitEggHotspot.offsetWidth;
+            outfitEggHotspot.classList.add('is-tapped');
+            window.setTimeout(() => outfitEggHotspot.classList.remove('is-tapped'), 340);
+
+            if (outfitEggTapCount === 1) {
+                showNonoPetBubble("嗯？剛剛是誰摸我？");
+            } else if (outfitEggTapCount === 2) {
+                showNonoPetBubble("好像藏著什麼……");
+            } else if (outfitEggTapCount >= OUTFIT_EGG_TRIGGER_CLICKS) {
+                clearTimeout(outfitEggTapTimer);
+                outfitEggTapCount = 0;
+                unlockOutfitMemoryWall();
+            }
+        });
+        outfitViewToggle?.addEventListener('click', () => {
+            const galleryIsVisible = outfitEggCard?.classList.contains('is-outfit-revealed');
+            setOutfitGalleryVisible(!galleryIsVisible);
+        });
+        guessEggHotspot?.addEventListener('click', () => {
+            if (hasUnlockedEasterEgg(GUESS_EGG_ID)) {
+                showNonoPetBubble("眼罩已經戴好囉！🦖");
+                return;
+            }
+
+            guessEggTapCount += 1;
+            clearTimeout(guessEggTapTimer);
+            guessEggTapTimer = window.setTimeout(() => {
+                guessEggTapCount = 0;
+            }, 2200);
+
+            guessEggHotspot.classList.remove('is-tapped');
+            void guessEggHotspot.offsetWidth;
+            guessEggHotspot.classList.add('is-tapped');
+            window.setTimeout(() => guessEggHotspot.classList.remove('is-tapped'), 340);
+
+            if (guessEggTapCount === 1) {
+                showNonoPetBubble("咦？小恐龍在看什麼？");
+            } else if (guessEggTapCount === 2) {
+                showNonoPetBubble("再一下就猜不到了……");
+            } else if (guessEggTapCount >= GUESS_EGG_TRIGGER_CLICKS) {
+                clearTimeout(guessEggTapTimer);
+                guessEggTapCount = 0;
+                unlockGuessEgg();
+            }
+        });
+        drawMemoryBtn?.addEventListener('click', () => {
+            if (hasUnlockedEasterEgg(TFT_EGG_ID)) return;
+
+            tftEggTapCount += 1;
+            clearTimeout(tftEggTapTimer);
+            tftEggTapTimer = window.setTimeout(() => {
+                tftEggTapCount = 0;
+            }, 4000);
+
+            if (tftEggTapCount >= TFT_EGG_TRIGGER_CLICKS) {
+                clearTimeout(tftEggTapTimer);
+                tftEggTapCount = 0;
+                window.setTimeout(unlockTftPrincess, 180);
+            }
+        });
+        tftShopClose?.addEventListener('click', () => closeTftShop());
+        tftReplayBtn?.addEventListener('click', openTftShop);
+        tftShopRefresh?.addEventListener('click', () => {
+            if (tftCurrentGold >= 2) {
+                tftCurrentGold -= 2;
+                if (tftShopGoldText) tftShopGoldText.textContent = `🪙 ${tftCurrentGold}`;
+                if (tftCurrentGold < 2) tftShopRefresh.disabled = true;
+                renderTftShopCards();
+            }
+        });
+        tftShopLayer?.addEventListener('click', event => {
+            if (event.target === tftShopLayer) closeTftShop();
+        });
+        eggStampClose?.addEventListener('click', closeEggStampCard);
+        eggStampReturn?.addEventListener('click', () => {
+            closeEggStampCard();
+            scrollToMuseumSection('.home-hero');
+        });
+        eggStampReset?.addEventListener('click', resetEasterEggProgress);
+        eggStampLayer?.addEventListener('click', event => {
+            if (event.target === eggStampLayer) closeEggStampCard();
         });
         nonoHairHotspot?.addEventListener('click', () => {
             try {
@@ -3645,7 +2419,11 @@
             if (event.target === nonoPopLayer) closeNonoPopLayer(true);
         });
         document.addEventListener('keydown', event => {
-            if (event.key === 'Escape' && nonoPopLayer?.classList.contains('is-active')) {
+            if (event.key === 'Escape' && tftShopLayer?.classList.contains('is-active')) {
+                closeTftShop();
+            } else if (event.key === 'Escape' && eggStampLayer?.classList.contains('is-active')) {
+                closeEggStampCard();
+            } else if (event.key === 'Escape' && nonoPopLayer?.classList.contains('is-active')) {
                 closeNonoPopLayer(true);
             } else if (event.key === 'Escape') {
                 toggleNonoPetMenu(false);

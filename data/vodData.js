@@ -473,5 +473,19 @@ window.museumDataParts.vodData = [
         "pinnedRank": 4,
         "addedAt": "2026-07-04",
         "streamDate": "2026-01-19"
+    },
+	{
+        "id": "Forest_of_Drizzling_Rain_Chapter_1",
+        "type": "vod",
+        "title": "霧雨飄散之森_第一章 ",
+        "link": "https://discord.com/channels/1437520274659479625/1473967136908251321/1530920722514313226",
+        "image": "",
+        "category": "遊戲",
+        "emoji": "🎮",
+        "story": "",
+        "tags": "",
+        "pinnedRank": 4,
+        "addedAt": "",
+        "streamDate": ""
     }
 ];

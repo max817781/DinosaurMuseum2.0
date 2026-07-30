@@ -23,7 +23,7 @@
             color: #e50914;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
-        
+
         /* 輪播橫幅區域 */
         .hero-slider {
             position: relative;
@@ -112,7 +112,7 @@
             -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%);
             mask-image: linear-gradient(to right, transparent 0%, black 30%);
         }
-        
+
         /* 左右切換按鈕 */
         .nav-arrow {
             position: absolute;
@@ -172,7 +172,7 @@
         }
 
         /* ==================================
-           模式切換按鈕區 (VOD模式 / 歌單模式) 
+           模式切換按鈕區 (VOD模式 / 歌單模式)
            ================================== */
         .mode-switch-container {
             display: flex;
@@ -220,7 +220,7 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-        
+
         .filter-container {
             display: flex;
             gap: 10px;
@@ -330,7 +330,7 @@
             justify-content: center;
             align-items: center;
             font-size: 5em;
-            z-index: 1; 
+            z-index: 1;
         }
         .cover-image {
             position: absolute;
@@ -339,7 +339,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            z-index: 2; 
+            z-index: 2;
         }
         .cover-image[src=""] {
             display: none;
@@ -529,7 +529,7 @@
         .song-row.no-link:hover {
             transform: none;
         }
-        
+
         .song-icon {
             font-size: 1.8em;
             margin-right: 20px;
@@ -1650,18 +1650,16 @@
         }
         .tft-shop-card:hover,
         .tft-shop-card:focus-visible {
-            transform: translateY(-5px);
             filter: brightness(1.1);
-            outline: 2px solid #ffe89e;
-            outline-offset: 1px;
+            box-shadow: 0 0 0 3px #ffe89e inset, 0 0 10px rgba(255,232,158,0.5);
         }
         .tft-shop-card.is-picked {
-            filter: saturate(.55) brightness(.72);
-            cursor: default;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
         }
         .tft-shop-card:disabled { opacity: 1; }
         .tft-shop-card.is-picked::after {
-            content: "✓";
             position: absolute;
             top: 8px;
             right: 8px;
@@ -1819,8 +1817,8 @@
             animation: orangePunch .78s cubic-bezier(.18,1.35,.3,1) forwards;
         }
         @keyframes tftGoldenCard {
-            from { transform: translateY(-3px) scale(1); }
-            to { transform: translateY(-7px) scale(1.025); }
+            from { transform: scale(1); filter: brightness(1.12); }
+            to { transform: scale(1.03); filter: brightness(1.25); }
         }
         @keyframes tftUpgradeArrive {
             from { opacity: 0; transform: translateY(80px) scale(.7); }
@@ -2837,3 +2835,105 @@
             90% { opacity: 1; }
             100% { transform: translate(-10px, 100vh); opacity: 0; }
         }
+/* TFT 商店卡片費用 */
+.tft-shop-cost {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.85);
+    color: #ffd700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border: 1px solid #ffd700;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    z-index: 10;
+}
+
+.tft-shop-cost.cannot-afford {
+    color: #ff4444;
+    border-color: #ff4444;
+}
+
+.tft-shop-card {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.2s;
+}
+
+.tft-shop-card.cannot-afford {
+    filter: grayscale(0.8) brightness(0.6);
+    cursor: not-allowed;
+}
+
+
+
+
+
+/* TFT V4 - Cost Borders & Inventory */
+.tft-shop-card.tft-cost-1 { border-color: #8c8c8c; }
+.tft-shop-card.tft-cost-2 { border-color: #11b288; }
+.tft-shop-card.tft-cost-3 { border-color: #207ac7; }
+.tft-shop-card.tft-cost-5 { border-color: #ffb93b; }
+
+.tft-inventory {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    justify-content: center;
+    min-height: 44px;
+}
+.tft-inv-item {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    border: 2px solid #555;
+    background-size: cover;
+    background-position: center top;
+}
+.tft-inv-item.cost-1 { border-color: #8c8c8c; }
+.tft-inv-item.cost-2 { border-color: #11b288; }
+.tft-inv-item.cost-3 { border-color: #207ac7; }
+.tft-inv-item.cost-5 { border-color: #ffb93b; }
+
+.tft-inv-badge {
+    position: absolute;
+    bottom: -6px;
+    right: -6px;
+    background: #ff4444;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    border: 1px solid #fff;
+}
+.tft-shop-card.is-picked {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            transform: scale(0.8) !important;
+        }
+/* TFT Fun Upgrade */
+.tft-flip-anim .tft-shop-card {
+    animation: tftCardFlip 0.3s ease-out;
+}
+@keyframes tftCardFlip {
+    0% { transform: scaleY(0); opacity: 0; }
+    100% { transform: scaleY(1); opacity: 1; }
+}
+.tft-inv-item.is-twostar {
+    border-color: #ffd758 !important;
+    box-shadow: 0 0 8px #ffd758;
+}
+.tft-inv-badge.twostar {
+    background: #ffd758;
+    color: #333;
+    letter-spacing: -2px;
+    padding: 2px 4px;
+}

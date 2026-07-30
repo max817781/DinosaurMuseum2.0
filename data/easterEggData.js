@@ -59,17 +59,17 @@ window.museumDataParts.easterEggData = {
             id: "tft-princess",
             triggerClicks: 3,
             stampTitle: "TFT小公主",
-            stampDesc: "連續抽三張回憶卡，召喚由下往上出現的五星衣裝商店。",
-            unlockBubble: "五星小公主商店出現了！⭐⭐⭐⭐⭐",
+            stampDesc: "連續抽三張回憶卡，召喚由下往上出現的 TFT 衣裝商店。",
+            unlockBubble: "TFT 小公主商店出現了！⭐⭐⭐",
             shopTitle: "TFT小公主",
-            shopSubtitle: "本回合五星衣裝商店",
+            shopSubtitle: "本回合 TFT 衣裝商店",
             upgradeSound: "media/tft-five-star-upgrade.mp3",
             drawCount: 5,
             cards: [
-                { name: "工地小公主", image: "images/工地小公主.jpg" },
-                { name: "黑玫瑰諾諾", image: "images/黑玫瑰初登場.jpg" },
-                { name: "哥布林諾諾", image: "images/哥布林初登場.jpg" },
-                { name: "半周年新衣裝", image: "images/半周年新衣裝初登場.jpg" }
+                { name: "工地小公主", image: "images/工地小公主.jpg", cost: 2 },
+                { name: "黑玫瑰諾諾", image: "images/黑玫瑰初登場.jpg", cost: 3 },
+                { name: "哥布林諾諾", image: "images/哥布林初登場.jpg", cost: 1 },
+                { name: "半周年新衣裝", image: "images/半周年新衣裝初登場.jpg", cost: 5 }
             ]
         },
         {
@@ -83,8 +83,8 @@ window.museumDataParts.easterEggData = {
         {
             id: "tft-graduation",
             stampTitle: "TFT畢業證書",
-            stampDesc: "在TFT小公主商店中，累計成功合成三次三星衣裝即可獲得。",
-            unlockBubble: "恭喜畢業！⭐⭐⭐⭐⭐"
+            stampDesc: "在TFT小公主商店中，成功收集 9 張【半周年新衣裝(5費)】合成三星即可獲得。",
+            unlockBubble: "恭喜畢業！⭐⭐⭐"
         },
         {
             id: "kirisame-rain",

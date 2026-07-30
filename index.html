@@ -51,25 +51,25 @@
 
     <div class="tft-shop-layer" id="tftShopLayer" aria-hidden="true">
         <section class="tft-shop-panel" role="dialog" aria-modal="true" aria-labelledby="tftShopTitle">
-            <button class="tft-shop-close" id="tftShopClose" type="button" aria-label="關閉五星衣裝商店">×</button>
+            <button class="tft-shop-close" id="tftShopClose" type="button" aria-label="關閉 TFT 衣裝商店">×</button>
             <div class="tft-shop-header">
                 <span class="tft-shop-level">LV. 8</span>
                 <div>
-                    <small id="tftShopSubtitle">本回合五星衣裝商店</small>
+                    <small id="tftShopSubtitle">本回合 TFT 衣裝商店</small>
                     <h2 id="tftShopTitle">TFT小公主</h2>
                 </div>
                 <div class="tft-shop-controls">
-                    <button class="tft-shop-refresh" id="tftShopRefresh" type="button" aria-label="花費2金幣刷新商店" title="花費2金幣刷新商店">刷新 🪙 2</button>
-                    <span class="tft-shop-gold" id="tftShopGoldText">🪙 67</span>
+                    <button class="tft-shop-refresh" id="tftShopRefresh" type="button" aria-label="花費20金幣刷新商店" title="花費20金幣刷新商店">刷新 🪙 20</button>
+                    <span class="tft-shop-gold" id="tftShopGoldText">🪙 670</span>
                 </div>
             </div>
             <div class="tft-shop-grid" id="tftShopGrid"></div>
-            <p class="tft-shop-hint">三張同名卡會自動合成；沒有合成時，選完五張收起商店</p>
+            <div id="tftInventory" class="tft-inventory"></div>
+            <p class="tft-shop-hint">三張同名卡會自動升級並獲得獎勵金；合成【5費卡】至三星即可獲得畢業證書！</p>
             <div class="tft-upgrade-reveal" id="tftUpgradeReveal" aria-hidden="true">
                 <div class="tft-upgrade-burst"></div>
                 <img id="tftUpgradeImage" src="" alt="">
                 <strong id="tftUpgradeName"></strong>
-                <span>⭐⭐⭐⭐⭐</span>
             </div>
         </section>
     </div>
@@ -269,7 +269,7 @@
     <div class="hero-slider" id="heroSlider" aria-label="精選館藏"></div>
 
     <div class="container">
-        
+
         <div class="mode-switch-container">
             <button id="btnVodMode" class="mode-btn active" onclick="switchMode('vod')">📺 VOD 實況存檔</button>
             <button id="btnSongMode" class="mode-btn" onclick="switchMode('song')">🎵 歌單搜尋模式</button>
@@ -347,7 +347,7 @@
         // =========================================================================
         // 【維護專區 1：輪播橫幅資料】
         // =========================================================================
- 
+
 
         // =========================================================================
         // 【維護專區 2：大型 VOD 存檔資料】
@@ -359,7 +359,7 @@
         // 💡 status 填: "已唱" 或 "待練"
         // 💡 language 填: "中文", "英文", "日文"...
         // =========================================================================
-      
+
 
         // 網站內容由 data.js 提供。
 		const {
@@ -666,13 +666,13 @@
         // =========================================================================
         // 渲染邏輯區：生成 HTML
         // =========================================================================
-        
+
         // 渲染輪播 (將幻燈片與按鈕同時寫入，避免層級與點擊失效)
         const sliderContainer = document.getElementById('heroSlider');
         function initSliderDOM() {
             let sliderHTML = '';
             let dotsHTML = '<div class="slider-dots">';
-            
+
             // 先加入所有幻燈片
             heroData.forEach((heroItem, index) => {
                 const item = resolveItem(heroItem);
@@ -703,7 +703,7 @@
             // 最後加入左右按鈕，確保 z-index 不受干擾
             sliderHTML += '<button class="nav-arrow prev-arrow" onclick="changeSlide(-1)">&#10094;</button>';
             sliderHTML += '<button class="nav-arrow next-arrow" onclick="changeSlide(1)">&#10095;</button>';
-            
+
             sliderContainer.innerHTML = sliderHTML + dotsHTML;
         }
         initSliderDOM();
@@ -1023,7 +1023,7 @@
                         ? `<div class="song-play-btn disabled">僅收錄曲目</div>`
                         : `<div class="song-play-btn">▶ 前往點聽</div>`);
                 const rowTag = hasPerformances ? 'div' : 'a';
-                
+
                 let pendingBadge = isPending ? `<span class="song-badge status-pending">🌱 練習中</span>` : '';
                 const tagBadges = songTags
                     .map(tag => `<span class="song-badge song-tag-badge">#${escapeHtml(tag)}</span>`)
@@ -1176,7 +1176,7 @@
         // 第三版：年度回顧（數字自動從 data.js 計算）
         const annualReviewContainer = document.getElementById('annualReviewContainer');
         function renderAnnualReview() {
-            const sungCount = songData.filter(song => song.status === '已唱').length;
+            const sungCount = songData.length;
             annualReviewContainer.innerHTML = `
                 <div class="annual-year">${annualReview.year}</div>
                 <span class="section-kicker">YEAR IN MEMORIES</span>
@@ -1184,7 +1184,7 @@
                 <p>${annualReview.desc}</p>
                 <div class="annual-stats">
                     <div class="annual-stat"><strong>${vodData.length}</strong><span>段 VOD 故事</span></div>
-                    <div class="annual-stat"><strong>${sungCount}</strong><span>首已唱歌曲</span></div>
+                    <div class="annual-stat"><strong>${sungCount}</strong><span>首收錄歌曲</span></div>
                     <div class="annual-stat"><strong>${timelineData.length}</strong><span>枚成長腳印</span></div>
                 </div>`;
         }
@@ -1672,9 +1672,10 @@
         let tftStampPending = false;
         let tftPickedCount = 0;
         let tftPickedByName = new Map();
+        let tftCurrentShopCards = [];
         let tftUpgradeTimer = null;
         let tftUpgradeAudio = null;
-        let tftCurrentGold = 67;
+        let tftCurrentGold = 670;
         const tftShopGoldText = document.getElementById('tftShopGoldText');
         const tftShopRefresh = document.getElementById('tftShopRefresh');
         let orangeEasterRunning = false;
@@ -1915,32 +1916,146 @@
             }
         }
 
+        function saveTftState() {
+            localStorage.setItem('nonoMuseumTftGold', tftCurrentGold);
+            const invObj = {};
+            tftPickedByName.forEach((val, key) => invObj[key] = val);
+            localStorage.setItem('nonoMuseumTftInventory', JSON.stringify(invObj));
+            localStorage.setItem('nonoMuseumTftShopCards', JSON.stringify(tftCurrentShopCards));
+        }
+
+        function loadTftState() {
+            const savedGold = localStorage.getItem('nonoMuseumTftGold');
+            if (savedGold !== null) {
+                tftCurrentGold = Number(savedGold);
+            } else {
+                tftCurrentGold = 670;
+            }
+
+            const savedShop = localStorage.getItem('nonoMuseumTftShopCards');
+            if (savedShop) {
+                try { tftCurrentShopCards = JSON.parse(savedShop); }
+                catch(e) { tftCurrentShopCards = []; }
+            } else {
+                tftCurrentShopCards = [];
+            }
+
+            const savedInv = localStorage.getItem('nonoMuseumTftInventory');
+            tftPickedByName = new Map();
+            if (savedInv) {
+                try {
+                    const invObj = JSON.parse(savedInv);
+                    for (const k in invObj) {
+                        tftPickedByName.set(k, invObj[k]);
+                    }
+                } catch(e) {}
+            }
+        }
+
+        function renderTftInventory() {
+            const invDiv = document.getElementById('tftInventory');
+            if (!invDiv) return;
+            invDiv.innerHTML = '';
+
+            tftPickedByName.forEach((count, name) => {
+                if (count > 0) {
+                    const cardItem = (tftEggDefinition.cards || []).find(i => i.name === name) || {};
+                    const cost = cardItem.cost || 1;
+
+                    const twoStars = Math.floor(count / 3);
+                    const oneStars = count % 3;
+
+                    for(let i = 0; i < twoStars; i++) {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = `tft-inv-item cost-${cost} is-twostar`;
+                        itemDiv.style.backgroundImage = `url('${cardItem.image}')`;
+                        itemDiv.title = `${name} (二星)`;
+                        const badge = document.createElement('span');
+                        badge.className = 'tft-inv-badge twostar';
+                        badge.textContent = '⭐⭐';
+                        itemDiv.appendChild(badge);
+                        invDiv.appendChild(itemDiv);
+                    }
+
+                    for(let i = 0; i < oneStars; i++) {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = `tft-inv-item cost-${cost}`;
+                        itemDiv.style.backgroundImage = `url('${cardItem.image}')`;
+                        itemDiv.title = `${name} (一星)`;
+                        const badge = document.createElement('span');
+                        badge.className = 'tft-inv-badge';
+                        badge.textContent = '⭐';
+                        itemDiv.appendChild(badge);
+                        invDiv.appendChild(itemDiv);
+                    }
+                }
+            });
+        }
+
         function renderTftShopCards() {
             if (!tftShopGrid) return;
             tftShopGrid.innerHTML = '';
             tftPickedCount = 0;
-            tftPickedByName = new Map();
 
             const cardPool = Array.isArray(tftEggDefinition.cards) ? tftEggDefinition.cards : [];
             const drawCount = Math.max(1, Number(tftEggDefinition.drawCount) || 5);
             if (cardPool.length === 0) return;
 
+            const pool1 = cardPool.filter(c => c.cost === 1);
+            const pool2 = cardPool.filter(c => c.cost === 2);
+            const pool3 = cardPool.filter(c => c.cost === 3);
+            const pool5 = cardPool.filter(c => c.cost === 5);
+
+            function getRandomCard() {
+                const r = Math.random() * 100;
+                if (r < 5 && pool5.length > 0) return pool5[Math.floor(Math.random() * pool5.length)];
+                if (r < 20 && pool3.length > 0) return pool3[Math.floor(Math.random() * pool3.length)];
+                if (r < 55 && pool2.length > 0) return pool2[Math.floor(Math.random() * pool2.length)];
+                if (pool1.length > 0) return pool1[Math.floor(Math.random() * pool1.length)];
+                return cardPool[Math.floor(Math.random() * cardPool.length)];
+            }
+
+            let needsSave = false;
+            if (!Array.isArray(tftCurrentShopCards) || tftCurrentShopCards.length !== drawCount) {
+                tftCurrentShopCards = [];
+                for (let index = 0; index < drawCount; index += 1) {
+                    const randomItem = getRandomCard();
+                    tftCurrentShopCards.push({
+                        name: randomItem.name,
+                        cost: randomItem.cost,
+                        image: randomItem.image,
+                        isPicked: false
+                    });
+                }
+                needsSave = true;
+            }
+
             for (let index = 0; index < drawCount; index += 1) {
-                const item = cardPool[Math.floor(Math.random() * cardPool.length)];
+                const item = tftCurrentShopCards[index];
+                const cost = item.cost || 0;
+                const canAfford = tftCurrentGold >= cost;
                 const card = document.createElement('button');
                 card.type = 'button';
-                card.className = 'tft-shop-card';
-                card.dataset.cardName = item.name || '五星衣裝卡';
-                card.setAttribute('aria-label', `選擇五星卡：${item.name || "衣裝卡"}`);
+                card.className = `tft-shop-card tft-cost-${cost} ${canAfford ? '' : 'cannot-afford'}`;
+
+                if (item.isPicked) {
+                    card.classList.add('is-picked');
+                    card.disabled = true;
+                } else {
+                    card.dataset.cardName = item.name || '三星衣裝卡';
+                    card.setAttribute('aria-label', `選擇卡片：${item.name || "衣裝卡"}`);
+                    card.addEventListener('click', () => pickTftShopCard(card, item, index));
+                }
+
                 card.innerHTML = `
-                    <img src="${item.image || ""}" alt="${item.name || "五星衣裝卡"}" loading="lazy" decoding="async">
+                    <img src="${item.image || ""}" alt="${item.name || "衣裝卡"}" loading="lazy" decoding="async">
+                    <span class="tft-shop-cost ${canAfford ? '' : 'cannot-afford'}">🪙 ${cost}</span>
                     <span class="tft-shop-card-copy">
-                        <strong class="tft-shop-card-name">${item.name || "五星衣裝卡"}</strong>
-                        <span class="tft-shop-stars" aria-label="五星">⭐⭐⭐⭐⭐</span>
+                        <strong class="tft-shop-card-name">${item.name || "衣裝卡"}</strong>
                     </span>`;
-                card.addEventListener('click', () => pickTftShopCard(card, item));
                 tftShopGrid.appendChild(card);
             }
+            if (needsSave) saveTftState();
         }
 
         function hideTftUpgradeReveal() {
@@ -1951,86 +2066,166 @@
 
         function playTftUpgradeSound(onEndedCallback) {
             const soundPath = String(tftEggDefinition.upgradeSound || '').trim();
+            let fired = false;
+            const safeCall = () => {
+                if (!fired) {
+                    fired = true;
+                    if (onEndedCallback) onEndedCallback();
+                }
+            };
             if (!soundPath) {
-                if (onEndedCallback) setTimeout(onEndedCallback, 1850);
+                setTimeout(safeCall, 1850);
                 return;
             }
             try {
                 tftUpgradeAudio?.pause();
                 tftUpgradeAudio = new Audio(soundPath);
                 tftUpgradeAudio.volume = .72;
-                if (onEndedCallback) {
-                    tftUpgradeAudio.onended = onEndedCallback;
-                }
+                tftUpgradeAudio.onended = safeCall;
                 const playPromise = tftUpgradeAudio.play();
                 if (playPromise && typeof playPromise.catch === 'function') {
-                    playPromise.catch((error) => {
-                        console.warn('TFT 音效播放失敗', error);
-                        if (onEndedCallback) setTimeout(onEndedCallback, 1850);
-                    });
+                    playPromise.catch(() => { setTimeout(safeCall, 1850); });
                 }
+                setTimeout(safeCall, 2500); // Failsafe
             } catch (error) {
-                // 音效檔尚未放入時，彩蛋仍可正常遊玩。
-                if (onEndedCallback) setTimeout(onEndedCallback, 1850);
+                setTimeout(safeCall, 1850);
             }
         }
 
-        function showTftUpgrade(item) {
+        function showTftUpgrade(item, starLevel, isGraduation = true) {
             if (!tftUpgradeReveal) return;
             tftShopGrid?.querySelectorAll('.tft-shop-card').forEach(card => {
                 if (card.dataset.cardName === item.name) card.classList.add('is-golden-match');
             });
             if (tftUpgradeImage) {
                 tftUpgradeImage.src = item.image || '';
-                tftUpgradeImage.alt = `${item.name || "五星衣裝"}升級`;
+                tftUpgradeImage.alt = `${item.name || "衣裝"}升級`;
             }
-            if (tftUpgradeName) tftUpgradeName.textContent = `${item.name || "五星衣裝"}・三星合成！`;
+            const stars = starLevel === 3 ? '⭐⭐⭐' : '⭐⭐';
+            const starText = starLevel === 3 ? '三星大圓滿！' : '二星合成！'; // Update text to be more epic
+            if (tftUpgradeName) tftUpgradeName.innerHTML = `${item.name || "衣裝"}・${starText}<br><span style="color:#ffd758">${stars}</span>`;
+
+            // Force z-index high so it's always on top
+            tftUpgradeReveal.style.zIndex = '9999';
+            tftUpgradeReveal.style.pointerEvents = 'auto'; // Block clicks behind it during animation
+
             tftUpgradeReveal.classList.add('is-active');
             tftUpgradeReveal.setAttribute('aria-hidden', 'false');
-            
+
             clearTimeout(tftUpgradeTimer);
             playTftUpgradeSound(() => {
                 hideTftUpgradeReveal();
-                
-                let count = Number(localStorage.getItem('tftUpgradeCount') || 0) + 1;
-                localStorage.setItem('tftUpgradeCount', count);
-                
-                if (count >= 3 && !hasUnlockedEasterEgg("tft-graduation")) {
-                    closeTftShop({ showStamp: false });
-                    unlockTftGraduation();
-                } else {
-                    closeTftShop();
+                tftUpgradeReveal.style.pointerEvents = 'none'; // Re-enable clicks
+
+                if (starLevel === 3) {
+                    if (isGraduation) {
+                        // FORCE CLEAR STATE
+                        tftCurrentGold = 670;
+                        tftPickedByName.clear();
+                        localStorage.removeItem('nonoMuseumTftGold');
+                        localStorage.removeItem('nonoMuseumTftInventory');
+                        localStorage.removeItem('nonoMuseumTftShopCards');
+                        tftCurrentShopCards = [];
+
+                        if (!hasUnlockedEasterEgg("tft-graduation")) {
+                            closeTftShop({ showStamp: false });
+                            unlockTftGraduation();
+                        } else {
+                            closeTftShop();
+                        }
+                    } else {
+                        // Not graduation! Farm gold and reset this card's inventory
+                        tftPickedByName.set(item.name || '衣裝卡', 0);
+                        saveTftState();
+                    }
+                    renderTftInventory();
+                    if (tftShopGoldText) tftShopGoldText.textContent = `🪙 ${tftCurrentGold}`;
                 }
             });
         }
 
-        function pickTftShopCard(card, item) {
-            if (!card || card.disabled) return;
+        function pickTftShopCard(card, item, index) {
+            if (!card || card.disabled || card.classList.contains('cannot-afford')) return;
+            if (index !== undefined && tftCurrentShopCards[index]) tftCurrentShopCards[index].isPicked = true;
+
+            const cost = item.cost || 0;
+            if (tftCurrentGold < cost) return;
+            tftCurrentGold -= cost;
+
+            if (tftShopGoldText) tftShopGoldText.textContent = `🪙 ${tftCurrentGold}`;
+            if (tftCurrentGold < 20 && tftShopRefresh) tftShopRefresh.disabled = true;
+
+            // Update board afford logic
+            Array.from(tftShopGrid.children).forEach(c => {
+                if (c.disabled || c.classList.contains('is-picked')) return;
+                const cardName = c.dataset.cardName;
+                const cardItem = (tftEggDefinition.cards || []).find(i => i.name === cardName) || {};
+                const cCost = cardItem.cost || 0;
+                if (tftCurrentGold < cCost) {
+                    c.classList.add('cannot-afford');
+                    const costSpan = c.querySelector('.tft-shop-cost');
+                    if (costSpan) costSpan.classList.add('cannot-afford');
+                }
+            });
+
             card.disabled = true;
             card.classList.add('is-picked');
             tftPickedCount += 1;
 
-            const cardName = item.name || '五星衣裝卡';
+            const cardName = item.name || '衣裝卡';
             const sameCardCount = (tftPickedByName.get(cardName) || 0) + 1;
             tftPickedByName.set(cardName, sameCardCount);
-            if (sameCardCount === 3) showTftUpgrade(item);
 
-            const totalCards = tftShopGrid?.querySelectorAll('.tft-shop-card').length || 0;
-            if (totalCards > 0 && tftPickedCount >= totalCards) {
-                if (!tftUpgradeReveal?.classList.contains('is-active')) {
-                    window.setTimeout(() => closeTftShop(), 520);
+            saveTftState();
+            renderTftInventory();
+
+            if (sameCardCount === 3) {
+                tftCurrentGold += 15;
+                if (tftShopGoldText) tftShopGoldText.textContent = `🪙 ${tftCurrentGold}`;
+                showNonoPetBubble('升級二星！獎勵 15 金幣！');
+                showTftUpgrade(item, 2);
+            } else if (sameCardCount === 6) {
+                tftCurrentGold += 30;
+                if (tftShopGoldText) tftShopGoldText.textContent = `🪙 ${tftCurrentGold}`;
+                showNonoPetBubble('即將大圓滿！獎勵 30 金幣！');
+                showTftUpgrade(item, 2);
+            } else if (sameCardCount === 9) {
+                const cost = item.cost || 1;
+                if (cost === 5) {
+                    showTftUpgrade(item, 3, true);
+                } else {
+                    const reward = cost === 3 ? 100 : (cost === 2 ? 70 : 50);
+                    tftCurrentGold += reward;
+                    if (tftShopGoldText) tftShopGoldText.textContent = `🪙 ${tftCurrentGold}`;
+                    showNonoPetBubble(`達成三星！獎勵 ${reward} 金幣！`);
+                    showTftUpgrade(item, 3, false);
                 }
             }
         }
 
         function openTftShop() {
+            loadTftState();
+
+            // Check Bankruptcy
+            if (tftCurrentGold < 2) {
+                // Bankruptcy auto restart
+                localStorage.removeItem('nonoMuseumTftGold');
+                localStorage.removeItem('nonoMuseumTftInventory');
+                localStorage.removeItem('nonoMuseumTftShopCards');
+                tftCurrentShopCards = [];
+                showNonoPetBubble('哇阿阿阿你破產啦！窮光蛋！🦖');
+                loadTftState(); // reload to 670 and empty inv
+                console.log("破產自動重啟，重新獲得 670 元");
+            }
+
             if (!tftShopLayer) return;
-            tftCurrentGold = 67;
             if (tftShopTitle) tftShopTitle.textContent = tftEggDefinition.shopTitle || 'TFT小公主';
-            if (tftShopSubtitle) tftShopSubtitle.textContent = tftEggDefinition.shopSubtitle || '本回合五星衣裝商店';
+
+            if (tftShopSubtitle) tftShopSubtitle.textContent = tftEggDefinition.shopSubtitle || '本回合 TFT 衣裝商店';
             if (tftShopGoldText) tftShopGoldText.textContent = `🪙 ${tftCurrentGold}`;
-            if (tftShopRefresh) tftShopRefresh.disabled = (tftCurrentGold < 2);
+            if (tftShopRefresh) tftShopRefresh.disabled = (tftCurrentGold < 20);
             renderTftShopCards();
+            renderTftInventory();
             hideTftUpgradeReveal();
             tftShopLayer.classList.add('is-active');
             tftShopLayer.setAttribute('aria-hidden', 'false');
@@ -2047,6 +2242,26 @@
                 tftStampPending = false;
                 window.setTimeout(() => openEggStampCard({ celebrate: true }), 360);
             }
+        }
+
+        if (tftShopRefresh) {
+            tftShopRefresh.addEventListener('click', () => {
+                if (tftCurrentGold >= 20) {
+                    tftCurrentGold -= 20;
+                    tftCurrentShopCards = []; // Reset cards on refresh
+                    if (tftShopGoldText) tftShopGoldText.textContent = `🪙 ${tftCurrentGold}`;
+                    saveTftState();
+
+                    if (tftShopGrid) {
+                        tftShopGrid.classList.remove('tft-flip-anim');
+                        void tftShopGrid.offsetWidth;
+                        tftShopGrid.classList.add('tft-flip-anim');
+                    }
+
+                    renderTftShopCards();
+                    if (tftCurrentGold < 20) tftShopRefresh.disabled = true;
+                }
+            });
         }
 
         function unlockTftPrincess() {
@@ -2080,7 +2295,7 @@
         function triggerFavoriteEgg(eggDef, targetCard) {
             const unlockedEggs = getUnlockedEasterEggs();
             const isFirstUnlock = !unlockedEggs.includes(eggDef.id);
-            
+
             if (!isFirstUnlock) {
                 return;
             }
@@ -2107,7 +2322,7 @@
             const rainLayer = document.createElement('div');
             rainLayer.className = 'kirisame-rain-layer';
             document.body.appendChild(rainLayer);
-            
+
             for (let i = 0; i < 60; i++) {
                 const drop = document.createElement('div');
                 drop.className = 'kirisame-drop';
@@ -2116,10 +2331,10 @@
                 drop.style.animationDelay = (Math.random() * 1.5) + 's';
                 rainLayer.appendChild(drop);
             }
-            
+
             void rainLayer.offsetWidth;
             rainLayer.style.opacity = '1';
-            
+
             window.setTimeout(() => {
                 rainLayer.style.opacity = '0';
                 window.setTimeout(() => {
@@ -2204,6 +2419,14 @@
             try {
                 localStorage.removeItem(EASTER_EGG_STORAGE_KEY);
                 localStorage.removeItem('tftUpgradeCount');
+                localStorage.removeItem('nonoMuseumTftGold');
+                localStorage.removeItem('nonoMuseumTftInventory');
+                localStorage.removeItem('nonoMuseumTftShopCards');
+                if (typeof tftPickedByName !== 'undefined' && tftPickedByName) {
+                    tftCurrentShopCards = [];
+                    tftPickedByName.clear();
+                    tftCurrentGold = 670;
+                }
             } catch (error) {
                 console.warn('無法重置彩蛋集章卡狀態。', error);
             }
@@ -2385,14 +2608,6 @@
         });
         tftShopClose?.addEventListener('click', () => closeTftShop());
         tftReplayBtn?.addEventListener('click', openTftShop);
-        tftShopRefresh?.addEventListener('click', () => {
-            if (tftCurrentGold >= 2) {
-                tftCurrentGold -= 2;
-                if (tftShopGoldText) tftShopGoldText.textContent = `🪙 ${tftCurrentGold}`;
-                if (tftCurrentGold < 2) tftShopRefresh.disabled = true;
-                renderTftShopCards();
-            }
-        });
         tftShopLayer?.addEventListener('click', event => {
             if (event.target === tftShopLayer) closeTftShop();
         });
@@ -2446,11 +2661,11 @@
             if (slides.length === 0) return;
             slides.forEach((slide) => slide.classList.remove("active"));
             dots.forEach((dot) => dot.classList.remove("active"));
-            
+
             slideIndex = index;
             if (slideIndex >= slides.length) { slideIndex = 0; }
             if (slideIndex < 0) { slideIndex = slides.length - 1; }
-            
+
             slides[slideIndex].classList.add("active");
             dots[slideIndex].classList.add("active");
         };

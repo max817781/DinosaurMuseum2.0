@@ -43,7 +43,7 @@
                 <small id="eggStampStoredMessage">已收進右下角的小恐龍導覽員 🦖</small>
                 <div class="egg-stamp-actions">
                     <button class="egg-stamp-reset" id="eggStampReset" type="button">重置彩蛋</button>
-                    <button class="egg-stamp-return" id="eggStampReturn" type="button">再看看新衣裝</button>
+                    <button class="egg-stamp-return" id="eggStampReturn" type="button">繼續逛逛</button>
                 </div>
             </div>
         </section>
@@ -282,10 +282,7 @@
                     <button class="filter-btn vod-category-btn active" onclick="filterVod(this, 'all')">全部</button>
                     <button class="filter-btn vod-category-btn" onclick="filterVod(this, '遊戲')">🎮 遊戲</button>
                     <button class="filter-btn vod-category-btn" onclick="filterVod(this, '唱歌')">🎤 唱歌</button>
-                    <button class="filter-btn vod-category-btn" onclick="filterVod(this, '雜談')">💬 雜談</button>
-                    <button class="filter-btn vod-category-btn" onclick="filterVod(this, '活動')">🎉 活動</button>
                     <button class="filter-btn vod-category-btn" onclick="filterVod(this, '精華')">🎬 精華</button>
-                    <button class="filter-btn vod-category-btn" onclick="filterVod(this, '其他')">🦖 其他</button>
                     <button class="filter-btn vod-category-btn" onclick="filterVod(this, 'favorite')">❤️ 我的最愛</button>
                     <button class="filter-btn" id="advancedTagToggle" type="button" onclick="toggleAdvancedTags()" aria-expanded="false">🏷️ 進階標籤</button>
                 </div>
@@ -305,9 +302,9 @@
             <div class="controls-container">
                 <div class="filter-container" id="songFilterBtnContainer">
                     <button class="filter-btn active" onclick="filterSong(this, 'all')">全部歌曲</button>
-                    <button class="filter-btn" onclick="filterSong(this, '中文')">中文</button>
-                    <button class="filter-btn" onclick="filterSong(this, '英文')">英文</button>
-                    <button class="filter-btn" onclick="filterSong(this, '日文')">日文</button>
+                    <button class="filter-btn" onclick="filterSong(this, 'ZH')">ZH 中文</button>
+                    <button class="filter-btn" onclick="filterSong(this, 'EN')">EN 英文</button>
+                    <button class="filter-btn" onclick="filterSong(this, 'JP')">JP 日文</button>
                     <button class="filter-btn" onclick="filterSong(this, '練習中')">🌱 練習中</button>
                 </div>
                 <div class="search-container song-search-wrap">
@@ -924,7 +921,7 @@
                             ${imageHtml}
                         </div>
                         <div class="video-info has-favorite-button">
-                            <div class="video-title">${getTitle(video)}</div>
+                            <div class="video-title">${escapeHtml(getTitle(video))}</div>
                             <div class="tags">
                                 <span class="tag">#${category}</span>
                                 ${advancedTagsHtml}
@@ -1043,7 +1040,7 @@
                                     <div class="song-singer">${artist}</div>
                                 </div>
                                 <div class="song-tags-wrap">
-                                    <span class="song-badge">${song.language}</span>
+                                    <span class="song-badge">${formatDisplayLanguage(song.language)}</span>
                                     ${pendingBadge}
                                     ${tagBadges}
                                 </div>
@@ -1439,7 +1436,13 @@
             const hasFilters = currentVodCategory !== 'all' || currentVodTag !== 'all' || searchVodInput.value.trim() !== '';
 
             renderVod(pageVodData);
-            vodResultSummary.textContent = `${hasFilters ? '找到' : '共'} ${totalItems} 支影片，目前第 ${currentVodPage} / ${totalPages} 頁`;
+            const latestVodDate = (window.museumDataParts?.vodData || [])
+                .map(i => i.addedAt || '')
+                .filter(Boolean)
+                .sort()
+                .pop() || '2026-07-31';
+            const formattedDate = latestVodDate.replace(/-/g, '/');
+            vodResultSummary.textContent = `${hasFilters ? '找到' : '共'} ${totalItems} 支影片，目前第 ${currentVodPage} / ${totalPages} 頁 (最後vod更新時間: ${formattedDate})`;
             renderVodPagination(totalPages);
         }
 
@@ -1507,6 +1510,26 @@
             applySongFilters();
         }
 
+        function formatDisplayLanguage(lang) {
+            if (!lang) return '';
+            const l = String(lang).toUpperCase().trim();
+            if (l === 'ZH' || l === '中文') return 'ZH 中文';
+            if (l === 'EN' || l === '英文') return 'EN 英文';
+            if (l === 'JP' || l === '日文') return 'JP 日文';
+            return lang;
+        }
+
+        function isSongLanguageMatch(songLang, filterLang) {
+            if (!songLang || !filterLang) return false;
+            const s = String(songLang).toUpperCase().trim();
+            const f = String(filterLang).toUpperCase().trim();
+            if (s === f) return true;
+            if ((s === 'ZH' || s === '中文') && (f === 'ZH' || f === '中文' || f.includes('ZH') || f.includes('中文'))) return true;
+            if ((s === 'EN' || s === '英文') && (f === 'EN' || f === '英文' || f.includes('EN') || f.includes('英文'))) return true;
+            if ((s === 'JP' || s === '日文') && (f === 'JP' || f === '日文' || f.includes('JP') || f.includes('日文'))) return true;
+            return false;
+        }
+
         function getFilteredSongData() {
             const keyword = normalizeSongSearchKeyword(searchSongInput.value);
 
@@ -1514,7 +1537,7 @@
                 const song = resolveItem(songItem);
                 const isPracticing = song.status === '待練' || song.status === '練習中';
                 const matchFilter = currentSongFilter === 'all'
-                    || (currentSongFilter === '練習中' ? isPracticing : song.language === currentSongFilter);
+                    || (currentSongFilter === '練習中' ? isPracticing : isSongLanguageMatch(song.language, currentSongFilter));
                 const matchSearch = !keyword || getSongSearchText(song).includes(keyword);
                 return matchFilter && matchSearch;
             });

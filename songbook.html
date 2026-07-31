@@ -703,9 +703,9 @@
             <div class="controls">
                 <div class="filter-row" id="songFilterBtnContainer">
                     <button class="filter-btn active" type="button" data-filter="all">全部歌曲</button>
-                    <button class="filter-btn" type="button" data-filter="中文">中文</button>
-                    <button class="filter-btn" type="button" data-filter="英文">英文</button>
-                    <button class="filter-btn" type="button" data-filter="日文">日文</button>
+                    <button class="filter-btn" type="button" data-filter="ZH">ZH 中文</button>
+                    <button class="filter-btn" type="button" data-filter="EN">EN 英文</button>
+                    <button class="filter-btn" type="button" data-filter="JP">JP 日文</button>
                     <button class="filter-btn" type="button" data-filter="練習中">🌱 練習中</button>
                 </div>
 
@@ -818,6 +818,7 @@
                 song.artist,
                 song.singer,
                 song.language,
+                formatDisplayLanguage(song.language),
                 song.status,
                 normalizeSongTags(song.tags)
             ].join(" ").toLowerCase();
@@ -880,7 +881,7 @@
                                 <div class="song-artist">${escapeHtml(artist)}</div>
                             </div>
                             <div class="song-tags">
-                                <span class="song-badge">${escapeHtml(song.language || "未分類")}</span>
+                                <span class="song-badge">${escapeHtml(formatDisplayLanguage(song.language) || "未分類")}</span>
                                 ${statusBadge}
                                 ${tagBadges}
                             </div>
@@ -893,6 +894,26 @@
             songListContainer.innerHTML = html;
         }
 
+        function formatDisplayLanguage(lang) {
+            if (!lang) return '';
+            const l = String(lang).toUpperCase().trim();
+            if (l === 'ZH' || l === '中文') return 'ZH 中文';
+            if (l === 'EN' || l === '英文') return 'EN 英文';
+            if (l === 'JP' || l === '日文') return 'JP 日文';
+            return lang;
+        }
+
+        function isSongLanguageMatch(songLang, filterLang) {
+            if (!songLang || !filterLang) return false;
+            const s = String(songLang).toUpperCase().trim();
+            const f = String(filterLang).toUpperCase().trim();
+            if (s === f) return true;
+            if ((s === 'ZH' || s === '中文') && (f === 'ZH' || f === '中文' || f.includes('ZH') || f.includes('中文'))) return true;
+            if ((s === 'EN' || s === '英文') && (f === 'EN' || f === '英文' || f.includes('EN') || f.includes('英文'))) return true;
+            if ((s === 'JP' || s === '日文') && (f === 'JP' || f === '日文' || f.includes('JP') || f.includes('日文'))) return true;
+            return false;
+        }
+
         function getFilteredSongData() {
             const keyword = normalizeSongSearchKeyword(searchSongInput.value);
 
@@ -900,7 +921,7 @@
                 const song = resolveItem(songItem);
                 const isPracticing = song.status === "待練" || song.status === "練習中";
                 const matchFilter = currentSongFilter === "all"
-                    || song.language === currentSongFilter
+                    || isSongLanguageMatch(song.language, currentSongFilter)
                     || (currentSongFilter === "練習中" && isPracticing);
                 const matchSearch = !keyword || getSongSearchText(song).includes(keyword);
 

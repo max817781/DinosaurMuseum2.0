@@ -49,20 +49,54 @@ window.museumDataParts.contentMap = {
         "audio": "images/rawr.mp3",
         "image": ""
     },
-    "quote_not_goblin": {
+    "quote_goblin_over_crocodile": {
         "type": "quote",
         "title": "恐龍語錄",
-        "text": "不是哥布林，是恐龍。這件事非常重要。",
+        "text": "我寧願當哥不林也不要當鱷魚!",
         "link": "",
         "audio": "",
         "image": ""
     },
-    "quote_southern_zongzi": {
+    "quote_care_about_dumplings": {
         "type": "quote",
-        "title": "2026 端午粽子之戰",
-        "text": "南部粽才是最賀甲的…！！！而且一定要鹹粽！！",
-        "link": "https://x.com/LittleDinoYan/status/2067829682742202618",
+        "title": "恐龍語錄",
+        "text": "小籠包～我都有在關關的心啊",
         "audio": "",
-        "image": "images/粽子投票.jpg"
+        "image": ""
+    },
+    "quote_drowning_singing": {
+        "type": "quote",
+        "title": "恐龍語錄",
+        "text": "水之呼吸！溺水唱法！",
+        "audio": "",
+        "image": ""
+    },
+    "quote_onedayday": {
+        "type": "quote",
+        "title": "恐龍語錄",
+        "text": "Onedayday 的！",
+        "audio": "",
+        "image": ""
+    },
+    "quote_orange_scolding": {
+        "type": "quote",
+        "title": "恐龍語錄",
+        "text": "哈什麼哈！嚴厲斥責！恰恰！",
+        "audio": "",
+        "image": ""
+    },
+    "quote_gentle_and_graceful": {
+        "type": "quote",
+        "title": "恐龍語錄",
+        "text": "溫柔婉約這部分，雖然不好意思，但也是事實啦！嘿嘿",
+        "audio": "",
+        "image": ""
+    },
+    "quote_onion_evolution": {
+        "type": "quote",
+        "title": "恐龍語錄",
+        "text": "又昇華了～洋蔥切起來",
+        "audio": "",
+        "image": ""
     }
 };

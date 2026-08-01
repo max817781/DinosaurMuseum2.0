@@ -713,21 +713,21 @@
         .nav-dropdown.open .nav-dropdown-arrow { transform: rotate(180deg); }
         .museum-side-rail {
             position: fixed;
-            top: 50%;
-            left: 10px;
+            top: 62%;
+            left: 6px;
             z-index: 24;
             display: grid;
-            gap: 10px;
+            gap: 7px;
             transform: translateY(-50%);
         }
         .museum-side-link {
-            width: 42px;
-            height: 42px;
+            width: 29px;
+            height: 29px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
             overflow: hidden;
-            padding: 0 10px;
+            padding: 0 6px;
             border: 1px solid rgba(211,197,169,.82);
             border-radius: 999px;
             background: rgba(255,251,239,.92);
@@ -743,18 +743,24 @@
         .museum-side-link:nth-child(3) { animation-delay: -1.8s; }
         .museum-side-link:hover,
         .museum-side-link:focus-visible {
-            width: 146px;
+            width: 116px;
             background: #f4f7dd;
             color: #617849;
             outline: none;
             animation-play-state: paused;
         }
-        .museum-side-paw { flex: 0 0 20px; font-size: 1.05em; }
+        .museum-side-paw {
+            flex: 0 0 16px;
+            width: 16px;
+            text-align: center;
+            font-size: .72em;
+            line-height: 1;
+        }
         .museum-side-label {
             flex: 0 0 auto;
             opacity: 0;
             white-space: nowrap;
-            font-size: .86em;
+            font-size: .72em;
             font-weight: 900;
             transform: translateX(-5px);
             transition: opacity .16s ease, transform .16s ease;
@@ -766,7 +772,7 @@
         }
         @keyframes museumPawFloat {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
+            50% { transform: translateY(-2px); }
         }
         .home-hero {
             min-height: 720px; padding: 120px 8% 70px; box-sizing: border-box;

@@ -4,9 +4,19 @@ window.museumDataParts.contentMap = {
     "original_rawr_rawr": {
         "type": "originalSong",
         "title": "RawrRawr",
+        "englishTitle": "My First Original Song",
         "date": "2026.03.28",
-        "youtube": "https://www.youtube.com/watch?v=SOYVnvJXcq4&list=RDSOYVnvJXcq4&start_radio=1",
-        "image": ""
+        "desc": "YanYan 的第一首原創歌曲，從這聲 Rawr Rawr 開始，把小恐龍的故事唱給大家聽。",
+        "youtube": "https://www.youtube.com/watch?v=SOYVnvJXcq4",
+        "image": "images/original-rawr-rawr.jpg",
+        "kicker": "THE FIRST RAWR",
+        "credits": [
+            "Vocal & VTuber：YanYan",
+            "Music Production：cyro_music_",
+            "Lyrics：cyro_music_ & YanYan",
+            "MV Art：sukicakie30903",
+            "MV Production：avaris_"
+        ]
     },
     "original_dear_dumplings": {
         "type": "originalSong",
@@ -14,9 +24,10 @@ window.museumDataParts.contentMap = {
         "englishTitle": "Dear Soup Dumplings",
         "date": "2026.05.30",
         "desc": "一封寫給小龍包們的信。這不只是原創歌曲，也是 YanYan 與大家共同走過一段時間的證明。",
-        "youtube": "https://youtu.be/vsmhL5o-kvo?si=-ep-zsgPCVpY29h3",
+        "youtube": "https://www.youtube.com/watch?v=vsmhL5o-kvo",
         "xLink": "https://x.com/LittleDinoYan/status/2060945997682131069",
-        "image": "",
+        "image": "images/original-dear-dumplings.jpg",
+        "kicker": "A LETTER IN HER VOICE",
         "credits": [
             "Vocal & Melody：YanYan",
             "Lyrics：YanYan",

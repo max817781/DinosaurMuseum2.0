@@ -476,7 +476,7 @@
         function validateSourceIds() {
             const sections = {
                 heroData, timelineData, quoteData,
-                originalSong: [originalSong]
+                originalSong: [originalSong], originalSongs
             };
             Object.entries(sections).forEach(([sectionName, items]) => {
                 items.forEach(item => {
@@ -1116,36 +1116,44 @@
         // 第三版：原創歌曲特別展
         const originalSongContainer = document.getElementById('originalSongContainer');
         function renderOriginalSong() {
-            const song = resolveItem(originalSong);
-            const date = song.date || "";
-            const englishTitle = song.englishTitle || "";
-            const desc = song.desc || "";
-            const credits = Array.isArray(song.credits) ? song.credits : [];
-            const youtube = song.youtube || "";
-            const xLink = song.xLink || "";
-            const creditsHtml = credits.map(credit => `<span>${credit}</span>`).join('');
-            const youtubeButton = youtube
-                ? `<a class="song-action" href="${youtube}" target="_blank" rel="noopener">在 YouTube 聽歌 ▶</a>`
-                : '';
-            const xButton = xLink
-                ? `<a class="song-action secondary" href="${xLink}" target="_blank" rel="noopener">閱讀原始貼文 ↗</a>`
-                : '';
-            originalSongContainer.innerHTML = `
-                <div class="song-art">
-                    <div class="song-art-icon">✉️🦖</div>
-                    <small>ORIGINAL SONG · ${date}</small>
-                </div>
-                <div class="song-story">
-                    <span class="section-kicker">A LETTER IN HER VOICE</span>
-                    <h2>〈${getTitle(song)}〉</h2>
-                    <div class="song-en-title">${englishTitle}</div>
-                    <p>${desc}</p>
-                    <div class="credit-list">${creditsHtml}</div>
-                    <div class="song-actions">
-                        ${youtubeButton}
-                        ${xButton}
+            const exhibitSongs = Array.isArray(originalSongs) && originalSongs.length
+                ? originalSongs
+                : [originalSong];
+            originalSongContainer.innerHTML = exhibitSongs.map(songItem => {
+                const song = resolveItem(songItem);
+                const date = song.date || "";
+                const englishTitle = song.englishTitle || "";
+                const desc = song.desc || "";
+                const credits = Array.isArray(song.credits) ? song.credits : [];
+                const youtube = song.youtube || "";
+                const xLink = song.xLink || "";
+                const image = getImage(song);
+                const kicker = song.kicker || "ORIGINAL SONG";
+                const creditsHtml = credits.map(credit => `<span>${credit}</span>`).join('');
+                const youtubeButton = youtube
+                    ? `<a class="song-action" href="${youtube}" target="_blank" rel="noopener">在 YouTube 聽歌 ▶</a>`
+                    : '';
+                const xButton = xLink
+                    ? `<a class="song-action secondary" href="${xLink}" target="_blank" rel="noopener">閱讀原始貼文 ↗</a>`
+                    : '';
+                const artVisual = image
+                    ? `<img class="song-art-image" src="${image}" alt="${getTitle(song)} YouTube 封面" loading="lazy" decoding="async">`
+                    : `<div class="song-art-icon">${song.icon || '🎵🦖'}</div>`;
+                return `<article class="original-song-card">
+                    <div class="song-art ${image ? 'has-image' : ''}">
+                        ${artVisual}
+                        <small>ORIGINAL SONG · ${date}</small>
                     </div>
-                </div>`;
+                    <div class="song-story">
+                        <span class="section-kicker">${kicker}</span>
+                        <h2>〈${getTitle(song)}〉</h2>
+                        ${englishTitle ? `<div class="song-en-title">${englishTitle}</div>` : ''}
+                        ${desc ? `<p>${desc}</p>` : ''}
+                        ${creditsHtml ? `<div class="credit-list">${creditsHtml}</div>` : ''}
+                        ${(youtubeButton || xButton) ? `<div class="song-actions">${youtubeButton}${xButton}</div>` : ''}
+                    </div>
+                </article>`;
+            }).join('');
         }
         renderOriginalSong();
 

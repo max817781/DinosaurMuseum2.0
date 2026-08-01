@@ -1131,12 +1131,16 @@
         .timeline-icon { float: right; font-size: 2.1em; }
 
         .original-song-section { background: linear-gradient(145deg, #1d1822, #101012); }
-        .original-song-card { display: grid; grid-template-columns: .82fr 1.18fr; max-width: 1100px; margin: 0 auto; border-radius: 32px; overflow: hidden; border: 1px solid #3b3445; box-shadow: 0 28px 70px rgba(0,0,0,.32); }
-        .song-art { min-height: 420px; padding: 46px; display: flex; flex-direction: column; justify-content: space-between; background: radial-gradient(circle at 70% 20%, rgba(216,235,157,.32), transparent 25%), linear-gradient(145deg,#9f8bc5,#4f426b); }
+        .original-song-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; max-width: 1180px; margin: 0 auto; align-items: stretch; }
+        .original-song-card { display: flex; min-width: 0; flex-direction: column; border-radius: 28px; overflow: hidden; border: 1px solid #3b3445; box-shadow: 0 28px 70px rgba(0,0,0,.32); }
+        .song-art { position: relative; min-height: 280px; padding: 36px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; background: radial-gradient(circle at 70% 20%, rgba(216,235,157,.32), transparent 25%), linear-gradient(145deg,#9f8bc5,#4f426b); }
+        .song-art.has-image { min-height: 0; padding: 0; aspect-ratio: 16 / 9; background: #19171d; }
+        .song-art-image { width: 100%; height: 100%; display: block; object-fit: cover; }
+        .song-art.has-image small { position: absolute; left: 18px; bottom: 16px; padding: 7px 10px; border-radius: 999px; background: rgba(24,23,28,.78); backdrop-filter: blur(5px); }
         .song-art-icon { font-size: 6em; }
         .song-art small { color: #eee8f7; letter-spacing: .12em; }
-        .song-story { padding: 48px; background: #18171c; }
-        .song-story h2 { margin: 10px 0 6px; font-size: 3em; }
+        .song-story { display: flex; flex: 1; flex-direction: column; padding: 34px; background: #18171c; }
+        .song-story h2 { margin: 10px 0 6px; font-size: clamp(2em,3vw,2.7em); }
         .song-en-title { color: #c6b7e3; font-size: 1.1em; }
         .song-story > p { color: #b3adb9; line-height: 1.8; }
         .credit-list { display: grid; gap: 8px; margin: 25px 0; color: #918b98; font-size: .9em; }
@@ -1181,7 +1185,8 @@
             .x-intro { position: static; }
             .x-profile-banner { border-radius: 18px; }
             .x-banner-cta { right: 12px; bottom: 12px; font-size: .84em; }
-            .memory-draw-wrap, .original-song-card { grid-template-columns: 1fr; }
+            .memory-draw-wrap { grid-template-columns: 1fr; }
+            .original-song-list { grid-template-columns: 1fr; }
             .timeline::before { left: 10px; }
             .timeline-item { grid-template-columns: 1fr; gap: 10px; padding-left: 38px; }
             .timeline-date { text-align: left; padding-top: 0; }

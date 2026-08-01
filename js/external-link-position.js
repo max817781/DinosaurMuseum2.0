@@ -2,6 +2,7 @@
     const STORAGE_KEY = "museum-external-return-scroll-v1";
     const MAX_AGE_MS = 30 * 60 * 1000;
     let waitingForExternalReturn = false;
+    let restoreInProgress = false;
 
     function getAnchorState() {
         const scrollY = Math.max(0, window.scrollY || 0);
@@ -79,6 +80,23 @@
         window.scrollTo({ top: Math.max(0, targetY), left: 0, behavior: "auto" });
     }
 
+    function restorePendingPosition() {
+        if (restoreInProgress) return;
+        const saved = readSavedPosition();
+        if (!saved || !saved.departed) return;
+
+        restoreInProgress = true;
+        window.requestAnimationFrame(() => {
+            restorePosition(saved);
+            window.setTimeout(() => restorePosition(saved), 120);
+            window.setTimeout(() => {
+                restorePosition(saved);
+                restoreInProgress = false;
+                clearSavedPosition();
+            }, 700);
+        });
+    }
+
     document.addEventListener("click", event => {
         const link = event.target.closest("a[href]");
         if (!link) return;
@@ -96,39 +114,31 @@
         if (!/^https?:$/.test(destination.protocol) || destination.origin === window.location.origin) return;
 
         savePosition();
+        // 新分頁不一定會觸發原頁的 pagehide，先記成已離開，
+        // 回到原分頁時可由 pageshow / visibilitychange / focus 復原。
+        markPageDeparted();
         link.target = "_blank";
         link.relList.add("noopener", "noreferrer");
 
         window.setTimeout(() => {
-            if (document.visibilityState === "visible") clearSavedPosition();
+            // 若彈窗被阻擋或原頁一直維持可見，就不需要保留暫存狀態。
+            if (document.visibilityState === "visible" && document.hasFocus()) {
+                clearSavedPosition();
+            }
         }, 1500);
     }, true);
 
-    window.addEventListener("pageshow", event => {
-        const navigationEntry = performance.getEntriesByType?.("navigation")?.[0];
-        const returnedFromHistory = event.persisted || navigationEntry?.type === "back_forward";
-        if (!returnedFromHistory) return;
-
-        const saved = readSavedPosition();
-        if (!saved || !saved.departed) return;
-
-        window.requestAnimationFrame(() => {
-            restorePosition(saved);
-            window.setTimeout(() => restorePosition(saved), 120);
-            window.setTimeout(() => {
-                restorePosition(saved);
-                clearSavedPosition();
-            }, 600);
-        });
-    });
+    window.addEventListener("pageshow", restorePendingPosition);
 
     window.addEventListener("pagehide", markPageDeparted);
 
     document.addEventListener("visibilitychange", () => {
         if (document.visibilityState !== "visible" || !waitingForExternalReturn) return;
-        window.setTimeout(() => {
-            const saved = readSavedPosition();
-            if (saved && !saved.departed) clearSavedPosition();
-        }, 300);
+        window.setTimeout(restorePendingPosition, 80);
+    });
+
+    window.addEventListener("focus", () => {
+        if (!waitingForExternalReturn) return;
+        window.setTimeout(restorePendingPosition, 80);
     });
 })();

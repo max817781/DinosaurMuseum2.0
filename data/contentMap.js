@@ -8,6 +8,7 @@ window.museumDataParts.contentMap = {
         "date": "2026.03.28",
         "desc": "YanYan 的第一首原創歌曲，從這聲 Rawr Rawr 開始，把小恐龍的故事唱給大家聽。",
         "youtube": "https://www.youtube.com/watch?v=SOYVnvJXcq4",
+        "xLink": "https://x.com/LittleDinoYan/status/2038140652652048434?s=20",
         "image": "images/original-rawr-rawr.jpg",
         "kicker": "THE FIRST RAWR",
         "credits": [

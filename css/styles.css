@@ -367,7 +367,24 @@
         .tag {
             margin-right: 10px;
         }
-        .video-story { margin-top: 9px; color: #85818a; font-size: .86em; line-height: 1.5; }
+        .video-story {
+    margin-top: 9px;
+    color: #85818a;
+    font-size: .86em;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+    transition: max-height 0.3s ease;
+}
+
+.video-card:hover .video-story {
+    display: block;
+    -webkit-line-clamp: initial;
+    overflow: visible;
+}
         .new-badge {
             position: absolute;
             top: 10px;
@@ -1582,7 +1599,7 @@
         }
         .tft-shop-header {
             display: grid;
-            grid-template-columns: auto 1fr auto;
+            grid-template-columns: auto auto 1fr auto;
             align-items: center;
             gap: 14px;
             margin: 0 44px 14px 0;
@@ -2936,4 +2953,424 @@
     color: #333;
     letter-spacing: -2px;
     padding: 2px 4px;
+}
+
+        .tft-dango-icon {
+            width: 46px;
+            height: 46px;
+            object-fit: contain;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.15));
+            user-select: none;
+            vertical-align: middle;
+        }
+        .tft-dango-icon:hover {
+            transform: scale(1.18) rotate(6deg);
+            filter: drop-shadow(0 6px 14px rgba(255, 215, 0, 0.45));
+        }
+        .tft-dango-icon:active {
+            transform: scale(0.92);
+        }
+        .tft-dango-icon[hidden] {
+            display: none !important;
+        }
+
+        /* TFT Timer & D Hotkey Styles */
+        
+        .tft-shop-panel.is-warning-border {
+            animation: tftPanelWarningPulse 1s infinite alternate;
+        }
+        @keyframes tftPanelWarningPulse {
+            0% { border-color: #9d7b37; box-shadow: 0 -22px 60px rgba(10,12,18,.45), inset 0 1px 0 rgba(255,255,255,.14); }
+            100% { border-color: #ff3333; box-shadow: 0 -22px 60px rgba(255,0,0,0.4), inset 0 0 45px rgba(255,0,0,0.25); }
+        }
+        .tft-shop-timer {
+            justify-self: center;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #ffe9a0;
+            background: linear-gradient(180deg, #2a1a1a, #110505);
+            padding: 6px 36px;
+            border-radius: 40px;
+            border: 3px solid #e5b330;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 15px rgba(229,179,48,0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+        .tft-shop-timer.is-warning {
+            color: #ff3333;
+            border-color: #ff3333;
+            background: linear-gradient(180deg, #3a0a0a, #1a0202);
+            box-shadow: 0 8px 20px rgba(255,0,0,0.5), inset 0 0 25px rgba(255,0,0,0.3);
+            animation: tftTimerPulse 0.5s infinite alternate;
+        }
+        @keyframes tftTimerPulse {
+            from { transform: scale(1); box-shadow: 0 0 4px rgba(255, 82, 82, 0.4); }
+            to { transform: scale(1.06); box-shadow: 0 0 14px rgba(255, 82, 82, 0.8); }
+        }
+        .tft-kbd-hint {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: 0.75rem;
+            font-family: inherit;
+            margin-left: 4px;
+            color: #ffffff;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+/* TFT Overlays */
+.tft-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    
+    transition: none;
+}
+.tft-overlay.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+.tft-overlay-content {
+    background: #2a2a2a;
+    padding: 24px;
+    border-radius: 12px;
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+    max-width: 85%;
+}
+.tft-overlay-content h3 {
+    color: #ffe9a0;
+    margin-bottom: 16px;
+    font-size: 1.5rem;
+}
+.tft-overlay-content p {
+    color: #eee;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    text-align: left;
+}
+.tft-fail-overlay .tft-overlay-content p {
+    text-align: center;
+    color: #ff5252;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+.tft-btn-primary {
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    color: #000;
+    border: none;
+    padding: 10px 28px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.2s;
+    box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
+}
+.tft-btn-primary:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+.tft-rules-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(42, 42, 42, 0.85);
+    border: 2px dashed rgba(255, 215, 0, 0.4);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin-bottom: 12px;
+    gap: 16px;
+    transition: all 0.3s ease;
+}
+.tft-rules-banner.is-hidden {
+    display: none;
+}
+.tft-rules-text {
+    color: #eee;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    flex: 1;
+}
+.tft-rules-text strong {
+    color: #ffe9a0;
+}
+
+.tft-shop-grid.is-waiting-start {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.tft-shop-grid {
+    transition: opacity 0.3s ease;
+}
+
+.tft-upgrade-reward {
+    color: #ffb74d;
+    font-size: 1.15rem;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 2px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 183, 77, 0.5);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    animation: tftRewardBounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes tftRewardBounce {
+    0% { transform: scale(0.5); opacity: 0; }
+    80% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+
+/* Amaterasu Easter Egg */
+.amaterasu-image-container {
+    position: relative;
+    display: block;
+    width: min(230px, 75%); /* Exact match with original image */
+    margin: -15px auto 5px;
+}
+.amaterasu-image-container .chibi-image {
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+
+
+/* Amaterasu Active Mode */
+.amaterasu-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-color: rgba(30, 0, 0, 0.85);
+    z-index: 9998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.amaterasu-overlay.is-active {
+    opacity: 1;
+}
+
+.amaterasu-image-container.is-active {
+    z-index: 9999;
+}
+
+.amaterasu-image-container.is-active .chibi-image {
+    filter: invert(1) hue-rotate(180deg) drop-shadow(0 0 20px red) contrast(1.5);
+    animation: amaterasuShake 0.1s infinite;
+}
+
+@keyframes amaterasuShake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+.nono-bubble.is-active blockquote {
+    color: #ff3333;
+    font-weight: bold;
+    text-shadow: 0 0 10px #ff0000;
+}
+
+
+.amaterasu-eyepatch-hotspot {
+    position: absolute;
+    top: 38%;
+    right: 31%;
+    width: 17%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    z-index: 10;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+    appearance: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.amaterasu-eyepatch-hotspot:focus-visible {
+    outline: 3px solid rgba(255, 93, 117, 0.85);
+    outline-offset: 3px;
+}
+
+
+/* Amaterasu Popout */
+.amaterasu-popout {
+    position: fixed;
+    bottom: -50px;
+    right: -110vw;
+    width: min(100vw, 500px);
+    max-width: 500px;
+    height: min(100vw, 500px);
+    max-height: 500px;
+    z-index: 9999;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: right 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+}
+
+.amaterasu-popout.is-active {
+    right: max(2vw, env(safe-area-inset-right));
+    opacity: 1;
+}
+
+.amaterasu-popout.is-vanishing {
+    transition: opacity 0.5s ease 0.2s, right 0s linear 0.7s;
+    opacity: 0;
+    right: -100%;
+}
+
+.amaterasu-big-nono {
+    position: absolute;
+    bottom: 0;
+    height: 80%;
+    object-fit: contain;
+    filter: invert(1) hue-rotate(180deg) drop-shadow(0 0 30px #ff0000) contrast(1.5);
+    animation: amaterasuShake 0.1s infinite;
+}
+
+/* Black Flames Effect */
+.amaterasu-flames {
+    position: absolute;
+    bottom: 0;
+    width: 150%;
+    height: 150%;
+    background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.8) 70%);
+    box-shadow: inset 0 -100px 100px -50px #ff0000;
+    animation: flamesFlicker 0.3s infinite alternate;
+    border-radius: 50%;
+    mix-blend-mode: color-burn;
+}
+
+@keyframes flamesFlicker {
+    0% { transform: scale(1) translateY(0); opacity: 0.8; }
+    100% { transform: scale(1.05) translateY(-10px); opacity: 1; }
+}
+
+/* Chuunibyou Shout Text */
+.amaterasu-shout-text {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    width: min(92vw, 620px);
+    font-size: clamp(2rem, 10vw, 5rem);
+    font-weight: 900;
+    color: #ff0000;
+    text-shadow: 
+        0 0 10px #000, 
+        0 0 20px #000, 
+        0 0 40px #ff0000,
+        5px 5px 0 #000;
+    transform: translateX(-50%) rotate(-10deg) scale(0);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.5), opacity 0.3s ease;
+    transition-delay: 0.5s; /* Wait for popout to slide in */
+}
+
+.amaterasu-popout.is-active .amaterasu-shout-text {
+    transform: translateX(-50%) rotate(-10deg) scale(1);
+    opacity: 1;
+}
+
+.amaterasu-popout.is-vanishing .amaterasu-shout-text {
+    opacity: 0;
+    transform: translateX(-50%) rotate(-10deg) scale(1.5);
+    transition: all 0.3s ease;
+    transition-delay: 0s;
+}
+
+/* Ninja Smoke */
+.amaterasu-smoke {
+    position: absolute;
+    bottom: 10%;
+    width: 100%;
+    height: 80%;
+    background: radial-gradient(circle, rgba(200,200,200,0.9) 0%, rgba(100,100,100,0.6) 50%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(10px);
+    opacity: 0;
+    transform: scale(0.5);
+    pointer-events: none;
+}
+
+.amaterasu-popout.is-vanishing .amaterasu-smoke {
+    animation: ninjaSmoke 0.6s ease-out forwards;
+}
+
+@keyframes ninjaSmoke {
+    0% { opacity: 0; transform: scale(0.5); }
+    30% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0; transform: scale(2); }
+}
+
+@media (max-width: 600px) {
+    .amaterasu-popout {
+        bottom: max(-20px, calc(-1 * env(safe-area-inset-bottom)));
+        width: 100vw;
+        height: min(100vw, 440px);
+    }
+
+    .amaterasu-popout.is-active {
+        right: 0;
+    }
+
+    .amaterasu-shout-text {
+        top: 6%;
+        width: 88vw;
+        font-size: clamp(1.9rem, 11vw, 3.8rem);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .amaterasu-overlay,
+    .amaterasu-popout,
+    .amaterasu-shout-text {
+        transition-duration: 0.01ms !important;
+    }
+
+    .amaterasu-image-container.is-active .chibi-image,
+    .amaterasu-big-nono,
+    .amaterasu-flames,
+    .amaterasu-popout.is-vanishing .amaterasu-smoke {
+        animation: none !important;
+    }
 }

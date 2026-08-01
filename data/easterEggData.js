@@ -11,6 +11,16 @@ window.museumDataParts.easterEggData = {
     },
     eggs: [
         {
+            id: "amaterasu-nono",
+            triggerClicks: 3,
+            tapResetMs: 5000,
+            popoutMs: 3000,
+            restoreMs: 4500,
+            stampTitle: "阿嬤特拉斯！",
+            stampDesc: "在自我介紹裡對著諾諾的紅色眼罩連點三次，直到她凝聚足夠的查克拉展現黑炎瞳術。",
+            unlockBubble: "阿嬤特拉斯！🔥👁️"
+        },
+        {
             id: "outfit-memory-wall",
             triggerClicks: 3,
             stampTitle: "衣裝回憶牆",

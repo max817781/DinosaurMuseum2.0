@@ -96,14 +96,6 @@ window.museumDataParts.timelineData = [
         "icon": "🌱",
         "link": ""
     },
-	{
-        "date": "2026.07.28",
-        "label": "成長紀錄",
-        "title": "集結 670 萬顆小龍包",
-        "desc": "親親幫大力支持的幸運日，又一個值得收藏的成長足跡。",
-        "icon": "🥟",
-        "link": ""
-    },
     {
         "date": "2026.07.30",
         "label": "成長紀錄",

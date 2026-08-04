@@ -1334,33 +1334,54 @@
             currentSongPage = page;
             
         // Check if URL has ?id= parameter to display detail view directly inside songbook
-        const params = new URLSearchParams(location.search);
-        const detailSongId = params.get('id') || '';
+        const detailSongId = new URLSearchParams(location.search).get('id') || '';
 
-        (lyric) {
-            if (!lyric) return '';
+        function renderSongDetailView(id) {
+            const songInfo = songData.find(s => s.id === id) || null;
+            const lyricInfo = (window.museumDataParts && window.museumDataParts.songLyrics || []).find(s => s.id === id) || null;
+            const detailContainer = document.getElementById('songDetailContainer');
+            const heroSection = document.querySelector('.hero');
+            const panelSection = document.querySelector('.songbook-panel');
 
-            // YT backing
-            if (lyric.backingYt) {
-                return `
+            if (heroSection) heroSection.style.display = 'none';
+            if (panelSection) panelSection.style.display = 'none';
+
+            if (!songInfo) {
+                document.title = '找不到歌曲 | YanYan 歌聲收藏冊';
+                if (detailContainer) {
+                    detailContainer.innerHTML = `
+                        <div class="not-found">
+                            <strong>找不到這首歌</strong>
+                            這首歌可能還沒有收錄，或連結有誤。<br><br>
+                            <a class="back-link" href="songbook.html">← 回到歌聲收藏冊</a>
+                        </div>`;
+                }
+                return;
+            }
+
+            document.title = `${songInfo.title}｜YanYan 歌聲收藏冊`;
+            const status = songInfo.status === '待練' || songInfo.status === '練習中' ? '練習中' : (songInfo.status || '已收錄');
+            const isPracticing = status === '練習中';
+            const year = detailLyricInfo && detailLyricInfo.year ? detailLyricInfo.year + ' 年' : '';
+
+            let playerHtml = '';
+            if (lyricInfo && lyricInfo.backingYt) {
+                playerHtml = `
                 <div class="song-section">
                     <div class="section-title">🎵 伴奏</div>
-                    <a class="backing-yt-link" href="${escapeHtml(lyric.backingYt)}" target="_blank" rel="noopener">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.27 8.27 0 0 0 4.84 1.56V6.81a4.85 4.85 0 0 1-1.07-.12z"/></svg>
+                    <a class="backing-yt-link" href="${escapeHtml(lyricInfo.backingYt)}" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px;flex:0 0 auto;"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.27 8.27 0 0 0 4.84 1.56V6.81a4.85 4.85 0 0 1-1.07-.12z"/></svg>
                         前往 YouTube 伴奏 ↗
                     </a>
                     <p class="backing-note">點擊後會在新分頁開啟 YouTube 伴奏頁面。</p>
                 </div>`;
-            }
-
-            // Local audio player
-            if (lyric.backingFile) {
-                return `
+            } else if (lyricInfo && lyricInfo.backingFile) {
+                playerHtml = `
                 <div class="song-section">
                     <div class="section-title">🎵 伴奏播放器</div>
                     <div class="audio-player" id="audioPlayer">
                         <audio id="audioEl" preload="none">
-                            <source src="${escapeHtml(lyric.backingFile)}" type="audio/mpeg">
+                            <source src="${escapeHtml(lyricInfo.backingFile)}" type="audio/mpeg">
                         </audio>
                         <div class="player-controls">
                             <button class="player-btn" id="playBtn" type="button" title="播放 / 暫停" aria-label="播放 / 暫停">▶</button>
@@ -1383,116 +1404,44 @@
                 </div>`;
             }
 
-            return '';
-        }
-
-        function renderLyrics(lyric) {
-            if (!lyric || !lyric.lyrics) return '';
-            const lines = lyric.lyrics.trim().split('\n');
-            const html = lines.map(line => {
-                if (line.trim() === '') return '<br>';
-                return `<div>${escapeHtml(line)}</div>`;
-            }).join('\n');
-
-            return `
-            <div class="song-section">
-                <div class="section-title">📄 歌詞</div>
-                <div class="lyrics-block">${html}</div>
-            </div>`;
-        }
-
-        if (!songInfo) {
-            document.title = '找不到歌曲 | YanYan 歌聲收藏冊';
-            container.innerHTML = `
-                <div class="not-found">
-                    <strong>找不到這首歌</strong>
-                    這首歌可能還沒有收錄，或連結有誤。<br>
-                    <br>
-                    <a class="back-link" href="songbook.html">← 回到歌聲收藏冊</a>
+            let lyricsHtml = '';
+            if (lyricInfo && lyricInfo.lyrics) {
+                const lines = lyricInfo.lyrics.trim().split('\n');
+                const formattedLines = lines.map(line => line.trim() === '' ? '<br>' : `<div>${escapeHtml(line)}</div>`).join('\n');
+                lyricsHtml = `
+                <div class="song-section">
+                    <div class="section-title">📄 歌詞</div>
+                    <div class="lyrics-block">${formattedLines}</div>
                 </div>`;
-        } else {
-            document.title = `${songInfo.title}｜YanYan 歌聲收藏冊`;
+            }
 
-            const status = songInfo.status === '待練' || songInfo.status === '練習中' ? '練習中' : (songInfo.status || '已收錄');
-            const isPracticing = status === '練習中';
-            const year = lyricInfo && lyricInfo.year ? lyricInfo.year + ' 年' : '';
-
-            container.innerHTML = `
-                <section class="song-header">
-                    <div class="song-kicker">Song Archive</div>
-                    <h1 class="song-name">${escapeHtml(songInfo.title)}</h1>
-                    <div class="song-meta">
-                        ${escapeHtml(songInfo.artist || '')}
-                        ${year ? `<span>·</span>${escapeHtml(year)}` : ''}
-                    </div>
-                    <div class="song-badges">
-                        <span class="song-badge">${escapeHtml(formatLanguage(songInfo.language))}</span>
-                        <span class="song-badge ${isPracticing ? 'green' : ''}">${isPracticing ? '🌱 ' : ''}${escapeHtml(status)}</span>
-                    </div>
-                </section>
-
-                ${renderPlayer(lyricInfo)}
-                ${renderLyrics(lyricInfo)}
-
-                ${!lyricInfo ? `
-                <div class="song-section" style="text-align:center; color:#8a7d6a; padding: 30px;">
-                    這首歌目前還沒有歌詞與伴奏資料。
-                </div>` : ''}
-            `;
-
-            
-
-        if (detailSongId) {
-            const detailSongInfo = songData.find(s => s.id === detailSongId) || null;
-            const detailLyricInfo = songLyrics.find(s => s.id === detailSongId) || null;
-            const detailContainer = document.getElementById('songDetailContainer');
-            const heroSection = document.querySelector('.hero');
-            const panelSection = document.querySelector('.songbook-panel');
-
-            if (heroSection) heroSection.style.display = 'none';
-            if (panelSection) panelSection.style.display = 'none';
-
-            if (!detailSongInfo) {
-                document.title = '找不到歌曲 | YanYan 歌聲收藏冊';
-                detailContainer.innerHTML = `
-                    <div class="not-found">
-                        <strong>找不到這首歌</strong>
-                        這首歌可能還沒有收錄，或連結有誤。<br><br>
-                        <a class="back-link" href="?">← 回到歌聲收藏冊</a>
-                    </div>`;
-            } else {
-                document.title = `${detailSongInfo.title}｜YanYan 歌聲收藏冊`;
-                const status = detailSongInfo.status === '待練' || detailSongInfo.status === '練習中' ? '練習中' : (detailSongInfo.status || '已收錄');
-                const isPracticing = status === '練習中';
-                const year = detailLyricInfo && detailLyricInfo.year ? detailLyricInfo.year + ' 年' : '';
-
+            if (detailContainer) {
                 detailContainer.innerHTML = `
                     <nav class="topbar" style="margin-bottom: 20px;">
-                        <a class="back-link" href="?">← 回到歌聲收藏冊</a>
+                        <a class="back-link" href="songbook.html">← 回到歌聲收藏冊</a>
                     </nav>
                     <section class="song-header">
                         <div class="song-kicker">Song Archive</div>
-                        <h1 class="song-name">${escapeHtml(detailSongInfo.title)}</h1>
+                        <h1 class="song-name">${escapeHtml(songInfo.title)}</h1>
                         <div class="song-meta">
-                            ${escapeHtml(detailSongInfo.artist || '')}
+                            ${escapeHtml(songInfo.artist || '')}
                             ${year ? `<span>·</span>${escapeHtml(year)}` : ''}
                         </div>
                         <div class="song-badges">
-                            <span class="song-badge">${escapeHtml(formatDisplayLanguage(detailSongInfo.language))}</span>
+                            <span class="song-badge">${escapeHtml(formatDisplayLanguage(songInfo.language))}</span>
                             <span class="song-badge ${isPracticing ? 'green' : ''}">${isPracticing ? '🌱 ' : ''}${escapeHtml(status)}</span>
                         </div>
                     </section>
 
-                    ${renderPlayer(detailLyricInfo)}
-                    ${renderLyrics(detailLyricInfo)}
+                    ${playerHtml}
+                    ${lyricsHtml}
 
-                    ${!detailLyricInfo ? `
+                    ${!lyricInfo ? `
                     <div class="song-section" style="text-align:center; color:#8a7d6a; padding: 30px;">
                         這首歌目前還沒有歌詞與伴奏資料。
                     </div>` : ''}
                 `;
 
-                // Init audio player
                 const audio = document.getElementById('audioEl');
                 const playBtn = document.getElementById('playBtn');
                 const progressFill = document.getElementById('progressFill');
@@ -1522,11 +1471,14 @@
                     audio.addEventListener('timeupdate', updateProgress);
                     audio.addEventListener('ended', () => { playBtn.textContent = '▶'; });
                     audio.addEventListener('error', () => {
-                        document.getElementById('audioPlayer').innerHTML = `
-                            <div class="player-no-file">
-                                <strong>找不到伴奏檔案</strong>
-                                請確認 <code>${escapeHtml(detailLyricInfo.backingFile)}</code> 已放入正確位置。
-                            </div>`;
+                        const playerEl = document.getElementById('audioPlayer');
+                        if (playerEl) {
+                            playerEl.innerHTML = `
+                                <div class="player-no-file">
+                                    <strong>找不到伴奏檔案</strong>
+                                    請確認 <code>${escapeHtml(lyricInfo ? lyricInfo.backingFile : '')}</code> 已放入正確位置。
+                                </div>`;
+                        }
                     });
                     playBtn.addEventListener('click', () => {
                         if (audio.paused) { audio.play(); playBtn.textContent = '⏸'; }
@@ -1538,10 +1490,16 @@
                         audio.currentTime = pct * audio.duration;
                         updateProgress();
                     });
-                    volumeSlider.addEventListener('input', () => { audio.volume = volumeSlider.value; });
+                    if (volumeSlider) {
+                        volumeSlider.addEventListener('input', () => { audio.volume = volumeSlider.value; });
+                    }
                     audio.volume = 0.8;
                 }
             }
+        }
+
+        if (detailSongId) {
+            renderSongDetailView(detailSongId);
         }
 
         renderSongPage();

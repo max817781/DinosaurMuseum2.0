@@ -866,22 +866,34 @@
                 const performances = Array.isArray(song.performances) ? song.performances : [];
                 const hasPerformances = performances.length > 0;
                 const link = getPrimaryLink(song);
-                const rowTag = !hasPerformances && link ? "a" : "article";
-                const linkAttrs = !hasPerformances && link ? `href="${escapeHtml(link)}" target="_blank" rel="noopener"` : "";
-                const rowClass = `song-row ${(!hasPerformances && link) ? "has-link" : ""}`;
                 const statusBadge = `<span class="song-badge ${isPracticing ? "status-pending" : ""}">${isPracticing ? "🌱 " : ""}${escapeHtml(status)}</span>`;
                 const tagBadges = tags
                     .map(tag => `<span class="song-badge song-tag-badge">#${escapeHtml(tag)}</span>`)
                     .join("");
                 const hasLyrics = Boolean(songLyricsMap[song.id || songItem.id]);
+                const lyricEntry = songLyricsMap[song.id || songItem.id];
+                const lyricsLabel = lyricEntry && lyricEntry.backingYt && !lyricEntry.lyrics ? '🎵 伴奏' : '🎵 歌詞';
                 const lyricsBtn = hasLyrics
-                    ? `<a class="performance-link" href="song.html?id=${escapeHtml(song.id || songItem.id)}">🎵 歌詞</a>`
+                    ? `<a class="performance-link" href="song.html?id=${escapeHtml(song.id || songItem.id)}">${lyricsLabel}</a>`
                     : '';
+
+                // 有 lyricsBtn 時不能讓整個 row 是 <a>（避免 <a> 嵌套 <a>）
+                const useRowLink = !hasPerformances && link && !hasLyrics;
+                const rowTag = useRowLink ? "a" : "article";
+                const linkAttrs = useRowLink ? `href="${escapeHtml(link)}" target="_blank" rel="noopener"` : "";
+                const rowClass = `song-row ${useRowLink ? "has-link" : ""}`;
+
+                const recordBtn = !hasPerformances && link && hasLyrics
+                    ? `<a class="song-link" href="${escapeHtml(link)}" target="_blank" rel="noopener">打開紀錄 ↗</a>`
+                    : '';
+
                 const actionHtml = (hasPerformances
                     ? renderSongPerformances(song, performances)
-                    : link
+                    : useRowLink
                         ? `<span class="song-link">打開紀錄 ↗</span>`
-                        : `<span class="song-muted">僅收錄曲目</span>`) + lyricsBtn;
+                        : !link
+                            ? `<span class="song-muted">僅收錄曲目</span>`
+                            : recordBtn) + lyricsBtn;
 
                 return `
                     <${rowTag} ${linkAttrs} class="${rowClass}">

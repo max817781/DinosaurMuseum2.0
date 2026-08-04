@@ -11,7 +11,7 @@ window.museumDataParts.songLyrics = [
     },
     {
         id: "song_yi_qi_qu_bali",
-        backingFile: "audio/song_yi_qi_qu_bali.mp3",
+        backingFile: "audio/1_一起去巴黎 (Go to Paris)_(Instrumental).mp3",
         lyrics: `昨天我們決定
 明年我們要一起去巴黎
 要先一起補習

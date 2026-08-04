@@ -732,6 +732,7 @@
     <script src="data/contentMap.js"></script>
     <script src="data/vodData.js"></script>
     <script src="data/songData.js"></script>
+    <script src="data/songLyrics.js"></script>
     <script src="data.js"></script>
     <script>
         const {
@@ -739,6 +740,11 @@
             vodData = [],
             songData = []
         } = window.museumData || {};
+
+        const songLyricsMap = {};
+        ((window.museumDataParts && window.museumDataParts.songLyrics) || []).forEach(l => {
+            if (l.id) songLyricsMap[l.id] = l;
+        });
 
         const contentMap = { ...otherContentMap };
         [...vodData, ...songData].forEach(item => {
@@ -867,11 +873,15 @@
                 const tagBadges = tags
                     .map(tag => `<span class="song-badge song-tag-badge">#${escapeHtml(tag)}</span>`)
                     .join("");
-                const actionHtml = hasPerformances
+                const hasLyrics = Boolean(songLyricsMap[song.id || songItem.id]);
+                const lyricsBtn = hasLyrics
+                    ? `<a class="performance-link" href="song.html?id=${escapeHtml(song.id || songItem.id)}">🎵 歌詞</a>`
+                    : '';
+                const actionHtml = (hasPerformances
                     ? renderSongPerformances(song, performances)
                     : link
                         ? `<span class="song-link">打開紀錄 ↗</span>`
-                        : `<span class="song-muted">僅收錄曲目</span>`;
+                        : `<span class="song-muted">僅收錄曲目</span>`) + lyricsBtn;
 
                 return `
                     <${rowTag} ${linkAttrs} class="${rowClass}">

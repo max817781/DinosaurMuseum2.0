@@ -798,6 +798,17 @@ window.museumDataParts.songData = [
         "tags": ""
     },
     {
+        "id": "song_yi_qi_qu_bali",
+        "type": "song",
+        "title": "一起去巴黎",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
         "id": "song_067",
         "type": "song",
         "title": "愛你",

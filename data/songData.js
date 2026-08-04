@@ -809,6 +809,94 @@ window.museumDataParts.songData = [
         "tags": ""
     },
     {
+        "id": "song_fu_xiu",
+        "type": "song",
+        "title": "腐朽",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_rang_wo_xiang_yi_xiang",
+        "type": "song",
+        "title": "讓我想一想",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_wo_qin_ai_de_pian_zhi_kuang",
+        "type": "song",
+        "title": "我親愛的偏執狂",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_ju_li",
+        "type": "song",
+        "title": "距離",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_tai_duo",
+        "type": "song",
+        "title": "太多",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_zui_chu_de_qi_dian",
+        "type": "song",
+        "title": "最初的起點",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_bo_la_tu_shi_de_ai_qing",
+        "type": "song",
+        "title": "柏拉圖式的愛情",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_yi_shou_ge_rang_ni_dai_hui_qu",
+        "type": "song",
+        "title": "一首歌，讓你帶回去",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
         "id": "song_067",
         "type": "song",
         "title": "愛你",
@@ -1230,5 +1318,38 @@ window.museumDataParts.songData = [
         "status": "待練",
         "link": "",
         "image": ""
+    },
+    {
+        "id": "song_wo_zhi_shi_yi_ge_ping_fan_de_nv_hai",
+        "type": "song",
+        "title": "我只是一個平凡的女孩",
+        "artist": "洪安妮",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_ai_yi_xiang",
+        "type": "song",
+        "title": "愛異想",
+        "artist": "郭采潔",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_wo_de_bei_shang_shi_shui_zuo_de",
+        "type": "song",
+        "title": "我的悲傷是水做的",
+        "artist": "洛天依",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
     }
 ];

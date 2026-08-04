@@ -936,6 +936,17 @@
             return false;
         }
 
+        function getSongPriorityScore(songItem) {
+            const song = resolveItem(songItem);
+            const lyric = songLyricsMap[song.id || songItem.id];
+            const isCqz = String(song.artist || '').includes('陳綺貞');
+            const hasBackingFile = Boolean(lyric && lyric.backingFile);
+
+            if (isCqz && hasBackingFile) return 1;
+            if (hasBackingFile) return 2;
+            return 3;
+        }
+
         function getFilteredSongData() {
             const keyword = normalizeSongSearchKeyword(searchSongInput.value);
 
@@ -948,7 +959,7 @@
                 const matchSearch = !keyword || getSongSearchText(song).includes(keyword);
 
                 return matchFilter && matchSearch;
-            });
+            }).sort((a, b) => getSongPriorityScore(a) - getSongPriorityScore(b));
         }
 
         function getSongPageItems(totalPages) {

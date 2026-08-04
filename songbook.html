@@ -1325,6 +1325,201 @@
             const pageSongData = filteredSongData.slice(startIndex, startIndex + SONG_ITEMS_PER_PAGE);
             const hasFilter = currentSongFilter !== "all" || searchSongInput.value.trim() !== "";
 
+return performances.map((performance, index) => {
+                const label = performance.label || performance.date || `版本 ${index + 1}`;
+                const source = getContent(performance.sourceId);
+                const link = source ? getPrimaryLink(source) : "";
+
+                if (!link) {
+                    return `<span class="song-muted">${escapeHtml(label)}</span>`;
+                }
+
+                return `
+                    <a class="performance-link" href="${escapeHtml(link)}" target="_blank" rel="noopener">
+                        ${escapeHtml(label)} ↗
+                    </a>
+                `;
+            }).join("");
+        }
+
+        function renderSongs(songs) {
+            const html = songs.map(songItem => {
+                const song = resolveItem(songItem);
+                const title = song.title || "未命名歌曲";
+                const artist = song.artist || song.singer || "未填歌手";
+                const status = getDisplayStatus(song.status);
+                const isPracticing = status === "練習中";
+                const tags = getSongTagList(song.tags);
+                const performances = Array.isArray(song.performances) ? song.performances : [];
+                const hasPerformances = performances.length > 0;
+                const link = getPrimaryLink(song);
+                const statusBadge = `<span class="song-badge ${isPracticing ? "status-pending" : ""}">${isPracticing ? "🌱 " : ""}${escapeHtml(status)}</span>`;
+                const tagBadges = tags
+                    .map(tag => `<span class="song-badge song-tag-badge">#${escapeHtml(tag)}</span>`)
+                    .join("");
+                const hasLyrics = Boolean(songLyricsMap[song.id || songItem.id]);
+                const lyricEntry = songLyricsMap[song.id || songItem.id];
+                const lyricsLabel = lyricEntry && lyricEntry.backingYt && !lyricEntry.lyrics ? '🎵 伴奏' : '🎵 歌詞';
+                const lyricsBtn = hasLyrics
+                    ? `<a class="performance-link" href="?id=${escapeHtml(song.id || songItem.id)}">${lyricsLabel}</a>`
+                    : '';
+
+                // 有 lyricsBtn 時不能讓整個 row 是 <a>（避免 <a> 嵌套 <a>）
+                const useRowLink = !hasPerformances && link && !hasLyrics;
+                const rowTag = useRowLink ? "a" : "article";
+                const linkAttrs = useRowLink ? `href="${escapeHtml(link)}" target="_blank" rel="noopener"` : "";
+                const rowClass = `song-row ${useRowLink ? "has-link" : ""}`;
+
+                const recordBtn = !hasPerformances && link && hasLyrics
+                    ? `<a class="song-link" href="${escapeHtml(link)}" target="_blank" rel="noopener">打開紀錄 ↗</a>`
+                    : '';
+
+                const actionHtml = (hasPerformances
+                    ? renderSongPerformances(song, performances)
+                    : useRowLink
+                        ? `<span class="song-link">打開紀錄 ↗</span>`
+                        : !link
+                            ? `<span class="song-muted">僅收錄曲目</span>`
+                            : recordBtn) + lyricsBtn;
+
+                return `
+                    <${rowTag} ${linkAttrs} class="${rowClass}">
+                        <div class="song-main">
+                            <div class="song-title-line">
+                                <div class="song-title">${escapeHtml(title)}</div>
+                                <div class="song-artist">${escapeHtml(artist)}</div>
+                            </div>
+                            <div class="song-tags">
+                                <span class="song-badge">${escapeHtml(formatDisplayLanguage(song.language) || "未分類")}</span>
+                                ${statusBadge}
+                                ${tagBadges}
+                            </div>
+                        </div>
+                        <div class="song-actions">${actionHtml}</div>
+                    </${rowTag}>
+                `;
+            }).join("");
+
+            songListContainer.innerHTML = html;
+        }
+
+        function formatDisplayLanguage(lang) {
+            if (!lang) return '';
+            const l = String(lang).toUpperCase().trim();
+            if (l === 'ZH' || l === '中文') return 'ZH 中文';
+            if (l === 'EN' || l === '英文') return 'EN 英文';
+            if (l === 'JP' || l === '日文') return 'JP 日文';
+            return lang;
+        }
+
+        function isSongLanguageMatch(songLang, filterLang) {
+            if (!songLang || !filterLang) return false;
+            const s = String(songLang).toUpperCase().trim();
+            const f = String(filterLang).toUpperCase().trim();
+            if (s === f) return true;
+            if ((s === 'ZH' || s === '中文') && (f === 'ZH' || f === '中文' || f.includes('ZH') || f.includes('中文'))) return true;
+            if ((s === 'EN' || s === '英文') && (f === 'EN' || f === '英文' || f.includes('EN') || f.includes('英文'))) return true;
+            if ((s === 'JP' || s === '日文') && (f === 'JP' || f === '日文' || f.includes('JP') || f.includes('日文'))) return true;
+            return false;
+        }
+
+        function getSongPriorityScore(songItem) {
+            const song = resolveItem(songItem);
+            const lyric = songLyricsMap[song.id || songItem.id];
+            const isCqz = String(song.artist || '').includes('陳綺貞');
+            const hasBackingFile = Boolean(lyric && lyric.backingFile);
+
+            if (isCqz && hasBackingFile) return 1;
+            if (hasBackingFile) return 2;
+            return 3;
+        }
+
+        function getFilteredSongData() {
+            const keyword = normalizeSongSearchKeyword(searchSongInput.value);
+
+            return songData.filter(songItem => {
+                const song = resolveItem(songItem);
+                const isPracticing = song.status === "待練" || song.status === "練習中";
+                const matchFilter = currentSongFilter === "all"
+                    || isSongLanguageMatch(song.language, currentSongFilter)
+                    || (currentSongFilter === "練習中" && isPracticing);
+                const matchSearch = !keyword || getSongSearchText(song).includes(keyword);
+
+                return matchFilter && matchSearch;
+            }).sort((a, b) => getSongPriorityScore(a) - getSongPriorityScore(b));
+        }
+
+        function getSongPageItems(totalPages) {
+            if (totalPages <= 7) {
+                return Array.from({ length: totalPages }, (_, index) => index + 1);
+            }
+
+            const pages = new Set([1, totalPages]);
+            for (let page = currentSongPage - 2; page <= currentSongPage + 2; page += 1) {
+                if (page > 1 && page < totalPages) pages.add(page);
+            }
+
+            return [...pages].sort((a, b) => a - b);
+        }
+
+        function renderSongPagination(totalPages) {
+            songPagination.innerHTML = "";
+            if (totalPages <= 1) return;
+
+            const createPageButton = (label, page, options = {}) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.textContent = label;
+                button.disabled = Boolean(options.disabled);
+                button.classList.toggle("active", Boolean(options.active));
+                button.addEventListener("click", () => changeSongPage(page));
+                return button;
+            };
+
+            songPagination.appendChild(
+                createPageButton("上一頁", currentSongPage - 1, { disabled: currentSongPage === 1 })
+            );
+
+            let previousPage = 0;
+            getSongPageItems(totalPages).forEach(page => {
+                if (previousPage && page - previousPage > 1) {
+                    const ellipsis = document.createElement("span");
+                    ellipsis.textContent = "…";
+                    songPagination.appendChild(ellipsis);
+                }
+                songPagination.appendChild(
+                    createPageButton(String(page), page, { active: page === currentSongPage })
+                );
+                previousPage = page;
+            });
+
+            songPagination.appendChild(
+                createPageButton("下一頁", currentSongPage + 1, { disabled: currentSongPage === totalPages })
+            );
+        }
+
+        function renderSongPage() {
+            const filteredSongData = getFilteredSongData();
+            const totalItems = filteredSongData.length;
+
+            if (totalItems === 0) {
+                songResultSummary.textContent = "沒有找到符合條件的歌曲";
+                songListContainer.innerHTML = `
+                    <div class="empty-state">
+                        沒有找到符合條件的歌曲。<br>
+                        可以試試其他關鍵字，或按右側 × 清除搜尋。
+                    </div>
+                `;
+                songPagination.innerHTML = "";
+                return;
+            }
+
+            const totalPages = Math.ceil(totalItems / SONG_ITEMS_PER_PAGE);
+            currentSongPage = Math.min(Math.max(currentSongPage, 1), totalPages);
+            const startIndex = (currentSongPage - 1) * SONG_ITEMS_PER_PAGE;
+            const pageSongData = filteredSongData.slice(startIndex, startIndex + SONG_ITEMS_PER_PAGE);
+            const hasFilter = currentSongFilter !== "all" || searchSongInput.value.trim() !== "";
+
             songResultSummary.textContent = `${hasFilter ? "找到" : "共"} ${totalItems} 首歌曲，目前第 ${currentSongPage} / ${totalPages} 頁`;
             renderSongs(pageSongData);
             renderSongPagination(totalPages);
@@ -1332,7 +1527,9 @@
 
         function changeSongPage(page) {
             currentSongPage = page;
-            
+            renderSongPage();
+        }
+
         // Check if URL has ?id= parameter to display detail view directly inside songbook
         const detailSongId = new URLSearchParams(location.search).get('id') || '';
 
@@ -1362,7 +1559,7 @@
             document.title = `${songInfo.title}｜YanYan 歌聲收藏冊`;
             const status = songInfo.status === '待練' || songInfo.status === '練習中' ? '練習中' : (songInfo.status || '已收錄');
             const isPracticing = status === '練習中';
-            const year = detailLyricInfo && detailLyricInfo.year ? detailLyricInfo.year + ' 年' : '';
+            const year = lyricInfo && lyricInfo.year ? lyricInfo.year + ' 年' : '';
 
             let playerHtml = '';
             if (lyricInfo && lyricInfo.backingYt) {
@@ -1500,9 +1697,6 @@
 
         if (detailSongId) {
             renderSongDetailView(detailSongId);
-        }
-
-        renderSongPage();
         }
 
         function applySongFilters() {

@@ -1361,6 +1361,16 @@ window.museumDataParts.songData = [
         "status": "已唱",
         "link": "",
         "image": "",
+    },
+    {
+        "id": "song_cinta_luar_biasa",
+        "type": "song",
+        "title": "Cinta Luar Biasa 非凡的愛",
+        "artist": "Andmesh",
+        "language": "EN",
+        "status": "已唱",
+        "link": "",
+        "image": "",
         "tags": ""
     }
 ];

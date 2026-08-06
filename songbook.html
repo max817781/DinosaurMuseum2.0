@@ -1578,7 +1578,7 @@ return performances.map((performance, index) => {
                     <div class="section-title">🎵 伴奏播放器</div>
                     <div class="audio-player" id="audioPlayer">
                         <audio id="audioEl" preload="none">
-                            <source src="${escapeHtml(lyricInfo.backingFile)}" type="audio/mpeg">
+                            <source src="${escapeHtml(encodeURI(lyricInfo.backingFile))}" type="audio/mpeg">
                         </audio>
                         <div class="player-controls">
                             <button class="player-btn" id="playBtn" type="button" title="播放 / 暫停" aria-label="播放 / 暫停">▶</button>
@@ -1667,7 +1667,19 @@ return performances.map((performance, index) => {
                     });
                     audio.addEventListener('timeupdate', updateProgress);
                     audio.addEventListener('ended', () => { playBtn.textContent = '▶'; });
+                    let hasRetriedFallback = false;
                     audio.addEventListener('error', () => {
+                        if (!hasRetriedFallback && lyricInfo && lyricInfo.backingFile) {
+                            hasRetriedFallback = true;
+                            const fallbackUrl = 'https://yanyanmuseum.pages.dev/' + encodeURI(lyricInfo.backingFile);
+                            console.log('Audio load failed, trying fallback:', fallbackUrl);
+                            audio.src = fallbackUrl;
+                            audio.load();
+                            if (playBtn.textContent === '⏸') {
+                                audio.play().catch(e => console.log('Audio autoplay prevented:', e));
+                            }
+                            return;
+                        }
                         const playerEl = document.getElementById('audioPlayer');
                         if (playerEl) {
                             playerEl.innerHTML = `

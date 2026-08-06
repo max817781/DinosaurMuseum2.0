@@ -1351,5 +1351,16 @@ window.museumDataParts.songData = [
         "link": "",
         "image": "",
         "tags": ""
+    },
+    {
+        "id": "song_jiu_suan_quan_shi_jie_yu_wo_wei_di",
+        "type": "song",
+        "title": "就算全世界與我為敵",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
     }
 ];

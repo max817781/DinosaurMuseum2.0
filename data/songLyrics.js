@@ -54,6 +54,7 @@ LA LA LA`
     {
         id: "song_fu_xiu",
         backingFile: "audio/1_陳綺貞-腐朽 Lyrics 歌詞_320k_(Instrumental).mp3",
+        uploadDate: "2026-08-04",
         lyrics: `一句掩飾肯定
 掀開以後不再寫入驚喜
 走進繁花盛開的森林
@@ -577,6 +578,7 @@ I POD剛摔壞 還沒時間買
     {
         id: "song_jiu_suan_quan_shi_jie_yu_wo_wei_di",
         backingFile: "audio/1_陳綺貞 Cheer Chen【就算全世界與我為敵 Enemy】Official Music Video_320k_(Instrumental).mp3",
+        uploadDate: "2026-08-06",
         lyrics: `作詞：陳綺貞     作曲：陳綺貞
 
 看你的眼神 有一點懷疑

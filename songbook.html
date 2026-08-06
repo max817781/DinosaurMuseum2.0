@@ -1318,14 +1318,14 @@
                 songPagination.innerHTML = "";
                 return;
             }
+            if (status === "待練" || status === "練習中") return "練習中";
+            return status || "已收錄";
+        }
 
-            const totalPages = Math.ceil(totalItems / SONG_ITEMS_PER_PAGE);
-            currentSongPage = Math.min(Math.max(currentSongPage, 1), totalPages);
-            const startIndex = (currentSongPage - 1) * SONG_ITEMS_PER_PAGE;
-            const pageSongData = filteredSongData.slice(startIndex, startIndex + SONG_ITEMS_PER_PAGE);
-            const hasFilter = currentSongFilter !== "all" || searchSongInput.value.trim() !== "";
+        function renderSongPerformances(song, performances) {
+            if (!Array.isArray(performances) || performances.length === 0) return "";
 
-return performances.map((performance, index) => {
+            return performances.map((performance, index) => {
                 const label = performance.label || performance.date || `版本 ${index + 1}`;
                 const source = getContent(performance.sourceId);
                 const link = source ? getPrimaryLink(source) : "";
@@ -1364,6 +1364,22 @@ return performances.map((performance, index) => {
                     ? `<a class="performance-link" href="?id=${escapeHtml(song.id || songItem.id)}">${lyricsLabel}</a>`
                     : '';
 
+                // 判斷是否為 14 天內上傳的新歌
+                let newBadge = '';
+                if (lyricEntry && lyricEntry.backingFile && lyricEntry.uploadDate) {
+                    try {
+                        const uploadDate = new Date(lyricEntry.uploadDate);
+                        const today = new Date();
+                        uploadDate.setHours(0, 0, 0, 0);
+                        today.setHours(0, 0, 0, 0);
+                        const diffTime = today - uploadDate;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        if (diffDays >= 0 && diffDays <= 14) {
+                            newBadge = `<span class="song-badge" style="background: var(--pink); color: #fff;">🔥 NEW</span>`;
+                        }
+                    } catch (e) {}
+                }
+
                 // 有 lyricsBtn 時不能讓整個 row 是 <a>（避免 <a> 嵌套 <a>）
                 const useRowLink = !hasPerformances && link && !hasLyrics;
                 const rowTag = useRowLink ? "a" : "article";
@@ -1391,6 +1407,7 @@ return performances.map((performance, index) => {
                             </div>
                             <div class="song-tags">
                                 <span class="song-badge">${escapeHtml(formatDisplayLanguage(song.language) || "未分類")}</span>
+                                ${newBadge}
                                 ${statusBadge}
                                 ${tagBadges}
                             </div>
@@ -1429,9 +1446,28 @@ return performances.map((performance, index) => {
             const isCqz = String(song.artist || '').includes('陳綺貞');
             const hasBackingFile = Boolean(lyric && lyric.backingFile);
 
-            if (isCqz && hasBackingFile) return 1;
-            if (hasBackingFile) return 2;
-            return 3;
+            // 判斷是否為 14 天內上傳的新歌
+            let isNew = false;
+            if (lyric && lyric.uploadDate) {
+                try {
+                    const uploadDate = new Date(lyric.uploadDate);
+                    const today = new Date();
+                    uploadDate.setHours(0, 0, 0, 0);
+                    today.setHours(0, 0, 0, 0);
+                    const diffTime = today - uploadDate;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    isNew = (diffDays >= 0 && diffDays <= 14);
+                } catch (e) {}
+            }
+
+            if (hasBackingFile) {
+                if (isNew) {
+                    return isCqz ? 1 : 2; // 新歌帶伴奏：陳綺貞最優先(1)，其他歌手其次(2)
+                } else {
+                    return isCqz ? 3 : 4; // 舊歌帶伴奏：陳綺貞優先(3)，其他歌手其次(4)
+                }
+            }
+            return 5; // 無伴奏
         }
 
         function getFilteredSongData() {

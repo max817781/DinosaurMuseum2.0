@@ -462,7 +462,8 @@
                     <div class="section-title">🎵 伴奏播放器</div>
                     <div class="audio-player" id="audioPlayer">
                         <audio id="audioEl" preload="none">
-                            <source src="${escapeHtml(lyric.backingFile)}" type="audio/mpeg">
+                            <source src="https://max817781.github.io/DinosaurMuseum2.0/${escapeHtml(encodeURI(lyric.backingFile))}" type="audio/mpeg">
+                            <source src="${escapeHtml(encodeURI(lyric.backingFile))}" type="audio/mpeg">
                         </audio>
                         <div class="player-controls">
                             <button class="player-btn" id="playBtn" type="button" title="播放 / 暫停" aria-label="播放 / 暫停">▶</button>

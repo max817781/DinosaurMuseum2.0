@@ -1577,7 +1577,7 @@ return performances.map((performance, index) => {
                 <div class="song-section">
                     <div class="section-title">🎵 伴奏播放器</div>
                     <div class="audio-player" id="audioPlayer">
-                        <audio id="audioEl" preload="none">
+                        <audio id="audioEl" preload="none" crossorigin="anonymous">
                             <source src="https://max817781.github.io/DinosaurMuseum2.0/${escapeHtml(encodeURI(lyricInfo.backingFile))}" type="audio/mpeg">
                             <source src="${escapeHtml(encodeURI(lyricInfo.backingFile))}" type="audio/mpeg">
                         </audio>

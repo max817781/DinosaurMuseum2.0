@@ -1372,5 +1372,16 @@ window.museumDataParts.songData = [
         "link": "",
         "image": "",
         "tags": ""
+    },
+    {
+        "id": "song_kuang_lian",
+        "type": "song",
+        "title": "狂戀",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
     }
 ];

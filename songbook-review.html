@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>歌單真實性核對｜YanYan Song Review</title>
+    <style>
+        :root {
+            --cream: #fff9e9;
+            --paper: rgba(255, 253, 247, 0.92);
+            --green: #718b59;
+            --green-soft: #dce9bd;
+            --purple: #5a4e73;
+            --purple-soft: #e8dff3;
+            --pink: #dd7498;
+            --yellow: #f5d77b;
+            --brown: #6f624d;
+            --line: #ded0b3;
+            --red: #a85555;
+            --shadow: 0 16px 40px rgba(96, 76, 45, 0.13);
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--brown);
+            font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", system-ui, sans-serif;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(220, 233, 189, 0.86), transparent 30%),
+                radial-gradient(circle at 95% 5%, rgba(232, 223, 243, 0.86), transparent 28%),
+                linear-gradient(180deg, var(--cream), #f5ecd5);
+        }
+
+        button, input, textarea, select { font: inherit; }
+        button { cursor: pointer; }
+        a { color: inherit; }
+
+        .page {
+            width: min(1180px, calc(100% - 28px));
+            margin: 0 auto;
+            padding: 26px 0 54px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .brand img {
+            width: 58px;
+            height: 58px;
+            object-fit: contain;
+            border-radius: 19px;
+            background: rgba(255,255,255,.72);
+            box-shadow: 0 10px 24px rgba(94,80,48,.1);
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--purple);
+            font-size: clamp(1.45rem, 3vw, 2.15rem);
+            line-height: 1.15;
+        }
+
+        .brand small {
+            display: block;
+            margin-top: 4px;
+            color: var(--green);
+            font-weight: 800;
+            letter-spacing: .04em;
+        }
+
+        .back-link {
+            padding: 11px 17px;
+            border: 1px solid rgba(113,139,89,.3);
+            border-radius: 999px;
+            background: rgba(255,253,247,.85);
+            color: var(--green);
+            text-decoration: none;
+            font-weight: 850;
+            white-space: nowrap;
+        }
+
+        .intro,
+        .toolbar,
+        .song-card {
+            border: 1px solid rgba(222,208,179,.75);
+            border-radius: 26px;
+            background: var(--paper);
+            box-shadow: var(--shadow);
+        }
+
+        .intro { padding: clamp(22px, 4vw, 36px); }
+        .intro-kicker {
+            color: var(--green);
+            font-size: .82rem;
+            font-weight: 900;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .intro h2 {
+            margin: 10px 0 12px;
+            color: var(--purple);
+            font-size: clamp(2rem, 6vw, 4rem);
+            line-height: 1.08;
+            letter-spacing: -.04em;
+        }
+
+        .intro p { margin: 0; max-width: 880px; line-height: 1.8; }
+        .notice {
+            margin-top: 18px;
+            padding: 13px 16px;
+            border-radius: 16px;
+            background: rgba(245,215,123,.22);
+            color: #765d34;
+            line-height: 1.7;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 18px 0;
+        }
+
+        .stat {
+            padding: 18px;
+            border: 1px solid rgba(222,208,179,.68);
+            border-radius: 20px;
+            background: rgba(255,253,247,.82);
+            box-shadow: 0 10px 28px rgba(96,76,45,.08);
+        }
+
+        .stat strong { display: block; color: var(--purple); font-size: 1.85rem; }
+        .stat span { color: var(--green); font-size: .88rem; font-weight: 800; }
+
+        .toolbar {
+            position: sticky;
+            z-index: 10;
+            top: 8px;
+            margin-bottom: 18px;
+            padding: 17px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .toolbar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-row + .toolbar-row { margin-top: 11px; }
+        .search {
+            flex: 1 1 280px;
+            min-width: 0;
+            padding: 11px 14px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: #fff;
+            color: var(--purple);
+            outline: none;
+        }
+
+        .search:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(113,139,89,.12); }
+        .filter-btn,
+        .tool-btn,
+        select {
+            min-height: 42px;
+            padding: 9px 13px;
+            border: 1px solid rgba(113,139,89,.25);
+            border-radius: 999px;
+            background: #fffdf7;
+            color: var(--brown);
+            font-weight: 800;
+        }
+
+        .filter-btn.active { color: white; background: var(--green); border-color: var(--green); }
+        .tool-btn { color: var(--purple); }
+        .tool-btn.danger { color: var(--red); }
+        .progress-text { margin-left: auto; color: var(--purple); font-weight: 900; }
+
+        .song-list { display: grid; gap: 14px; }
+        .song-card { padding: 20px; box-shadow: 0 11px 30px rgba(96,76,45,.09); }
+        .song-card[data-risk="high"] { border-color: rgba(221,116,152,.55); }
+        .song-card-head {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: start;
+            gap: 16px;
+        }
+
+        .song-number { color: #9a8d79; font-size: .8rem; font-weight: 800; }
+        .song-title { margin: 3px 0 4px; color: var(--purple); font-size: 1.28rem; overflow-wrap: anywhere; }
+        .song-artist { color: var(--green); font-weight: 850; }
+        .song-artist.missing { color: var(--red); }
+
+        .badges { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+        .badge {
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: #f0eadc;
+            font-size: .78rem;
+            font-weight: 850;
+        }
+
+        .badge.online { color: #49663a; background: var(--green-soft); }
+        .badge.warn { color: #8a4c67; background: #f7d9e5; }
+        .badge.info { color: var(--purple); background: var(--purple-soft); }
+
+        .recommendation {
+            padding: 8px 11px;
+            border-radius: 13px;
+            color: var(--purple);
+            background: var(--purple-soft);
+            font-size: .84rem;
+            font-weight: 900;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .evidence {
+            margin: 16px 0 0;
+            padding: 14px 16px;
+            border-radius: 15px;
+            background: rgba(238,246,214,.68);
+            line-height: 1.7;
+        }
+
+        .correction {
+            margin-top: 10px;
+            color: #81506a;
+            font-weight: 850;
+        }
+
+        .sources { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .sources a {
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #fff;
+            color: var(--green);
+            font-size: .82rem;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .review-area {
+            display: grid;
+            grid-template-columns: minmax(0, auto) minmax(220px, 1fr);
+            gap: 14px;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 15px;
+            border-top: 1px dashed rgba(166,141,97,.35);
+        }
+
+        .choices { display: flex; flex-wrap: wrap; gap: 8px; }
+        .choice {
+            padding: 9px 12px;
+            border: 1px solid rgba(90,78,115,.18);
+            border-radius: 999px;
+            background: #fff;
+            color: var(--brown);
+            font-weight: 850;
+        }
+
+        .choice.active[data-choice="exists"] { color: #fff; background: var(--green); }
+        .choice.active[data-choice="asr"] { color: #fff; background: var(--pink); }
+        .choice.active[data-choice="exclude"] { color: #fff; background: var(--red); }
+        .choice.active[data-choice="pending"] { color: #5f4c25; background: var(--yellow); }
+
+        .note {
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 12px;
+            resize: vertical;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            color: var(--purple);
+            background: #fff;
+            outline: none;
+        }
+
+        .empty {
+            padding: 52px 20px;
+            border-radius: 24px;
+            background: rgba(255,255,255,.68);
+            text-align: center;
+            color: var(--purple);
+            font-weight: 850;
+        }
+
+        .footer { margin-top: 24px; text-align: center; color: #887b69; line-height: 1.7; }
+
+        @media (max-width: 820px) {
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .topbar { align-items: stretch; flex-direction: column; }
+            .back-link { text-align: center; }
+            .toolbar { position: static; }
+            .progress-text { width: 100%; margin-left: 0; }
+            .review-area { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 520px) {
+            .page { width: min(100% - 16px, 1180px); padding-top: 14px; }
+            .brand img { width: 48px; height: 48px; border-radius: 16px; }
+            h1 { font-size: 1.34rem; }
+            .intro { border-radius: 22px; padding: 22px 18px; }
+            .intro h2 { font-size: 2.2rem; }
+            .stats { gap: 8px; }
+            .stat { padding: 14px; border-radius: 17px; }
+            .stat strong { font-size: 1.55rem; }
+            .toolbar { padding: 13px; border-radius: 21px; }
+            .filter-btn, .tool-btn, select { flex: 1 1 calc(50% - 8px); }
+            .song-card { padding: 17px; border-radius: 21px; }
+            .song-card-head { grid-template-columns: 1fr; gap: 10px; }
+            .recommendation { justify-self: start; white-space: normal; text-align: left; }
+            .choices { display: grid; grid-template-columns: repeat(2, 1fr); }
+            .choice { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <header class="topbar">
+            <div class="brand">
+                <img src="images/nono-chibi.png" alt="YanYan 小恐龍 Q 版圖">
+                <h1>歌單真實性核對<small>160 SONGS REVIEW BOARD</small></h1>
+            </div>
+            <a class="back-link" href="songbook.html">← 回到歌聲收藏冊</a>
+        </header>
+
+        <section class="intro">
+            <span class="intro-kicker">Owner Review</span>
+            <h2>逐首確認，不讓辨識錯字混進歌單。</h2>
+            <p>這是獨立核對頁，不會直接修改正式歌單。系統已先比對 9/8 本機 160 首與目前線上 147 首，並把歌手空白、重複、疑似 ASR 錯誤及歌手錯字排到前面。最後判定由主人勾選。</p>
+            <div class="notice">勾選會自動儲存在這台裝置的瀏覽器。請定期按「匯出 JSON」備份；清除瀏覽器資料可能會讓未匯出的勾選消失。</div>
+        </section>
+
+        <section class="stats" aria-label="核對統計">
+            <div class="stat"><strong id="statTotal">--</strong><span>本機候選</span></div>
+            <div class="stat"><strong id="statOnline">--</strong><span>與線上完全相同</span></div>
+            <div class="stat"><strong id="statFlagged">--</strong><span>建議優先核對</span></div>
+            <div class="stat"><strong id="statReviewed">0</strong><span>主人已勾選</span></div>
+        </section>
+
+        <section class="toolbar" aria-label="搜尋與篩選">
+            <div class="toolbar-row">
+                <input class="search" id="searchInput" type="search" placeholder="搜尋歌名、歌手、ID 或備註…" autocomplete="off">
+                <select id="sortSelect" aria-label="排序方式">
+                    <option value="risk">疑點優先</option>
+                    <option value="index">原始順序</option>
+                    <option value="title">歌名排序</option>
+                </select>
+                <span class="progress-text" id="progressText">尚未勾選</span>
+            </div>
+            <div class="toolbar-row" id="filterRow">
+                <button class="filter-btn active" type="button" data-filter="all">全部</button>
+                <button class="filter-btn" type="button" data-filter="flagged">高疑點</button>
+                <button class="filter-btn" type="button" data-filter="not-online">未完全上線</button>
+                <button class="filter-btn" type="button" data-filter="missing">歌手空白</button>
+                <button class="filter-btn" type="button" data-filter="duplicate">重複歌名</button>
+                <button class="filter-btn" type="button" data-filter="unreviewed">尚未勾選</button>
+                <button class="filter-btn" type="button" data-filter="reviewed">已勾選</button>
+            </div>
+            <div class="toolbar-row">
+                <button class="tool-btn" id="exportJsonBtn" type="button">匯出 JSON</button>
+                <button class="tool-btn" id="exportCsvBtn" type="button">匯出 CSV</button>
+                <button class="tool-btn danger" id="resetBtn" type="button">清除本機勾選</button>
+            </div>
+        </section>
+
+        <section class="song-list" id="songList" aria-live="polite"></section>
+        <p class="footer">這一頁只收集主人的判定，不會直接新增、修改或刪除正式歌單。匯出結果後，再由網站主依主人核准內容處理。</p>
+    </main>
+
+    <script src="data/songReviewData.js?v=20261027a"></script>
+    <script>
+        const STORAGE_KEY = 'yanyan-song-review-v1';
+        const data = window.songReviewData || { songs: [] };
+        const songList = document.getElementById('songList');
+        const searchInput = document.getElementById('searchInput');
+        const sortSelect = document.getElementById('sortSelect');
+        const filterRow = document.getElementById('filterRow');
+        const progressText = document.getElementById('progressText');
+        let currentFilter = 'all';
+
+        function readChoices() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+            catch (error) { return {}; }
+        }
+
+        let choices = readChoices();
+
+        function saveChoices() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(choices));
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
+        const recommendationLabels = {
+            online: '已在線上：仍可重審',
+            exists: '歌曲存在：缺演唱證據',
+            asr: '高度疑似 ASR／錯字',
+            ambiguous: '同名多首／資料不足',
+            duplicate: '疑似重複資料',
+            review: '需要人工核對'
+        };
+
+        const decisionLabels = {
+            exists: '確實存在',
+            asr: 'ASR 錯誤',
+            exclude: '排除',
+            pending: '待確認'
+        };
+
+        function isMatch(song, keyword) {
+            if (!keyword) return true;
+            const choice = choices[song.id] || {};
+            return [song.title, song.artist, song.id, song.evidence, song.correctedTitle, song.correctedArtist, choice.note]
+                .join(' ').toLowerCase().includes(keyword);
+        }
+
+        function isFilterMatch(song) {
+            const reviewed = Boolean(choices[song.id]?.decision);
+            if (currentFilter === 'flagged') return song.riskScore >= 60;
+            if (currentFilter === 'not-online') return !song.onlineExact;
+            if (currentFilter === 'missing') return song.missingArtist;
+            if (currentFilter === 'duplicate') return song.duplicateTitle || song.recommendation === 'duplicate';
+            if (currentFilter === 'unreviewed') return !reviewed;
+            if (currentFilter === 'reviewed') return reviewed;
+            return true;
+        }
+
+        function getVisibleSongs() {
+            const keyword = searchInput.value.trim().toLowerCase();
+            const songs = data.songs.filter(song => isMatch(song, keyword) && isFilterMatch(song));
+            if (sortSelect.value === 'index') return songs.sort((a, b) => a.index - b.index);
+            if (sortSelect.value === 'title') return songs.sort((a, b) => a.title.localeCompare(b.title, 'zh-Hant'));
+            return songs.sort((a, b) => b.riskScore - a.riskScore || a.index - b.index);
+        }
+
+        function badge(text, className = '') {
+            return `<span class="badge ${className}">${escapeHtml(text)}</span>`;
+        }
+
+        function renderSong(song) {
+            const choice = choices[song.id] || {};
+            const badges = [badge(song.language || '未分類', 'info')];
+            badges.push(song.onlineExact ? badge('線上已有', 'online') : badge('線上無完全相同', 'warn'));
+            if (song.missingArtist) badges.push(badge('歌手空白', 'warn'));
+            if (song.duplicateTitle) badges.push(badge('重複歌名', 'warn'));
+            if (song.onlineStatus && song.onlineStatus !== song.localStatus) badges.push(badge(`狀態差異：線上 ${song.onlineStatus}`, 'warn'));
+
+            const correctionParts = [];
+            if (song.correctedTitle) correctionParts.push(`候選歌名：${song.correctedTitle}`);
+            if (song.correctedArtist) correctionParts.push(`候選歌手：${song.correctedArtist}`);
+            let sources = (song.sources || []).map(([label, url]) =>
+                `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(label)} ↗</a>`
+            ).join('');
+            if (song.originalLink) {
+                sources += `<a href="${escapeHtml(song.originalLink)}" target="_blank" rel="noopener">原資料連結 ↗</a>`;
+            }
+
+            return `
+                <article class="song-card" data-id="${escapeHtml(song.id)}" data-risk="${song.riskScore >= 60 ? 'high' : 'normal'}">
+                    <div class="song-card-head">
+                        <div>
+                            <div class="song-number">原始第 ${song.index} 筆 · ${escapeHtml(song.id)}</div>
+                            <h3 class="song-title">${escapeHtml(song.title)}</h3>
+                            <div class="song-artist ${song.missingArtist ? 'missing' : ''}">${escapeHtml(song.artist || '歌手空白')}</div>
+                            <div class="badges">${badges.join('')}</div>
+                        </div>
+                        <div class="recommendation">${escapeHtml(recommendationLabels[song.recommendation] || recommendationLabels.review)}</div>
+                    </div>
+                    <div class="evidence">
+                        ${escapeHtml(song.evidence)}
+                        ${correctionParts.length ? `<div class="correction">${escapeHtml(correctionParts.join('；'))}</div>` : ''}
+                        ${sources ? `<div class="sources">${sources}</div>` : ''}
+                    </div>
+                    <div class="review-area">
+                        <div class="choices" role="group" aria-label="${escapeHtml(song.title)} 的判定">
+                            ${Object.entries(decisionLabels).map(([value, label]) => `
+                                <button class="choice ${choice.decision === value ? 'active' : ''}" type="button" data-choice="${value}">${label}</button>
+                            `).join('')}
+                        </div>
+                        <textarea class="note" placeholder="主人備註：正確歌名、歌手、要回聽的位置…">${escapeHtml(choice.note || '')}</textarea>
+                    </div>
+                </article>
+            `;
+        }
+
+        function updateStats() {
+            const reviewed = data.songs.filter(song => choices[song.id]?.decision).length;
+            const flagged = data.songs.filter(song => song.riskScore >= 60).length;
+            document.getElementById('statTotal').textContent = data.localCount;
+            document.getElementById('statOnline').textContent = data.exactOnlineCount;
+            document.getElementById('statFlagged').textContent = flagged;
+            document.getElementById('statReviewed').textContent = reviewed;
+            progressText.textContent = reviewed ? `已勾 ${reviewed} / ${data.localCount}` : '尚未勾選';
+        }
+
+        function render() {
+            const songs = getVisibleSongs();
+            songList.innerHTML = songs.length
+                ? songs.map(renderSong).join('')
+                : '<div class="empty">這個篩選條件目前沒有歌曲。</div>';
+            updateStats();
+        }
+
+        songList.addEventListener('click', event => {
+            const button = event.target.closest('.choice');
+            if (!button) return;
+            const card = button.closest('.song-card');
+            const id = card.dataset.id;
+            const current = choices[id] || {};
+            choices[id] = {
+                ...current,
+                decision: button.dataset.choice,
+                updatedAt: new Date().toISOString()
+            };
+            saveChoices();
+            render();
+        });
+
+        songList.addEventListener('input', event => {
+            if (!event.target.classList.contains('note')) return;
+            const card = event.target.closest('.song-card');
+            const id = card.dataset.id;
+            choices[id] = {
+                ...(choices[id] || {}),
+                note: event.target.value,
+                updatedAt: new Date().toISOString()
+            };
+            saveChoices();
+            updateStats();
+        });
+
+        filterRow.addEventListener('click', event => {
+            const button = event.target.closest('.filter-btn');
+            if (!button) return;
+            currentFilter = button.dataset.filter;
+            filterRow.querySelectorAll('.filter-btn').forEach(item => item.classList.toggle('active', item === button));
+            render();
+        });
+
+        searchInput.addEventListener('input', render);
+        sortSelect.addEventListener('change', render);
+
+        function downloadFile(name, type, content) {
+            const blob = new Blob([content], { type });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = name;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        document.getElementById('exportJsonBtn').addEventListener('click', () => {
+            const result = {
+                exportedAt: new Date().toISOString(),
+                sourceGeneratedAt: data.generatedAt,
+                choices: data.songs.map(song => ({
+                    id: song.id,
+                    title: song.title,
+                    artist: song.artist,
+                    recommendation: song.recommendation,
+                    decision: choices[song.id]?.decision || '',
+                    note: choices[song.id]?.note || ''
+                }))
+            };
+            downloadFile('YanYan歌單核對結果.json', 'application/json;charset=utf-8', JSON.stringify(result, null, 2));
+        });
+
+        document.getElementById('exportCsvBtn').addEventListener('click', () => {
+            const csvEscape = value => `"${String(value ?? '').replaceAll('"', '""')}"`;
+            const rows = [['id', '歌名', '歌手', '建議', '主人判定', '主人備註']];
+            data.songs.forEach(song => rows.push([
+                song.id,
+                song.title,
+                song.artist,
+                recommendationLabels[song.recommendation] || recommendationLabels.review,
+                decisionLabels[choices[song.id]?.decision] || '',
+                choices[song.id]?.note || ''
+            ]));
+            downloadFile('YanYan歌單核對結果.csv', 'text/csv;charset=utf-8', '\ufeff' + rows.map(row => row.map(csvEscape).join(',')).join('\r\n'));
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            if (!confirm('確定要清除這台裝置上全部歌單勾選與備註嗎？此動作無法復原。')) return;
+            localStorage.removeItem(STORAGE_KEY);
+            choices = {};
+            render();
+        });
+
+        render();
+    </script>
+</body>
+</html>

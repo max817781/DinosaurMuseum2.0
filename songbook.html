@@ -1021,9 +1021,9 @@
         <p class="footer-note">Rawr Rawr!!! 願每一次歌聲，都被溫柔地記得。</p>
     </main>
 
-    <script src="data/contentMap.js"></script>
+    <script src="data/contentMap.js?v=20261027b"></script>
     <script src="data/vodData.js"></script>
-    <script src="data/songData.js"></script>
+    <script src="data/songData.js?v=20261027b"></script>
     <script src="data/songLyrics.js"></script>
     <script src="data.js"></script>
     <script>
@@ -1231,12 +1231,15 @@
         function getSongPriorityScore(songItem) {
             const song = resolveItem(songItem);
             const lyric = songLyricsMap[song.id || songItem.id];
+            const isNonoOriginal = song.id === 'song_original_rawr_rawr'
+                || song.id === 'song_original_zhi_xiaolongbao';
             const isCqz = String(song.artist || '').includes('陳綺貞');
             const hasBackingFile = Boolean(lyric && lyric.backingFile);
 
-            if (isCqz && hasBackingFile) return 1;
-            if (hasBackingFile) return 2;
-            return 3;
+            if (isNonoOriginal) return 1;
+            if (isCqz) return 2;
+            if (hasBackingFile) return 3;
+            return 4;
         }
 
         function getFilteredSongData() {
@@ -1443,6 +1446,8 @@
         function getSongPriorityScore(songItem) {
             const song = resolveItem(songItem);
             const lyric = songLyricsMap[song.id || songItem.id];
+            const isNonoOriginal = song.id === 'song_original_rawr_rawr'
+                || song.id === 'song_original_zhi_xiaolongbao';
             const isCqz = String(song.artist || '').includes('陳綺貞');
             const hasBackingFile = Boolean(lyric && lyric.backingFile);
 
@@ -1460,13 +1465,10 @@
                 } catch (e) {}
             }
 
-            if (hasBackingFile) {
-                if (isNew) {
-                    return isCqz ? 1 : 2; // 新歌帶伴奏：陳綺貞最優先(1)，其他歌手其次(2)
-                } else {
-                    return isCqz ? 3 : 4; // 舊歌帶伴奏：陳綺貞優先(3)，其他歌手其次(4)
-                }
-            }
+            if (isNonoOriginal) return 1; // 諾諾的兩首原創曲固定第一順位
+            if (isCqz) return 2; // 陳綺貞固定第二順位
+            if (hasBackingFile && isNew) return 3;
+            if (hasBackingFile) return 4;
             return 5; // 無伴奏
         }
 

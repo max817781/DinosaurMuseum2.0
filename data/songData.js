@@ -2,6 +2,28 @@
 window.museumDataParts = window.museumDataParts || {};
 window.museumDataParts.songData = [
     {
+        "id": "song_original_rawr_rawr",
+        "type": "song",
+        "title": "RawrRawr",
+        "artist": "小恐龍諾諾",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "https://www.youtube.com/watch?v=SOYVnvJXcq4",
+        "image": "images/original-rawr-rawr.jpg",
+        "tags": "原創曲"
+    },
+    {
+        "id": "song_original_zhi_xiaolongbao",
+        "type": "song",
+        "title": "致小籠包",
+        "artist": "小恐龍諾諾",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "https://www.youtube.com/watch?v=vsmhL5o-kvo",
+        "image": "images/original-dear-dumplings.jpg",
+        "tags": "原創曲"
+    },
+    {
         "id": "song_baobei",
         "type": "song",
         "title": "寶貝",

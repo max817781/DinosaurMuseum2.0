@@ -382,10 +382,10 @@
     </div>
 
     <script src="data/playgroundLinks.js"></script>
-    <script src="data/contentMap.js"></script>
+    <script src="data/contentMap.js?v=20261027b"></script>
     <script src="data/heroData.js"></script>
     <script src="data/vodData.js"></script>
-    <script src="data/songData.js"></script>
+    <script src="data/songData.js?v=20261027b"></script>
     <script src="data/marshmallowData.js"></script>
     <script src="data/marshmallowInfo.js"></script>
     <script src="data/timelineData.js"></script>
@@ -1593,6 +1593,16 @@
             return false;
         }
 
+        function getSongPriorityScore(songItem) {
+            const song = resolveItem(songItem);
+            const isNonoOriginal = song.id === 'song_original_rawr_rawr'
+                || song.id === 'song_original_zhi_xiaolongbao';
+
+            if (isNonoOriginal) return 1;
+            if (String(song.artist || '').includes('陳綺貞')) return 2;
+            return 3;
+        }
+
         function getFilteredSongData() {
             const keyword = normalizeSongSearchKeyword(searchSongInput.value);
 
@@ -1603,7 +1613,7 @@
                     || (currentSongFilter === '練習中' ? isPracticing : isSongLanguageMatch(song.language, currentSongFilter));
                 const matchSearch = !keyword || getSongSearchText(song).includes(keyword);
                 return matchFilter && matchSearch;
-            });
+            }).sort((a, b) => getSongPriorityScore(a) - getSongPriorityScore(b));
         }
 
         function getSongPageItems(totalPages) {

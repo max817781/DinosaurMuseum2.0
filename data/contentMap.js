@@ -21,10 +21,10 @@ window.museumDataParts.contentMap = {
     },
     "original_dear_dumplings": {
         "type": "originalSong",
-        "title": "致小龍包",
+        "title": "致小籠包",
         "englishTitle": "Dear Soup Dumplings",
         "date": "2026.05.30",
-        "desc": "一封寫給小龍包們的信。這不只是原創歌曲，也是 YanYan 與大家共同走過一段時間的證明。",
+        "desc": "一封寫給小籠包們的信。這不只是原創歌曲，也是 YanYan 與大家共同走過一段時間的證明。",
         "youtube": "https://www.youtube.com/watch?v=vsmhL5o-kvo",
         "xLink": "https://x.com/LittleDinoYan/status/2060945997682131069",
         "image": "images/original-dear-dumplings.jpg",

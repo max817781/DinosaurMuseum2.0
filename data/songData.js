@@ -429,7 +429,7 @@ window.museumDataParts.songData = [
         "title": "Golden Hour",
         "artist": "JVKE",
         "language": "EN",
-        "status": "待練",
+        "status": "已唱",
         "link": "",
         "image": "",
         "tags": ""

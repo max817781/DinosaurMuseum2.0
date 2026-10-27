@@ -1383,5 +1383,203 @@ window.museumDataParts.songData = [
         "link": "",
         "image": "",
         "tags": ""
+    },
+    {
+        "id": "song_taiyang",
+        "type": "song",
+        "title": "太陽",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_lvxing_de_yiyi",
+        "type": "song",
+        "title": "旅行的意義",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_erge",
+        "type": "song",
+        "title": "兒歌",
+        "artist": "張懸",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_shibaizhe_de_feixiang",
+        "type": "song",
+        "title": "失敗者的飛翔",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_tiantian_xiangni",
+        "type": "song",
+        "title": "天天想你",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_gaosu_wo",
+        "type": "song",
+        "title": "告訴我",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_xiage_xingqi_qu_yingguo",
+        "type": "song",
+        "title": "下個星期去英國",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_shuo_aini",
+        "type": "song",
+        "title": "說愛你",
+        "artist": "蔡依林",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_zaijian",
+        "type": "song",
+        "title": "再見",
+        "artist": "鄧紫棋",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_after_17",
+        "type": "song",
+        "title": "After 17",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_jitashou",
+        "type": "song",
+        "title": "吉他手",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_xiaobu_wuqu",
+        "type": "song",
+        "title": "小步舞曲",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_taibei_moge",
+        "type": "song",
+        "title": "臺北某個地方",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_biaomian_heping",
+        "type": "song",
+        "title": "表面的和平",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_tang_yigui",
+        "type": "song",
+        "title": "躺在你的衣櫃",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_haishi_jimo",
+        "type": "song",
+        "title": "還是會寂寞",
+        "artist": "陳綺貞",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_dianhua_huanghou",
+        "type": "song",
+        "title": "電話皇后",
+        "artist": "蔡依林",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
+    },
+    {
+        "id": "song_ribuluo",
+        "type": "song",
+        "title": "日不落",
+        "artist": "蔡依林",
+        "language": "ZH",
+        "status": "已唱",
+        "link": "",
+        "image": "",
+        "tags": ""
     }
 ];

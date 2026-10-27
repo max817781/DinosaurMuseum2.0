@@ -232,6 +232,11 @@
             white-space: nowrap;
         }
 
+        .recommendation.published { color: #49663a; background: var(--green-soft); }
+        .recommendation.hold { color: #765d34; background: rgba(245,215,123,.4); }
+        .recommendation.discard { color: #8b465c; background: #f7d9e5; }
+        .recommendation.owner { color: var(--purple); background: var(--purple-soft); }
+
         .evidence {
             margin: 16px 0 0;
             padding: 14px 16px;
@@ -344,17 +349,17 @@
         </header>
 
         <section class="intro">
-            <span class="intro-kicker">Owner Review</span>
-            <h2>逐首確認，不讓辨識錯字混進歌單。</h2>
-            <p>這是獨立核對頁，不會直接修改正式歌單。系統已先比對 9/8 本機 160 首與目前線上 147 首，並把歌手空白、重複、疑似 ASR 錯誤及歌手錯字排到前面。最後判定由主人勾選。</p>
-            <div class="notice">勾選會自動儲存在這台裝置的瀏覽器。請定期按「匯出 JSON」備份；清除瀏覽器資料可能會讓未匯出的勾選消失。</div>
+            <span class="intro-kicker">Site Owner Precheck</span>
+            <h2>網站主先判斷，只留 4 首給主人。</h2>
+            <p>我已先核對全部 160 首：144 首確認已在正式歌單、12 首已依重複／錯字／缺乏演唱證據做保守處理。現在預設只顯示真正需要主人確認的 4 首，不必再看完 160 首。</p>
+            <div class="notice">這仍是獨立核對頁，不會直接修改正式歌單。主人只要處理下方 4 首；勾選會儲存在這台裝置的瀏覽器，也可匯出 JSON／CSV 備份。</div>
         </section>
 
         <section class="stats" aria-label="核對統計">
-            <div class="stat"><strong id="statTotal">--</strong><span>本機候選</span></div>
-            <div class="stat"><strong id="statOnline">--</strong><span>與線上完全相同</span></div>
-            <div class="stat"><strong id="statFlagged">--</strong><span>建議優先核對</span></div>
-            <div class="stat"><strong id="statReviewed">0</strong><span>主人已勾選</span></div>
+            <div class="stat"><strong id="statOnline">--</strong><span>已確認上架</span></div>
+            <div class="stat"><strong id="statHandled">--</strong><span>網站主已處理</span></div>
+            <div class="stat"><strong id="statOwner">--</strong><span>需主人確認</span></div>
+            <div class="stat"><strong id="statReviewed">0</strong><span>主人已完成</span></div>
         </section>
 
         <section class="toolbar" aria-label="搜尋與篩選">
@@ -365,16 +370,14 @@
                     <option value="index">原始順序</option>
                     <option value="title">歌名排序</option>
                 </select>
-                <span class="progress-text" id="progressText">尚未勾選</span>
+                <span class="progress-text" id="progressText">待確認 4 首</span>
             </div>
             <div class="toolbar-row" id="filterRow">
-                <button class="filter-btn active" type="button" data-filter="all">全部</button>
-                <button class="filter-btn" type="button" data-filter="flagged">高疑點</button>
-                <button class="filter-btn" type="button" data-filter="not-online">未完全上線</button>
-                <button class="filter-btn" type="button" data-filter="missing">歌手空白</button>
-                <button class="filter-btn" type="button" data-filter="duplicate">重複歌名</button>
-                <button class="filter-btn" type="button" data-filter="unreviewed">尚未勾選</button>
-                <button class="filter-btn" type="button" data-filter="reviewed">已勾選</button>
+                <button class="filter-btn active" type="button" data-filter="owner">只看待主人確認</button>
+                <button class="filter-btn" type="button" data-filter="hold">暫不新增</button>
+                <button class="filter-btn" type="button" data-filter="discard">排除／合併</button>
+                <button class="filter-btn" type="button" data-filter="published">已上架</button>
+                <button class="filter-btn" type="button" data-filter="all">全部 160 首</button>
             </div>
             <div class="toolbar-row">
                 <button class="tool-btn" id="exportJsonBtn" type="button">匯出 JSON</button>
@@ -384,10 +387,10 @@
         </section>
 
         <section class="song-list" id="songList" aria-live="polite"></section>
-        <p class="footer">這一頁只收集主人的判定，不會直接新增、修改或刪除正式歌單。匯出結果後，再由網站主依主人核准內容處理。</p>
+        <p class="footer">網站主初判不會直接新增、修改或刪除正式歌單；只有主人確認後才進入下一步。</p>
     </main>
 
-    <script src="data/songReviewData.js?v=20261027a"></script>
+    <script src="data/songReviewData.js?v=20261027b"></script>
     <script>
         const STORAGE_KEY = 'yanyan-song-review-v1';
         const data = window.songReviewData || { songs: [] };
@@ -396,7 +399,7 @@
         const sortSelect = document.getElementById('sortSelect');
         const filterRow = document.getElementById('filterRow');
         const progressText = document.getElementById('progressText');
-        let currentFilter = 'all';
+        let currentFilter = 'owner';
 
         function readChoices() {
             try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
@@ -427,6 +430,13 @@
             review: '需要人工核對'
         };
 
+        const siteDecisionLabels = {
+            published: '網站主初判：正式站已上架',
+            hold: '網站主初判：暫不新增',
+            discard: '網站主初判：排除／合併',
+            owner: '待主人確認'
+        };
+
         const decisionLabels = {
             exists: '確實存在',
             asr: 'ASR 錯誤',
@@ -442,13 +452,10 @@
         }
 
         function isFilterMatch(song) {
-            const reviewed = Boolean(choices[song.id]?.decision);
-            if (currentFilter === 'flagged') return song.riskScore >= 60;
-            if (currentFilter === 'not-online') return !song.onlineExact;
-            if (currentFilter === 'missing') return song.missingArtist;
-            if (currentFilter === 'duplicate') return song.duplicateTitle || song.recommendation === 'duplicate';
-            if (currentFilter === 'unreviewed') return !reviewed;
-            if (currentFilter === 'reviewed') return reviewed;
+            if (currentFilter === 'owner') return song.siteDecision === 'owner';
+            if (currentFilter === 'hold') return song.siteDecision === 'hold';
+            if (currentFilter === 'discard') return song.siteDecision === 'discard';
+            if (currentFilter === 'published') return song.siteDecision === 'published';
             return true;
         }
 
@@ -457,7 +464,8 @@
             const songs = data.songs.filter(song => isMatch(song, keyword) && isFilterMatch(song));
             if (sortSelect.value === 'index') return songs.sort((a, b) => a.index - b.index);
             if (sortSelect.value === 'title') return songs.sort((a, b) => a.title.localeCompare(b.title, 'zh-Hant'));
-            return songs.sort((a, b) => b.riskScore - a.riskScore || a.index - b.index);
+            const decisionOrder = { owner: 0, discard: 1, hold: 2, published: 3 };
+            return songs.sort((a, b) => decisionOrder[a.siteDecision] - decisionOrder[b.siteDecision] || b.riskScore - a.riskScore || a.index - b.index);
         }
 
         function badge(text, className = '') {
@@ -491,7 +499,7 @@
                             <div class="song-artist ${song.missingArtist ? 'missing' : ''}">${escapeHtml(song.artist || '歌手空白')}</div>
                             <div class="badges">${badges.join('')}</div>
                         </div>
-                        <div class="recommendation">${escapeHtml(recommendationLabels[song.recommendation] || recommendationLabels.review)}</div>
+                        <div class="recommendation ${escapeHtml(song.siteDecision)}">${escapeHtml(siteDecisionLabels[song.siteDecision] || '待網站主判斷')}</div>
                     </div>
                     <div class="evidence">
                         ${escapeHtml(song.evidence)}
@@ -511,13 +519,15 @@
         }
 
         function updateStats() {
-            const reviewed = data.songs.filter(song => choices[song.id]?.decision).length;
-            const flagged = data.songs.filter(song => song.riskScore >= 60).length;
-            document.getElementById('statTotal').textContent = data.localCount;
+            const ownerSongs = data.songs.filter(song => song.siteDecision === 'owner');
+            const reviewed = ownerSongs.filter(song => choices[song.id]?.decision).length;
             document.getElementById('statOnline').textContent = data.exactOnlineCount;
-            document.getElementById('statFlagged').textContent = flagged;
+            document.getElementById('statHandled').textContent = data.siteHandledCount - data.exactOnlineCount;
+            document.getElementById('statOwner').textContent = data.ownerReviewCount;
             document.getElementById('statReviewed').textContent = reviewed;
-            progressText.textContent = reviewed ? `已勾 ${reviewed} / ${data.localCount}` : '尚未勾選';
+            progressText.textContent = reviewed
+                ? `主人已完成 ${reviewed} / ${data.ownerReviewCount}`
+                : `待確認 ${data.ownerReviewCount} 首`;
         }
 
         function render() {
@@ -587,6 +597,7 @@
                     id: song.id,
                     title: song.title,
                     artist: song.artist,
+                    siteDecision: song.siteDecision,
                     recommendation: song.recommendation,
                     decision: choices[song.id]?.decision || '',
                     note: choices[song.id]?.note || ''
@@ -597,11 +608,12 @@
 
         document.getElementById('exportCsvBtn').addEventListener('click', () => {
             const csvEscape = value => `"${String(value ?? '').replaceAll('"', '""')}"`;
-            const rows = [['id', '歌名', '歌手', '建議', '主人判定', '主人備註']];
+            const rows = [['id', '歌名', '歌手', '網站主初判', '查證建議', '主人判定', '主人備註']];
             data.songs.forEach(song => rows.push([
                 song.id,
                 song.title,
                 song.artist,
+                siteDecisionLabels[song.siteDecision] || '',
                 recommendationLabels[song.recommendation] || recommendationLabels.review,
                 decisionLabels[choices[song.id]?.decision] || '',
                 choices[song.id]?.note || ''

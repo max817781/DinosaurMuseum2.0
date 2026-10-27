@@ -16,6 +16,7 @@ function loadSongData(filePath) {
 
 const overrides = {
     song_huai_nvhai: {
+        siteDecision: 'owner',
         recommendation: 'ambiguous',
         evidence: '網路上有多首同名歌曲；常見候選包含 Ella 陳嘉樺與梅艷芳版本。沒有歌手或直播證據，不能直接判定。',
         sources: [
@@ -24,27 +25,32 @@ const overrides = {
         ]
     },
     song_xiage_xingqi_qu_yingguo: {
+        siteDecision: 'discard',
         recommendation: 'duplicate',
         evidence: '正式站已有同名歌曲，歌手為陳綺貞；這筆歌手空白，不應再新增。',
         correctedTitle: '下個星期去英國',
         correctedArtist: '陳綺貞'
     },
     song_yiqiannian_yihou: {
+        siteDecision: 'discard',
         recommendation: 'exists',
         evidence: '可確認是林俊傑歌曲，但主人先前已要求先排除；是否為諾諾實際唱過仍需直播證據。',
         sources: [['《一千年以後》資料', 'https://zh.wikipedia.org/wiki/一千年以後']]
     },
     song_zuichu_mengxiang: {
+        siteDecision: 'discard',
         recommendation: 'exists',
         evidence: '可確認是范瑋琪歌曲，但主人先前已要求先排除；是否為諾諾實際唱過仍需直播證據。',
         sources: [['福茂唱片官方 MV', 'https://www.youtube.com/watch?v=wGAmgmZg-48']]
     },
     song_count_on_me: {
+        siteDecision: 'hold',
         recommendation: 'exists',
         evidence: '可確認為 Bruno Mars《Count on Me》；仍缺諾諾演唱證據。',
         sources: [['Bruno Mars 官方藝人頻道', 'https://www.youtube.com/watch?v=VIHFZEYGA3g']]
     },
     song_bling_bling: {
+        siteDecision: 'discard',
         recommendation: 'asr',
         evidence: '高度疑似把歌詞中的 Bling Bling 當成歌名；正式站已有很美味《不靈不靈》，而且目前已有兩筆重複。',
         correctedTitle: '不靈不靈',
@@ -52,6 +58,7 @@ const overrides = {
         sources: [['《不靈不靈》線索', 'https://www.youtube.com/watch?v=aJkOr84oyJo']]
     },
     song_cup_song: {
+        siteDecision: 'hold',
         recommendation: 'exists',
         evidence: '一般所稱 Cup Song 多半是 Anna Kendrick《Cups (Pitch Perfect’s When I’m Gone)》；仍需確認諾諾唱的是哪個版本。',
         correctedTitle: 'Cups (Pitch Perfect’s When I’m Gone)',
@@ -59,18 +66,21 @@ const overrides = {
         sources: [['《Cups》資料', 'https://en.wikipedia.org/wiki/Cups_(song)']]
     },
     song_zhi_xiaolongbao: {
+        siteDecision: 'discard',
         recommendation: 'asr',
         evidence: '「至」為錯字；正式站已有諾諾原創曲《致小籠包》，不可重複新增。',
         correctedTitle: '致小籠包',
         correctedArtist: '小恐龍諾諾'
     },
     song_haiyou_ni: {
+        siteDecision: 'discard',
         recommendation: 'asr',
         evidence: '主人已指出可能是《海底》；資料庫中另有羅之豪《海裡》且附伴奏／歌詞，原始「還有你」很可能是辨識錯誤。需回聽判定《海裡》或《海底》。',
         correctedTitle: '海裡／海底（待回聽）',
         correctedArtist: '羅之豪（若為《海裡》）'
     },
     song_honey: {
+        siteDecision: 'hold',
         recommendation: 'exists',
         evidence: '可確認郭書瑤有歌曲《Honey》；仍缺諾諾演唱證據。',
         sources: [
@@ -79,6 +89,7 @@ const overrides = {
         ]
     },
     song_a_little_while: {
+        siteDecision: 'owner',
         recommendation: 'ambiguous',
         evidence: '同名或近似歌名很多；搜尋可找到 Yellow Days《A Little While》及 U2《In a Little While》，沒有歌手／歌詞證據不能判定。',
         sources: [
@@ -87,21 +98,25 @@ const overrides = {
         ]
     },
     song_9420: {
+        siteDecision: 'hold',
         recommendation: 'exists',
         evidence: '可確認《9420》是麥小兜歌曲；主人先前表示不熟悉，是否為諾諾演唱仍需證據。',
         sources: [['LINE MUSIC 藝人／歌曲資料', 'https://music-tw.line.me/artist/190744']]
     },
     song_xingzuo: {
+        siteDecision: 'owner',
         recommendation: 'ambiguous',
         evidence: '只有「星座」兩字且歌手空白，無法唯一對應歌曲；很可能是字幕截斷或辨識錯誤。'
     },
     song_liang_zhu: {
+        siteDecision: 'hold',
         recommendation: 'exists',
         evidence: '可確認《梁山伯與茱麗葉》由卓文萱與曹格合唱；仍缺諾諾演唱證據。',
         correctedArtist: '卓文萱＋曹格',
         sources: [['滾石發行資料', 'https://www.youtube.com/watch?v=jbnqa2P0bbs']]
     },
     song_haonanren: {
+        siteDecision: 'owner',
         recommendation: 'asr',
         evidence: '本機脈絡指向《Plastic Memories》OP；「好男人」可能是語音辨識誤判，候選為佐佐木惠梨《Ring of Fortune》，必須回聽。',
         correctedTitle: 'Ring of Fortune（候選）',
@@ -109,6 +124,7 @@ const overrides = {
         sources: [['動畫官方音樂頁', 'https://www.plastic-memories.jp/music/op.html']]
     },
     song_linyuyizhizou: {
+        siteDecision: 'hold',
         recommendation: 'exists',
         evidence: '歌名可確認，但本機歌手「張紹涵」是錯字，正確為張韶涵；仍缺諾諾演唱證據。',
         correctedArtist: '張韶涵',
@@ -135,6 +151,7 @@ const songs = localSongs.map((song, index) => {
     const missingArtist = !String(song.artist || '').trim();
     const duplicateTitle = (titleCount.get(song.title) || 0) > 1;
     let recommendation = override.recommendation || (exact ? 'online' : 'review');
+    const siteDecision = override.siteDecision || (exact ? 'published' : 'owner');
     let riskScore = 0;
     if (recommendation === 'asr') riskScore += 100;
     if (recommendation === 'ambiguous') riskScore += 85;
@@ -156,6 +173,8 @@ const songs = localSongs.map((song, index) => {
         sameTitleOnlineArtists: sameTitleOnline,
         missingArtist,
         duplicateTitle,
+        siteDecision,
+        ownerReviewRequired: siteDecision === 'owner',
         recommendation,
         riskScore,
         evidence: override.evidence || (exact
@@ -173,6 +192,8 @@ const payload = {
     localCount: localSongs.length,
     onlineCount: liveSongs.length,
     exactOnlineCount: songs.filter(song => song.onlineExact).length,
+    siteHandledCount: songs.filter(song => song.siteDecision !== 'owner').length,
+    ownerReviewCount: songs.filter(song => song.siteDecision === 'owner').length,
     reviewCount: songs.filter(song => !song.onlineExact || song.riskScore > 0).length,
     songs
 };
